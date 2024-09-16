@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Custom style for layout elements -->
+    <style name="CustomBackgroundStyle">
+        <item name="android:background">@color/customBackgroundForLayoutElement</item>
+    </style>
+</resources>

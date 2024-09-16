@@ -1,5 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.Jawwna" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="AppTextAppearance" parent="TextAppearance.AppCompat">
+        <item name="android:fontFamily">@font/normativeprobold</item> <!-- Default font -->
+    </style>
+
+    <style name="AppTextAppearanceArabic" parent="TextAppearance.AppCompat">
+        <item name="android:fontFamily">@font/cairobold</item> <!-- Arabic font -->
+    </style>
+
+    <style name="Theme.Jawwna" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:colorBackground">@color/colorBackground</item>
+        <item name="android:fontFamily">@style/AppTextAppearance</item>
+
+    </style>
+
+
+
 </resources>

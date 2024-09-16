@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<font-family xmlns:app="http://schemas.android.com/apk/res-auto">
+    <font
+        app:font="@font/normativeproblack"
+        app:fontStyle="normal"
+        app:fontWeight="400" />
+
+    <font
+        app:font="@font/normativeproblackitalic"
+        app:fontStyle="normal"
+        app:fontWeight="700" />
+
+    <font
+        app:font="@font/normativeprobold"
+        app:fontStyle="normal"
+        app:fontWeight="700" />
+
+    <font
+        app:font="@font/normativeprobolditalic"
+        app:fontStyle="normal"
+        app:fontWeight="700" />
+
+    <font
+        app:font="@font/normativeproextralight"
+        app:fontStyle="normal"
+        app:fontWeight="800" />
+
+    <font
+        app:font="@font/normativeproextralightitalic"
+        app:fontStyle="normal"
+        app:fontWeight="800" />
+
+    <font
+        app:font="@font/normativeprolight"
+        app:fontStyle="normal"
+        app:fontWeight="300" />
+
+    <font
+        app:font="@font/normativeprolightitalic"
+        app:fontStyle="normal"
+        app:fontWeight="300" />
+
+    <font
+        app:font="@font/normativeproltalic"
+        app:fontStyle="normal"
+        app:fontWeight="500" />
+
+    <font
+        app:font="@font/normativepromedium"
+        app:fontStyle="normal"
+        app:fontWeight="500" />
+
+    <font
+        app:font="@font/normativepromediumitalic"
+        app:fontStyle="normal"
+        app:fontWeight="500" />
+
+    <font
+        app:font="@font/normativeproregular"
+        app:fontStyle="normal"
+        app:fontWeight="400" />
+
+
+
+
+</font-family>
