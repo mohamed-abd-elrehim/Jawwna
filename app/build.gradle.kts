@@ -3,7 +3,6 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     id("org.jetbrains.kotlin.kapt")
 
-
 }
 
 android {
@@ -23,7 +22,6 @@ android {
         }
     }
 
-
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -42,8 +40,6 @@ android {
     }
     buildFeatures {
         compose = true
-        viewBinding= true
-
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -93,11 +89,5 @@ dependencies {
 
     // Glide
     implementation("com.github.bumptech.glide:glide:4.15.1")
-
-    //Resize the Video Using FFmpeg
-    implementation ("com.arthenica:ffmpeg-kit-full:4.5.1-1")
-
-
 }
-
 
