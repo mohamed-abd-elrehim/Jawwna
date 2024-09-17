@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SplashActivity">
+
+    <!--dp (Density-independent Pixels): وحدة قياس الأكثر استخدامًا، وتستند إلى كثافة الشاشة. يُفضل استخدام dp لعرض وارتفاع العناصر لأن هذه الوحدة تضمن مظهرًا متناسقًا عبر الأجهزة ذات الشاشات المختلفة. 1dp يعادل 1 بكسل على شاشة بمعدل كثافة 160dpi (القياسية).
+
+px (Pixels): البكسل هو أصغر وحدة في الشاشة، ويمثل نقطة واحدة. لكن استخدام px غير مستحب لأنه يختلف حسب كثافة الشاشة.
+
+sp (Scale-independent Pixels): تستخدم عادة لتحديد حجم الخطوط. تختلف عن dp في أنها تعتمد أيضًا على إعدادات المستخدم لحجم النص (لتكبير أو تصغير الخط).
+
+match_parent و wrap_content:
+
+match_parent: يجعل العرض أو الارتفاع يملأ كامل المساحة المتاحة للعنصر.
+-->
+
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottieAnimationView"
+        android:layout_width="250dp"
+        android:layout_height="176dp"
+        android:layout_marginTop="216dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:lottie_loop="true"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/welcomeText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
+        android:text="@string/welcome_text"
+        android:textSize="34sp"
+        app:layout_constraintEnd_toEndOf="@+id/lottieAnimationView"
+        app:layout_constraintHorizontal_bias="0.507"
+        app:layout_constraintStart_toStartOf="@+id/lottieAnimationView"
+        app:layout_constraintTop_toBottomOf="@+id/lottieAnimationView" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

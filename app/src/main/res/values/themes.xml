@@ -14,8 +14,12 @@
         <item name="android:windowTranslucentStatus">true</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:colorBackground">@color/colorBackground</item>
-        <item name="android:fontFamily">@style/AppTextAppearance</item>
 
+
+        <!-- Apply the font to default text appearances -->
+        <item name="android:textAppearanceLarge">@style/AppTextAppearance</item>
+        <item name="android:textAppearanceMedium">@style/AppTextAppearance</item>
+        <item name="android:textAppearanceSmall">@style/AppTextAppearance</item>
     </style>
 
 

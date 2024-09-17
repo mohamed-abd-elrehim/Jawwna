@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Jawwna</string>
+    <string name="welcome_text">Welcome to Jawwna</string>
 </resources>

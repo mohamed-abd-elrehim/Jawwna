@@ -39,7 +39,8 @@ android {
         jvmTarget = "1.8"
     }
     buildFeatures {
-        compose = true
+        viewBinding = true
+
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -89,5 +90,9 @@ dependencies {
 
     // Glide
     implementation("com.github.bumptech.glide:glide:4.15.1")
+
+    //lottie
+    implementation("com.airbnb.android:lottie:6.0.0")
+
 }
 
