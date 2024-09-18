@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- VideoView for background -->
+
+    <!-- VideoView for background
     <VideoView
         android:id="@+id/backgroundVideoView"
         android:layout_width="match_parent"
@@ -14,14 +15,28 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <!-- Semi-transparent overlay to make video less visible
-    <View
+ -->
+    <!--
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/nav_host_fragment"
+        android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#80000000"
-        android:clickable="false"
-        android:focusable="false" />
-          -->
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/main_nav_graph" />
+        -->
+
+    <!-- VideoView for background
+
+<com.mapbox.maps.MapView
+    android:id="@+id/mapView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:mapbox_cameraTargetLat="30.0444"
+    app:mapbox_cameraTargetLng="31.2357"
+    app:mapbox_cameraZoom="10.0"
+    app:mapbox_cameraPitch="0.0"
+    app:mapbox_cameraBearing="0.0" />
+    -->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

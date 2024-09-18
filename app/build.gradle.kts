@@ -1,14 +1,19 @@
+import org.gradle.internal.impldep.org.jsoup.safety.Safelist.basic
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     id("org.jetbrains.kotlin.kapt")
+    id("androidx.navigation.safeargs")
+    alias(libs.plugins.google.android.libraries.mapsplatform.secrets.gradle.plugin)  // Apply the Safe Args plugin for type-safe navigation arguments
+
 
 }
 
 android {
     namespace = "com.example.jawwna"
     compileSdk = 34
-
+    ndkVersion ="23.0.7599858"
     defaultConfig {
         applicationId = "com.example.jawwna"
         minSdk = 24
@@ -20,6 +25,14 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        // Add this line to access the token in BuildConfig
+        buildConfigField("String", "GOOGLE_API_KEY", "\"${project.properties["API_KEY"]}\"")
+        //buildConfigField("String", "MAPBOX_API_KEY", "\"${project.properties["MAPBOX_API_KEY"]}\"")
+
+        manifestPlaceholders["google_maps_api_key"] = project.properties["API_KEY"] as Any
+        //manifestPlaceholders["mapbox_api_key"] = project.properties["MAPBOX_API_KEY"] as Any
+
     }
 
     buildTypes {
@@ -40,6 +53,7 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        android.buildFeatures.buildConfig=true
 
     }
     composeOptions {
@@ -50,7 +64,11 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
+
+
 }
+
 
 dependencies {
 
@@ -66,6 +84,9 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.play.services.maps)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -93,6 +114,17 @@ dependencies {
 
     //lottie
     implementation("com.airbnb.android:lottie:6.0.0")
+
+    //navigation
+    implementation ("androidx.navigation:navigation-fragment-ktx:2.7.0")
+    implementation ("androidx.navigation:navigation-ui-ktx:2.7.0")
+
+    // mapbox
+    //implementation("com.mapbox.maps:android:11.6.1")
+
+
+
+
 
 }
 
