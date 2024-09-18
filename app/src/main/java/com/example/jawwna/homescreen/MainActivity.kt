@@ -8,13 +8,10 @@ import com.example.jawwna.BuildConfig
 import com.example.jawwna.databinding.ActivityMainBinding
 import com.example.jawwna.homescreen.viewmodel.MainViewModel
 import com.google.android.gms.maps.model.MarkerOptions
-import com.mapbox.common.MapboxOptions
-import com.mapbox.maps.MapInitOptions
-import com.mapbox.maps.MapView
-import com.mapbox.maps.Style
+
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var mapView: MapView
+    //private lateinit var mapView: MapView
 
     // Declare the View Binding object
     private lateinit var binding: ActivityMainBinding
