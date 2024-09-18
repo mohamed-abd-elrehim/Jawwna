@@ -15,11 +15,11 @@
         android:theme="@style/Theme.Jawwna"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".homescreen.MainActivity"
             android:configChanges="locale|layoutDirection|screenSize|orientation"
             android:exported="false" />
         <activity
-            android:name=".SplashActivity"
+            android:name=".splashscreen.SplashActivity"
             android:configChanges="locale|layoutDirection|screenSize|orientation"
             android:exported="true">
             <intent-filter>

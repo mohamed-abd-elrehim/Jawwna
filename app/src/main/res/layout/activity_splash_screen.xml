@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SplashActivity">
+    tools:context=".splashscreen.SplashActivity">
 
     <!--dp (Density-independent Pixels): وحدة قياس الأكثر استخدامًا، وتستند إلى كثافة الشاشة. يُفضل استخدام dp لعرض وارتفاع العناصر لأن هذه الوحدة تضمن مظهرًا متناسقًا عبر الأجهزة ذات الشاشات المختلفة. 1dp يعادل 1 بكسل على شاشة بمعدل كثافة 160dpi (القياسية).
 
