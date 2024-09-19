@@ -1,13 +1,9 @@
-package com.example.jawwna.homescreen
-import android.media.MediaPlayer
+package com.example.jawwna.mainactivity
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
-import com.example.jawwna.BuildConfig
 import com.example.jawwna.databinding.ActivityMainBinding
-import com.example.jawwna.homescreen.viewmodel.MainViewModel
-import com.google.android.gms.maps.model.MarkerOptions
+import com.example.jawwna.mainactivity.viewmodel.MainViewModel
 
 
 class MainActivity : AppCompatActivity() {
@@ -75,6 +71,6 @@ class MainActivity : AppCompatActivity() {
 //        })
 //
 //        // Set the video URI in the ViewModel based on the night mode
-//        viewModel.setVideoUri(packageName, nightModeFlags)
+       // viewModel.setVideoUri(packageName, nightModeFlags)
     }
 }

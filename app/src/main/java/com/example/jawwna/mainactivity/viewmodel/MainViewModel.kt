@@ -1,4 +1,4 @@
-package com.example.jawwna.homescreen.viewmodel
+package com.example.jawwna.mainactivity.viewmodel
 
 import android.app.Application
 import android.content.res.Configuration

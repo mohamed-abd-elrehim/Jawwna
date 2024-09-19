@@ -11,7 +11,7 @@ import androidx.lifecycle.Observer
 import com.airbnb.lottie.LottieAnimationView
 import com.example.jawwna.R
 import com.example.jawwna.databinding.ActivitySplashScreenBinding
-import com.example.jawwna.homescreen.MainActivity
+import com.example.jawwna.mainactivity.MainActivity
 import com.example.jawwna.splashscreen.viewmodel.SplashViewModel
 
 class SplashActivity : AppCompatActivity() {

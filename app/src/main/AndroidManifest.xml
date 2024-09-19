@@ -39,7 +39,7 @@
                 -->
 
         <activity
-            android:name=".homescreen.MainActivity"
+            android:name=".mainactivity.MainActivity"
             android:configChanges="locale|layoutDirection|screenSize|orientation"
             android:exported="false" />
         <activity

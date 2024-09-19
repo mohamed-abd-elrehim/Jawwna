@@ -30,7 +30,7 @@ android {
         buildConfigField("String", "GOOGLE_API_KEY", "\"${project.properties["API_KEY"]}\"")
         //buildConfigField("String", "MAPBOX_API_KEY", "\"${project.properties["MAPBOX_API_KEY"]}\"")
 
-        manifestPlaceholders["google_maps_api_key"] = project.properties["API_KEY"] as Any
+        manifestPlaceholders["google_maps_api_key"] = project.properties["GOOGELE_MAPS_API_KEY"] as Any
         //manifestPlaceholders["mapbox_api_key"] = project.properties["MAPBOX_API_KEY"] as Any
 
     }
@@ -118,6 +118,10 @@ dependencies {
     //navigation
     implementation ("androidx.navigation:navigation-fragment-ktx:2.7.0")
     implementation ("androidx.navigation:navigation-ui-ktx:2.7.0")
+
+    //google map
+    implementation ("com.google.android.gms:play-services-maps:18.1.0")
+    implementation ("com.google.android.gms:play-services-location:21.0.1")
 
     // mapbox
     //implementation("com.mapbox.maps:android:11.6.1")
