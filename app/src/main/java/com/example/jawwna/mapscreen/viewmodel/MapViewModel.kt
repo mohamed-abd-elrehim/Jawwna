@@ -4,14 +4,12 @@ import android.app.Application
 import android.content.res.Configuration
 import android.location.Address
 import android.location.Geocoder
-import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.jawwna.R
-import com.example.jawwna.model.LocationData
+import com.example.jawwna.datasource.model.LocationData
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
