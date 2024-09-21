@@ -1,10 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".mapscreen.MapFragment">
 
+
+    <!-- Map Fragment -->
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
@@ -12,14 +14,31 @@
         android:layout_height="match_parent"
         tools:context=".mapscreen.MapFragment" />
 
+    <!-- SearchView for searching a location -->
     <SearchView
-        android:id="@+id/search_for_place"
+        android:id="@+id/search_location"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="25dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginTop="50dp"
-        android:layout_marginBottom="16dp"
-        android:queryHint="Search for a place" />
+        android:background="@drawable/card_settings_field_background_light_mode"
+        android:elevation="6dp"
+        android:iconifiedByDefault="false"
+        android:queryHint="Search for a location" />
+
+    <!-- Floating Action Button to save location and fetch weather -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/save_location_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="36dp"
+        android:background="@drawable/card_settings_field_background_light_mode"
+        android:contentDescription="@string/save_location"
+        app:srcCompat="@drawable/save_location_light_mode" />
+
 </RelativeLayout>

@@ -84,8 +84,7 @@ data class CurrentWeather(
     @Embedded val sys: Sys, // Embedded object for system-related information
 
     val pop: Double?,
-    @Embedded
-    val rain: Rain?,
+    @Embedded val rain: Rain?,
     val dt_txt: String?
 
 
@@ -111,7 +110,7 @@ data class FavoriteLocation(
     val dt: Long,
     @Embedded val sys: Sys, // Embedded object for system-related information
     val pop: Double?,
-    val rain: Rain?,
+    @Embedded val rain: Rain?,
     val dt_txt: String? // Embedded object for system-related information
 
 )
@@ -158,11 +157,12 @@ data class WeatherCondition(
  *  @param `3h` Rain volume for the last 3 hours (nullable).
  *
  */
-data class Rain(
-    val `1h`: Double?, // Use backticks to handle the property name with a number
-    val `3h`: Double? // Use backticks to handle the property name with a number
 
+data class Rain(
+    val `1h`: Double? = null,  // Nullable Double for 1 hour of rain
+    val `3h`: Double? = null   // Nullable Double for 3 hours of rain
 )
+
 /**
  * Data class representing main weather data.
  *
@@ -237,7 +237,6 @@ data class Clouds(
  */
 data class Sys(
     val type: Int?,
-    val id: Long?,
     val country: String?,
     val sunrise: Long?,
     val sunset: Long?,
