@@ -18,7 +18,7 @@
     <color name="colorPrimaryDark">@android:color/transparent</color>
 
     <!-- Accent color used for highlights and interactive elements -->
-    <color name="colorAccent">#b0e9fa</color>
+    <color name="colorAccent">#91D2E6</color>
 
     <!-- Background color for the app's main content area -->
     <color name="colorBackground">#a0e4fb</color>

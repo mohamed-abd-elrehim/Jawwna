@@ -1,4 +1,4 @@
-package com.example.jawwna.model
+package com.example.jawwna.datasource.model
 
 // LocationData.kt
 // LocationData.kt

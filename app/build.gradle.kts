@@ -27,11 +27,17 @@ android {
         }
 
         // Add this line to access the token in BuildConfig
-        buildConfigField("String", "GOOGLE_API_KEY", "\"${project.properties["API_KEY"]}\"")
-        //buildConfigField("String", "MAPBOX_API_KEY", "\"${project.properties["MAPBOX_API_KEY"]}\"")
+//        buildConfigField("String", "GOOGLE_API_KEY", "\"${project.properties["API_KEY"]}\"")
 
-        manifestPlaceholders["google_maps_api_key"] = project.properties["GOOGELE_MAPS_API_KEY"] as Any
-        //manifestPlaceholders["mapbox_api_key"] = project.properties["MAPBOX_API_KEY"] as Any
+        buildConfigField("String", "OPEN_WEATHER_API_KEY", "\"${project.properties["OPEN_WEATHER_API_KEY"]}\"")
+        buildConfigField("String", "OPEN_WEATHER_API_KEY_PRO", "\"${project.properties["OPEN_WEATHER_API_KEY_PRO"]}\"")
+        buildConfigField("String", "GOOGLE_MAPS_API_KEY", "\"${project.properties["GOOGLE_MAPS_API_KEY"]}\"")
+        buildConfigField("String", "MAPBOX_ACCESS_TOKEN", "\"${project.properties["MAPBOX_ACCESS_TOKEN"]}\"")
+
+        manifestPlaceholders["google_maps_api_key"] = project.properties["GOOGLE_MAPS_API_KEY"] as Any
+        manifestPlaceholders["mapbox_access_token"] = project.properties["MAPBOX_ACCESS_TOKEN"]as Any
+        manifestPlaceholders["open_weather_map_api_key"] = project.properties["OPEN_WEATHER_API_KEY"]as Any
+        manifestPlaceholders["open_weather_map_api_key_pro"] = project.properties["OPEN_WEATHER_API_KEY_PRO"]as Any
 
     }
 
