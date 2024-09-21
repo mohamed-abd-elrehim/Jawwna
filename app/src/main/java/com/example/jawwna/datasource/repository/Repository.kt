@@ -5,6 +5,7 @@ import com.example.jawwna.datasource.model.ForecastResponse
 import com.example.jawwna.datasource.remotedatasource.IRemoteDataSource
 
 class Repository private constructor(private val remoteDataSource: IRepository) : IRepository  {
+
     // Implement the repository methods here
     // Implement the RemoteDataSource methods here
     override suspend fun getCurrenWeatherByLatLon(

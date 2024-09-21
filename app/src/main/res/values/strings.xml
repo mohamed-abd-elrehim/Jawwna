@@ -4,4 +4,28 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+
+    <string name="location_selection">Location Selection</string>
+    <string name="temperature_units">Temperature Units</string>
+    <string name="wind_speed_units">Wind Speed Units</string>
+    <string name="app_language">App Language</string>
+    <string name="theme_selection">Theme Selection</string>
+    <string name="notifications">Notifications</string>
+    <string name="gps">GPS</string>
+    <string name="map">Map</string>
+    <string name="kelvin">Kelvin</string>
+    <string name="celsius">Celsius</string>
+    <string name="fahrenheit">Fahrenheit</string>
+    <string name="meter_per_second">Meter/Second</string>
+    <string name="miles_per_hour">Miles/Hour</string>
+    <string name="arabic">Arabic</string>
+    <string name="english">English</string>
+    <string name="light">Light</string>
+    <string name="dark">Dark</string>
+    <string name="enable">Enable</string>
+    <string name="disable">Disable</string>
+    <string name="save">Save</string>
+    <string name="resetting">Resetting</string>
+    <string name="save_location">Save Location</string>
+
 </resources>
