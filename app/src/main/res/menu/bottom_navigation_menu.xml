@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Home Menu Item -->
+    <item
+        android:id="@+id/menuHome"
+        android:icon="@drawable/round_home_24_light_mode"
+        android:title="@string/home" />
+
+    <!-- Favorite Menu Item -->
+    <item
+        android:id="@+id/menuFavorite"
+        android:icon="@drawable/ic_favorite_light_mode"
+        android:title="@string/favorite" />
+
+    <!-- Settings Menu Item -->
+    <item
+        android:id="@+id/menuSetting"
+        android:icon="@drawable/round_settings_24_light_mode"
+        android:title="@string/setting" />
+
+</menu>

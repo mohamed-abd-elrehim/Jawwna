@@ -27,5 +27,27 @@
     <string name="save">Save</string>
     <string name="resetting">Resetting</string>
     <string name="save_location">Save Location</string>
+    <string name="_12_00_pm">12:00 PM</string>
+    <string name="_25_c">25°C</string>
+    <string name="current_date">Sat,21 Sep\n</string>
+    <string name="current_time">10:45 PM</string>
+    <string name="giza">Giza</string>
+    <string name="tomorrow">Tomorrow</string>
+    <string name="cloudy">Cloudy</string>
+    <string name="weather_information">Weather Information</string>
+    <string name="humidity_value">70%</string>
+    <string name="wind_speed_value">10 km/h</string>
+    <string name="pressure_value">1013 hPa</string>
+    <string name="clouds_value">50%</string>
+    <string name="humidity">Humidity</string>
+    <string name="clouds">Clouds</string>
+    <string name="pressure">Pressure</string>
+    <string name="wind">Wind</string>
+    <string name="fab_add">Add Item</string>
+    <string name="home">Home</string>
+    <string name="setting">Setting</string>
+    <string name="favorite">Favorite</string>
+
+
 
 </resources>

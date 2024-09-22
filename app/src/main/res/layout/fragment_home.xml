@@ -1,12 +1,690 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".homescreen.HomeFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+<!--    &lt;!&ndash; Background video &ndash;&gt;-->
+<!--    <VideoView-->
+<!--        android:id="@+id/background_video"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:scaleType="centerCrop"-->
+<!--        android:layout_alignParentTop="true"-->
+<!--        android:layout_alignParentLeft="true"-->
+<!--        android:layout_alignParentRight="true"-->
+<!--        android:layout_alignParentBottom="true"/>-->
+
+
+    <!-- Scrollable settings -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="25dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginLeft="13dp"
+        android:layout_marginRight="13dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/frameLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".homescreen.HomeFragment">
+    <TextView
+        android:id="@+id/city_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="44dp"
+        android:text="@string/giza"
+        android:textSize="34sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/currentDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/current_date"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="@+id/city_name"
+        app:layout_constraintStart_toStartOf="@+id/city_name"
+        app:layout_constraintTop_toBottomOf="@+id/city_name" />
+
+    <TextView
+        android:id="@+id/current_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/current_time"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="@+id/currentDate"
+        app:layout_constraintStart_toStartOf="@+id/currentDate"
+        app:layout_constraintTop_toBottomOf="@+id/currentDate" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@android:color/transparent"
+        app:cardCornerRadius="30dp"
+        app:cardElevation="4dp"
+        app:layout_constraintEnd_toEndOf="@+id/current_time"
+        app:layout_constraintStart_toStartOf="@+id/current_time"
+        app:layout_constraintTop_toBottomOf="@+id/current_time">
+
+        <LinearLayout
+            android:id="@+id/linear_layout_main_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/card_settings_field_background_light_mode"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/main_animation"
+                android:layout_width="151dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center"
+                app:lottie_autoPlay="true"
+                app:lottie_rawRes="@raw/animationgg"
+                app:lottie_loop="true"/>
+
+
+            <TextView
+                android:id="@+id/main_text_temperature"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="25°C"
+                android:textColor="@android:color/holo_blue_dark"
+                android:textSize="60sp" />
+
+            <TextView
+                android:id="@+id/main_text_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="12:00 PM"
+                android:textSize="34sp" />
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/hourly_recyclerView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1dp"
+        app:layout_constraintEnd_toEndOf="@+id/cardView"
+        app:layout_constraintStart_toStartOf="@+id/cardView"
+        app:layout_constraintTop_toBottomOf="@+id/cardView"/>
+
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/day_forecast_cardView1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                app:cardCornerRadius="30dp"
+                app:cardElevation="4dp"
+                app:layout_constraintEnd_toEndOf="@+id/hourly_recyclerView"
+                app:layout_constraintStart_toStartOf="@+id/hourly_recyclerView"
+                app:layout_constraintTop_toBottomOf="@+id/hourly_recyclerView">
+
+                <LinearLayout
+                    android:id="@+id/day_forecast_linearlayout1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/card_settings_field_background_light_mode"
+                    android:orientation="horizontal"
+                    android:padding="16dp"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/day_forecast_text_day1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="@string/tomorrow"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                    android:layout_marginEnd="8dp" />
+
+                    <ImageView
+                        android:id="@+id/day_forecast_image_weather1"
+                        android:layout_width="46dp"
+                        android:layout_height="25dp"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/ic_cloudy" />
+
+                    <TextView
+                        android:id="@+id/day_forecast_text_des1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="@string/cloudy"
+                        android:textColor="@android:color/holo_blue_dark"
+                        android:textSize="14sp"
+                        android:layout_marginStart="8dp" />
+                    <TextView
+                        android:id="@+id/day_forecast_text_temperature1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="25°C"
+                        android:textColor="@android:color/holo_blue_dark"
+                        android:textSize="14sp"
+                        android:layout_marginStart="8dp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+
+
+            <androidx.cardview.widget.CardView
+        android:id="@+id/day_forecast_cardView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        app:cardCornerRadius="30dp"
+        app:cardElevation="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/day_forecast_cardView1">
+
+
+        <LinearLayout
+            android:id="@+id/day_forecast_linearlayout2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/card_settings_field_background_light_mode"
+            android:orientation="horizontal"
+            android:padding="16dp"
+            android:gravity="center">
+            <TextView
+                android:id="@+id/day_forecast_text_day2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/tomorrow"
+                android:layout_marginStart="8dp"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:id="@+id/day_forecast_image_weather2"
+                android:layout_width="46dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="8dp"
+                android:src="@drawable/ic_cloudy" />
+
+            <TextView
+                android:id="@+id/day_forecast_text_des2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/cloudy"
+                android:layout_marginStart="8dp"
+                android:textColor="@android:color/holo_blue_dark"
+                android:textSize="14sp" />
+
+
+            <TextView
+                android:id="@+id/day_forecast_text_temperature2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="25°C"
+                android:layout_marginStart="8dp"
+                android:textColor="@android:color/holo_blue_dark"
+                android:textSize="14sp" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/day_forecast_cardView3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        app:cardCornerRadius="30dp"
+        app:cardElevation="4dp"
+        app:layout_constraintEnd_toEndOf="@+id/day_forecast_cardView2"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/day_forecast_cardView2"
+        app:layout_constraintTop_toBottomOf="@+id/day_forecast_cardView2">
+
+
+        <LinearLayout
+            android:id="@+id/day_forecast_linearlayout3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/card_settings_field_background_light_mode"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/day_forecast_text_day3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/tomorrow"
+                android:layout_marginStart="8dp"
+
+                android:textSize="16sp" />
+
+            <ImageView
+                android:id="@+id/day_forecast_image_weather3"
+                android:layout_width="46dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="8dp"
+                android:src="@drawable/ic_cloudy" />
+
+            <TextView
+                android:id="@+id/day_forecast_text_des3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_gravity="center"
+                android:text="@string/cloudy"
+                android:textColor="@android:color/holo_blue_dark"
+                android:textSize="14sp" />
+
+
+            <TextView
+                android:id="@+id/day_forecast_text_temperature3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="25°C"
+                android:layout_marginStart="8dp"
+                android:textColor="@android:color/holo_blue_dark"
+                android:textSize="14sp" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
 
 
 
-</FrameLayout>
+    <androidx.cardview.widget.CardView
+        android:id="@+id/day_forecast_cardView4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        app:cardCornerRadius="30dp"
+        app:cardElevation="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/day_forecast_cardView3">
+
+
+        <LinearLayout
+            android:id="@+id/day_forecast_linearlayout4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/card_settings_field_background_light_mode"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/day_forecast_text_day4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/tomorrow"
+                android:layout_marginStart="8dp"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:id="@+id/day_forecast_image_weather4"
+                android:layout_width="46dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="8dp"
+                android:src="@drawable/ic_cloudy" />
+
+            <TextView
+                android:id="@+id/day_forecast_text_des4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/cloudy"
+                android:layout_marginStart="8dp"
+                android:textColor="@android:color/holo_blue_dark"
+                android:textSize="14sp" />
+
+
+            <TextView
+                android:id="@+id/day_forecast_text_temperature4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="25°C"
+                android:layout_marginStart="8dp"
+                android:textColor="@android:color/holo_blue_dark"
+                android:textSize="14sp" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/day_forecast_cardView5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        app:cardCornerRadius="30dp"
+        app:cardElevation="4dp"
+        app:layout_constraintEnd_toEndOf="@+id/day_forecast_cardView4"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/day_forecast_cardView4"
+        app:layout_constraintTop_toBottomOf="@+id/day_forecast_cardView4">
+
+
+        <LinearLayout
+            android:id="@+id/day_forecast_linearlayout5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/card_settings_field_background_light_mode"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/day_forecast_text_day5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/tomorrow"
+                android:layout_marginStart="8dp"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:id="@+id/day_forecast_image_weather5"
+                android:layout_width="46dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="8dp"
+
+                android:src="@drawable/ic_cloudy" />
+
+            <TextView
+                android:id="@+id/day_forecast_text_des5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/cloudy"
+                android:layout_marginStart="8dp"
+                android:textColor="@android:color/holo_blue_dark"
+                android:textSize="14sp" />
+
+
+            <TextView
+                android:id="@+id/day_forecast_text_temperature5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="8dp"
+                android:text="25°C"
+                android:textColor="@android:color/holo_blue_dark"
+                android:textSize="14sp" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+
+
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/day_forecast_cardView6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        app:cardCornerRadius="30dp"
+        app:cardElevation="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/day_forecast_cardView5">
+
+
+        <LinearLayout
+            android:id="@+id/day_forecast_linearlayout6"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/card_settings_field_background_light_mode"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/day_forecast_text_day6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@string/tomorrow"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:id="@+id/day_forecast_image_weather6"
+                android:layout_width="46dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="8dp"
+
+                android:src="@drawable/ic_cloudy" />
+
+            <TextView
+                android:id="@+id/day_forecast_text_des6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/cloudy"
+                android:layout_marginStart="8dp"
+
+                android:textColor="@android:color/holo_blue_dark"
+                android:textSize="14sp" />
+
+
+            <TextView
+                android:id="@+id/day_forecast_text_temperature6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="25°C"
+                android:layout_marginStart="8dp"
+
+                android:textColor="@android:color/holo_blue_dark"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/weather_information_cardView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="30dp"
+                app:cardElevation="4dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/day_forecast_cardView6"
+                app:layout_constraintStart_toStartOf="@+id/day_forecast_cardView6"
+                app:layout_constraintTop_toBottomOf="@+id/day_forecast_cardView6">
+
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/constraint_layout_weather_information"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/card_settings_field_background_light_mode"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/text_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/weather_information"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <ImageView
+                        android:id="@+id/icon_humidity"
+                        android:layout_width="40dp"
+                        android:layout_height="30dp"
+                        android:layout_marginTop="16dp"
+                        android:src="@drawable/ic_humidity_light_mode"
+                        app:layout_constraintEnd_toStartOf="@+id/icon_wind_speed"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/text_title" />
+
+                    <TextView
+                        android:id="@+id/text_humidity"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/humidity_value"
+                        android:textColor="@android:color/holo_blue_dark"
+                        android:textSize="12sp"
+                        app:layout_constraintEnd_toEndOf="@+id/icon_humidity"
+                        app:layout_constraintStart_toStartOf="@+id/icon_humidity"
+                        app:layout_constraintTop_toBottomOf="@+id/icon_humidity" />
+
+                    <TextView
+                        android:id="@+id/text_humidity_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/humidity"
+                        android:textSize="14sp"
+                        app:layout_constraintEnd_toEndOf="@+id/text_humidity"
+                        app:layout_constraintStart_toStartOf="@+id/text_humidity"
+                        app:layout_constraintTop_toBottomOf="@+id/text_humidity" />
+
+                    <ImageView
+                        android:id="@+id/icon_wind_speed"
+                        android:layout_width="40dp"
+                        android:layout_height="30dp"
+                        android:layout_marginTop="16dp"
+                        android:src="@drawable/ic_windy_light_mode"
+                        app:layout_constraintEnd_toStartOf="@+id/icon_clouds"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toEndOf="@+id/icon_humidity"
+                        app:layout_constraintTop_toBottomOf="@+id/text_title" />
+
+                    <TextView
+                        android:id="@+id/text_wind_speed"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/wind_speed_value"
+                        android:textColor="@android:color/holo_blue_dark"
+                        android:textSize="12sp"
+                        app:layout_constraintEnd_toEndOf="@+id/icon_wind_speed"
+                        app:layout_constraintStart_toStartOf="@+id/icon_wind_speed"
+                        app:layout_constraintTop_toBottomOf="@+id/icon_wind_speed" />
+
+                    <ImageView
+                        android:id="@+id/icon_pressure"
+                        android:layout_width="40dp"
+                        android:layout_height="30dp"
+                        android:layout_marginTop="16dp"
+                        android:src="@drawable/ic_barometer_light_mode"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toEndOf="@+id/icon_clouds"
+                        app:layout_constraintTop_toBottomOf="@+id/text_title" />
+
+                    <TextView
+                        android:id="@+id/text_pressure"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/pressure_value"
+                        android:textColor="@android:color/holo_blue_dark"
+                        android:textSize="12sp"
+                        app:layout_constraintEnd_toEndOf="@+id/icon_pressure"
+                        app:layout_constraintStart_toStartOf="@+id/icon_pressure"
+                        app:layout_constraintTop_toBottomOf="@+id/icon_pressure" />
+
+                    <ImageView
+                        android:id="@+id/icon_clouds"
+                        android:layout_width="40dp"
+                        android:layout_height="30dp"
+                        android:layout_marginTop="16dp"
+                        android:src="@drawable/ic_cloud_lgiht_mode"
+                        app:layout_constraintEnd_toStartOf="@+id/icon_pressure"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toEndOf="@+id/icon_wind_speed"
+                        app:layout_constraintTop_toBottomOf="@+id/text_title" />
+
+                    <TextView
+                        android:id="@+id/text_clouds"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/clouds_value"
+                        android:textColor="@android:color/holo_blue_dark"
+                        android:textSize="12sp"
+                        app:layout_constraintEnd_toEndOf="@+id/icon_clouds"
+                        app:layout_constraintStart_toStartOf="@+id/icon_clouds"
+                        app:layout_constraintTop_toBottomOf="@+id/icon_clouds" />
+
+                    <TextView
+                        android:id="@+id/text_clouds_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/clouds"
+                        android:textSize="14sp"
+                        app:layout_constraintEnd_toEndOf="@+id/text_clouds"
+                        app:layout_constraintStart_toStartOf="@+id/text_clouds"
+                        app:layout_constraintTop_toBottomOf="@+id/text_clouds" />
+
+                    <TextView
+                        android:id="@+id/text_w_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/wind"
+                        android:textSize="14sp"
+                        app:layout_constraintEnd_toEndOf="@+id/text_wind_speed"
+                        app:layout_constraintStart_toStartOf="@+id/text_wind_speed"
+                        app:layout_constraintTop_toBottomOf="@+id/text_wind_speed" />
+
+                    <TextView
+                        android:id="@+id/text_pressure_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/pressure"
+                        android:textSize="14sp"
+                        app:layout_constraintEnd_toEndOf="@+id/text_pressure"
+                        app:layout_constraintStart_toStartOf="@+id/text_pressure"
+                        app:layout_constraintTop_toBottomOf="@+id/text_pressure" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+
+    </ScrollView>
+</RelativeLayout>

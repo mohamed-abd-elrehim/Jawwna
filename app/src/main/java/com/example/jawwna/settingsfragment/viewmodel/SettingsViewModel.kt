@@ -15,10 +15,6 @@ class SettingsViewModel(application: Application) : ViewModel() {
     private val preferencesSettingsHelper: PreferencesSettingsHelper =
         PreferencesSettingsHelper(application)
 
-    // LiveData to hold the video URI
-    private val _videoUri = MutableLiveData<Uri>()
-    val videoUri: LiveData<Uri> get() = _videoUri
-
     // LiveData to hold the card settings field background color
     private val _cardSettingsFieldBackgroundLightMode = MutableLiveData<Int>()
     val cardSettingsFieldBackgroundLightModeLiveData: LiveData<Int> get() = _cardSettingsFieldBackgroundLightMode
@@ -52,16 +48,6 @@ class SettingsViewModel(application: Application) : ViewModel() {
 
 
 
-    // Set the video URI based on the app package and night mode
-    fun setVideoUri(packageName: String, nightModeFlags: Int) {
-        val uri = when (nightModeFlags) {
-
-            Configuration.UI_MODE_NIGHT_YES -> Uri.parse("android.resource://$packageName/${R.raw.nightmodebacground}")
-            Configuration.UI_MODE_NIGHT_NO -> Uri.parse("android.resource://$packageName/${R.raw.lightmodebacground}")
-            else -> Uri.parse("android.resource://$packageName/${R.raw.lightmodebacground}")
-        }
-        _videoUri.value = uri
-    }
 
     fun setCardSettingsFieldBackgroundLightMode(packageName: String, nightModeFlags: Int) {
         val colorResId = when (nightModeFlags) {

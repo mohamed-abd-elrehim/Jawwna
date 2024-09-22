@@ -9,11 +9,13 @@
         <item name="android:fontFamily">@font/cairobold</item> <!-- Arabic font -->
     </style>
 
-    <style name="Theme.Jawwna" parent="Theme.AppCompat.DayNight.NoActionBar">
+    <style name="Theme.Jawwna" parent="Theme.Material3.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="android:windowTranslucentStatus">true</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:colorBackground">@color/colorBackground</item>
+
+        <!-- Button Text Color -->  <!-- Add Material Component support -->
 
 
         <!-- Apply the font to default text appearances -->

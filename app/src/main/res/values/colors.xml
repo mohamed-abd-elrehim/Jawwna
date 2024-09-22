@@ -11,7 +11,7 @@
 
         <!--light Mode-->
     <!-- Primary color used for app branding and accents -->
-    <color name="colorPrimary">#fffffd</color>
+    <color name="colorPrimary">#59AEC8</color>
 
     <!-- Darker variant of the primary color, used for the status bar -->
     <!-- Using transparent to make the status bar background invisible -->
@@ -39,5 +39,23 @@
     <color name="customBackgroundForLayoutElementNightMode">#2f2750</color>
 
 
+        <!-- Primary colors -->
+        <color name="colorPrimaryVariant">#3700B3</color>
+        <color name="colorOnPrimary">#FFFFFF</color>
+
+        <!-- Secondary colors -->
+        <color name="colorSecondary">#03DAC5</color>
+        <color name="colorSecondaryVariant">#018786</color>
+        <color name="colorOnSecondary">#000000</color>
+
+        <!-- Background colors -->
+        <color name="colorOnBackground">#000000</color>
+
+        <!-- Text colors -->
+        <color name="colorTextSecondary">#757575</color>
+
+        <!-- Button colors -->
+        <color name="buttonBackground">#6200EE</color>
+        <color name="buttonTextColor">#FFFFFF</color>
 
 </resources>

@@ -1,5 +1,6 @@
 package com.example.jawwna.settingsfragment
 
+import android.content.res.Configuration
 import android.media.MediaPlayer
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -106,49 +107,13 @@ class SettingsFragment : Fragment() {
 
 
 
-        // Access the VideoView using View Binding
-        val videoView = binding.backgroundVideo
-
         // Get current night mode
         val nightModeFlags =
             resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK
 
         // Set the video URI in the ViewModel based on the night mode
-        viewModel.setVideoUri(requireContext().packageName, nightModeFlags)
 
-        // Observe the video URI from ViewModel
-        viewModel.videoUri.observe(viewLifecycleOwner, Observer { uri ->
-            // Set up the VideoView with the URI provided by the ViewModel
-            videoView.setVideoURI(uri)
-            videoView.setOnPreparedListener { mediaPlayer ->
-                mediaPlayer.isLooping = true
-                mediaPlayer.setVolume(0f, 0f) // Mute the video
 
-                // Set fade-in animation
-                mediaPlayer.setOnInfoListener { _, what, _ ->
-                    if (what == MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START) {
-                        videoView.animate()
-                            .alpha(1f)
-                            .setDuration(2000)
-                            .start()
-                    }
-                    true
-                }
-
-                // Handle loop and fade-in effect
-                mediaPlayer.setOnCompletionListener {
-                    videoView.alpha = 0f
-                    mediaPlayer.seekTo(0)
-                    mediaPlayer.start()
-                    videoView.animate()
-                        .alpha(1f)
-                        .setDuration(2000)
-                        .start()
-                }
-
-                mediaPlayer.start()
-            }
-        })
 
         viewModel.setCardSettingsFieldBackgroundLightMode(
             requireContext().packageName,
@@ -172,6 +137,13 @@ class SettingsFragment : Fragment() {
                 binding.resettingbut.background =
                     ContextCompat.getDrawable(requireContext(), colorResId)
                 binding.savebut.background = ContextCompat.getDrawable(requireContext(), colorResId)
+                    if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES) {
+                        binding.resettingbut.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorTextNightMode))
+                        binding.savebut.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorTextNightMode))
+                    }else{
+                        binding.resettingbut.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorText))
+                        binding.savebut.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorText))
+                    }
             })
 
         binding.savebut.setOnClickListener {

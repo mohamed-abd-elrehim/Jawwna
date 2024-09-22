@@ -3,16 +3,6 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <!-- Background video -->
-    <VideoView
-        android:id="@+id/background_video"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"/>
 
     <!-- Scrollable settings -->
     <ScrollView
@@ -303,6 +293,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
+                android:textColor="@color/colorText"
                 android:background="@drawable/card_settings_field_background_light_mode"
                 android:text="@string/save" />
 
@@ -312,7 +303,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:background="@drawable/card_settings_field_background_light_mode"
-                android:text="@string/resetting" />
+                android:text="@string/resetting"
+                android:textColor="@color/colorText" />
 
         </LinearLayout>
     </ScrollView>

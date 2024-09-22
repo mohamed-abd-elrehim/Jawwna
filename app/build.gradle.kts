@@ -59,6 +59,7 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        dataBinding = true
         android.buildFeatures.buildConfig=true
 
     }
@@ -128,6 +129,10 @@ dependencies {
     //google map
     implementation ("com.google.android.gms:play-services-maps:18.1.0")
     implementation ("com.google.android.gms:play-services-location:21.0.1")
+
+    //material
+    implementation ("com.google.android.material:material:1.12.0")
+    implementation("com.google.android.material:material:1.10.0-alpha03")
 
     // mapbox
     //implementation("com.mapbox.maps:android:11.6.1")
