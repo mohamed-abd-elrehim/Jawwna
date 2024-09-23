@@ -4,12 +4,24 @@ import android.app.Application
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.jawwna.R
+import com.example.jawwna.datasource.model.CurrentWeather
+import com.example.jawwna.datasource.model.shared_preferences_helper.PreferencesLocationHelper
+import com.example.jawwna.datasource.repository.IRepository
+import com.example.jawwna.datasource.repository.Repository
+import kotlinx.coroutines.launch
 
-class HomeViewModel(application: Application) : AndroidViewModel(application) {
+class HomeViewModel(private val application: Application, private val repository: IRepository) :ViewModel() {
+
+    private val preferencesLocationHelper = PreferencesLocationHelper(application)
+    private val TAG = "HomeViewModel"
+
 
     // LiveData to hold the card settings field background color
     private val _cardSettingsFieldBackgroundLightMode = MutableLiveData<Int>()
@@ -19,6 +31,22 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private val _isDarkMode = MutableLiveData<Boolean>()
     val isDarkMode: LiveData<Boolean> get() = _isDarkMode
 
+
+
+//LiveDataGetWhterData
+    private val _weatherData = MutableLiveData<CurrentWeather>()
+    val weatherData: LiveData<CurrentWeather> get() = _weatherData
+
+    fun fetchWeatherData(apiKey: String) {
+
+        val latitude = preferencesLocationHelper.getLocationLatitude()
+        val longitude = preferencesLocationHelper.getLocationLongitude()
+        Log.i(TAG, "fetchWeatherData: $latitude $longitude")
+
+        viewModelScope.launch {
+          _weatherData.postValue(repository.getCurrenWeatherByLatLon(latitude, longitude,apiKey))
+        }
+    }
 
     fun setCardSettingsFieldBackgroundLightMode(packageName: String, nightModeFlags: Int) {
         val colorResId = when (nightModeFlags) {

@@ -9,30 +9,46 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object  RemoteDataSource: IRemoteDataSource {
 
-    private const val BASE_URL = "https://api.openweathermap.org/data/2.5/"
+    private const val BASE_URL = "https://api.openweathermap.org/"
+    private const val BASE_URL_HOURLY = "https://pro.openweathermap.org/"
+    private var currentBaseUrl: String = BASE_URL
+    private lateinit var retrofit: Retrofit
+    private lateinit var weatherApiService: WeatherApiService
 
 
-    private val retrofit: Retrofit by lazy {
-        Retrofit.Builder()
-            .baseUrl(BASE_URL)
+    init {
+        initializeRetrofit()
+    }
+
+    private fun initializeRetrofit() {
+        retrofit = Retrofit.Builder()
+            .baseUrl(currentBaseUrl)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
+            weatherApiService = retrofit.create(WeatherApiService::class.java)
     }
 
-    // Create an instance of the WeatherApiService
-    private val weatherApiService: WeatherApiService by lazy {
-        retrofit.create(WeatherApiService::class.java)
+
+
+
+    private fun setBaseUrl(baseUrl: String) {
+        currentBaseUrl = baseUrl
+        initializeRetrofit()
     }
+
+    fun useFirstBaseUrl() {
+        setBaseUrl(BASE_URL)
+    }
+
+    fun useSecondBaseUrl() {
+        setBaseUrl(BASE_URL_HOURLY)
+    }
+
 
     //Current weather data
     // Fetch weather data by latitude and longitude with optional lang and units
-    override suspend fun getCurrenWeatherByLatLon(
-        lat: Double,
-        lon: Double,
-        apiKey: String,
-        lang: String?,
-        units: String?
-    ): CurrentWeather {
+    override suspend fun getCurrenWeatherByLatLon(lat: Double, lon: Double, apiKey: String, lang: String?, units: String?): CurrentWeather {
+        useFirstBaseUrl()
         return weatherApiService.getWeatherByLatLon(lat, lon, apiKey, lang, units)
     }
 
@@ -97,6 +113,7 @@ object  RemoteDataSource: IRemoteDataSource {
         lang: String?,
         units: String?
     ): ForecastResponse {
+        useSecondBaseUrl()
         return weatherApiService.getHourlyForecastByLatLon(lat, lon, apiKey, lang, units)
     }
 

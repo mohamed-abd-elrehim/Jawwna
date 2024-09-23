@@ -6,7 +6,6 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface WeatherApiService {
-
     //Current weather data
     // Fetch weather data by latitude and longitude with optional lang and units
     @GET("data/2.5/weather")

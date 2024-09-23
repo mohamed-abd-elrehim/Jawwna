@@ -82,7 +82,6 @@ data class CurrentWeather(
     @Embedded val clouds: Clouds, // Embedded object for cloud information
     val dt: Long,
     @Embedded val sys: Sys, // Embedded object for system-related information
-
     val pop: Double?,
     @Embedded val rain: Rain?,
     val dt_txt: String?

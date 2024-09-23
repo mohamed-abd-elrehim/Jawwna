@@ -1,38 +1,42 @@
 package com.example.jawwna.homescreen
 
 
-import android.media.MediaPlayer
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.jawwna.BuildConfig
 import com.example.jawwna.R
 import com.example.jawwna.databinding.FragmentHomeBinding
+import com.example.jawwna.datasource.repository.Repository
+import com.example.jawwna.homescreen.viewmodel.HomeViewModelFactory
 import com.example.jawwna.homescreen.viewmodel.HomeViewModel
 
 class HomeFragment : Fragment() {
 
-    private val viewModel: HomeViewModel by viewModels()
+    private lateinit var  viewModel: HomeViewModel
     lateinit var binding: FragmentHomeBinding
+    private val TAG = "HomeFragment"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
-
         // Inflate the layout for this fragment
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel=ViewModelProvider(this, HomeViewModelFactory(requireActivity().application,Repository.getRepository()))
+            .get(HomeViewModel::class.java)
         // Access the VideoView using View Binding
         // Get current night mode
         val nightModeFlags =
@@ -67,6 +71,18 @@ class HomeFragment : Fragment() {
 
         // Check the current theme mode when view is created
         viewModel.checkThemeMode(resources)
+
+        viewModel.fetchWeatherData(BuildConfig.OPEN_WEATHER_API_KEY_PRO)
+        viewModel.weatherData.observe(viewLifecycleOwner) { weatherData ->
+            Toast.makeText(requireContext(), "${weatherData.main.temp }+ ${weatherData.weather.size}", Toast.LENGTH_SHORT).show()
+            Log.i(TAG, "onViewCreated: $weatherData")
+        }
+
+
+
+
+
+
     }
 
     private fun updateIcons(isDarkMode: Boolean) {
@@ -108,6 +124,8 @@ class HomeFragment : Fragment() {
         binding.textPressure.setTextColor(textColor)
         binding.textClouds.setTextColor(textColor)
     }
+
+
 
 
 }

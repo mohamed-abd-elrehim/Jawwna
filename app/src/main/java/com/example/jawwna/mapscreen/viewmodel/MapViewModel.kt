@@ -4,22 +4,31 @@ import android.app.Application
 import android.content.res.Configuration
 import android.location.Address
 import android.location.Geocoder
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.jawwna.R
+import com.example.jawwna.datasource.model.CurrentWeather
+import com.example.jawwna.datasource.model.ForecastResponse
 import com.example.jawwna.datasource.model.shared_preferences_helper.PreferencesLocationHelper
 import com.example.jawwna.datasource.model.shared_preferences_helper.PreferencesSettingsHelper
+import com.example.jawwna.datasource.remotedatasource.ApiResponse
+import com.example.jawwna.datasource.repository.IRepository
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.io.IOException
 
 
-    class MapViewModel(application: Application) : ViewModel() {
+    class MapViewModel(private val application: Application,private val repository: IRepository) : ViewModel() {
         private val preferencesLocationHelper: PreferencesLocationHelper = PreferencesLocationHelper(application)
+
+        private val TAG = "MapViewModel"
 
     // LiveData for location
     private val geocoder = Geocoder(application)
@@ -43,6 +52,15 @@ import java.io.IOException
         private val _icon = MutableLiveData<Int>()
         val icon: LiveData<Int> get() = _icon
 
+        //LiveDataGetWhterData
+
+        private val _weatherData = MutableStateFlow<ApiResponse<ForecastResponse>>(ApiResponse.Loading)
+        val weatherData: StateFlow<ApiResponse<ForecastResponse>> = _weatherData
+
+
+        private val _weatherData2 = MutableStateFlow<ApiResponse<ForecastResponse>>(ApiResponse.Loading)
+        val weatherData2: StateFlow<ApiResponse<ForecastResponse>> = _weatherData2
+
         // Initialize with default location
         init {
             val defaultName = preferencesLocationHelper.getLocationName()
@@ -55,6 +73,29 @@ import java.io.IOException
 
         }
 
+        fun fetchWeatherData(apiKey: String, lat: Double, lon: Double) {
+            viewModelScope.launch {
+                try {
+                    _weatherData.value = ApiResponse.Loading
+                    val data = repository.getForecastByLatLon(lat, lon, apiKey, null, null)
+                    _weatherData.value = ApiResponse.Success(data)
+                } catch (e: Exception) {
+                    _weatherData.value = ApiResponse.Error(e.message ?: "Unknown error")
+                }
+            }
+        }
+
+        fun fetchWeatherData2(apiKey: String, lat: Double, lon: Double) {
+            viewModelScope.launch {
+                try {
+                    _weatherData2.value = ApiResponse.Loading
+                    val data = repository.getHourlyForecastByLatLon(lat, lon, apiKey, null, null)
+                    _weatherData2.value = ApiResponse.Success(data)
+                } catch (e: Exception) {
+                    _weatherData2.value = ApiResponse.Error(e.message ?: "Unknown error")
+                }
+            }
+        }
     // Method to update the location
     fun updateLocation(latitude: Double, longitude: Double) {
         // Update the LocationData singleton
