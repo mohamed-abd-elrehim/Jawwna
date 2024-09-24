@@ -13,7 +13,6 @@ import android.view.ViewGroup
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -24,8 +23,6 @@ import com.example.jawwna.datasource.remotedatasource.ApiResponse
 import com.example.jawwna.datasource.repository.Repository
 import com.example.jawwna.mapscreen.viewmodel.MapViewModel
 import com.example.jawwna.mapscreen.viewmodel.MapViewModelFactory
-import com.example.jawwna.settingsfragment.viewmodel.SettingsViewModel
-import com.example.jawwna.settingsfragment.viewmodel.SettingsViewModelFactory
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -147,7 +144,7 @@ class MapFragment : Fragment() {
 
         }
         lifecycleScope.launch {
-            mapViewModel.weatherData.collect { response ->
+            mapViewModel.weatherForecastDailyData.collect { response ->
                 when (response) {
                     is ApiResponse.Loading -> {
                         // Show loading indicator
@@ -155,7 +152,7 @@ class MapFragment : Fragment() {
                     is ApiResponse.Success -> {
                         // Update UI with the weather data
                         Toast.makeText(requireContext(), "Weather: ${response.data}", Toast.LENGTH_SHORT).show()
-                        Log.i(TAG, ": Sccesss"+response.data)
+                        Log.i(TAG, ": Sccesss Weather Forecast Daily Data"+response.data)
 
                     }
                     is ApiResponse.Error -> {
@@ -166,12 +163,13 @@ class MapFragment : Fragment() {
                             .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
                             .create()
                         alertDialog.show()
+                        Log.i(TAG, ":ERROR Weather Forecast Daily Data "+response.message)
                     }
                 }
             }
         }
         lifecycleScope.launch {
-            mapViewModel.weatherData2.collect { response ->
+            mapViewModel.currentWeatherData.collect { response ->
                 when (response) {
                     is ApiResponse.Loading -> {
                         // Show loading indicator
@@ -179,7 +177,7 @@ class MapFragment : Fragment() {
                     is ApiResponse.Success -> {
                         // Update UI with the weather data
                         Toast.makeText(requireContext(), "Weather: ${response.data}", Toast.LENGTH_SHORT).show()
-                        Log.i(TAG, ": Sccesss2"+response.data)
+                        Log.i(TAG, ": Sccesss Current"+response.data)
 
                     }
                     is ApiResponse.Error -> {
@@ -190,10 +188,64 @@ class MapFragment : Fragment() {
                             .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
                             .create()
                         alertDialog.show()
+                        Log.i(TAG, ":ERROR Current "+response.message)
                     }
                 }
             }
         }
+
+        lifecycleScope.launch {
+            mapViewModel.weatherForecastHourlyData.collect { response ->
+                when (response) {
+                    is ApiResponse.Loading -> {
+                        // Show loading indicator
+                    }
+                    is ApiResponse.Success -> {
+                        // Update UI with the weather data
+                        Toast.makeText(requireContext(), "Weather: ${response.data}", Toast.LENGTH_SHORT).show()
+                        Log.i(TAG, ":Sccesss Weather Forecast Hourly Data "+response.data)
+
+                    }
+                    is ApiResponse.Error -> {
+                        // Show error message
+                        val alertDialog = AlertDialog.Builder(context)
+                            .setTitle("Error")
+                            .setMessage(response.message)
+                            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                            .create()
+                        alertDialog.show()
+                        Log.i(TAG, ":ERROR Weather Forecast Hourly Data "+response.message)
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            mapViewModel.weatherForecast16DailyData.collect { response ->
+                when (response) {
+                    is ApiResponse.Loading -> {
+                        // Show loading indicator
+                    }
+                    is ApiResponse.Success -> {
+                        // Update UI with the weather data
+                        Toast.makeText(requireContext(), "Weather: ${response.data}", Toast.LENGTH_SHORT).show()
+                        Log.i(TAG, ": Sccesss weather Forecast 16 Daily Data"+response.data)
+
+                    }
+                    is ApiResponse.Error -> {
+                        // Show error message
+                        val alertDialog = AlertDialog.Builder(context)
+                            .setTitle("Error")
+                            .setMessage(response.message)
+                            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                            .create()
+                        alertDialog.show()
+                        Log.i(TAG, ":ERROR weather Forecast 16 Daily Data "+response.message)
+                    }
+                }
+            }
+        }
+
         binding.saveLocationButton.setOnClickListener {
             // Scale down animation
             binding.saveLocationButton.animate()
@@ -226,26 +278,44 @@ class MapFragment : Fragment() {
 
 
                 // Trigger fetching weather data
-                fetchWeatherData  ( latitude, longitude)
-                fetchWeatherData2  ( latitude, longitude)
+
+                fetchWeatherForecastDailyData  ( latitude, longitude)
+                fetchWeatherForecastHourlyData  ( latitude, longitude)
+                fetchCurrentWeatherData  ( latitude, longitude)
+                fetchWeather16ForecastDailyData  ( latitude, longitude)
+
             } else {
                 Log.e(TAG, "Current location or place name is not set.")
             }
         }
 
     }
-    private fun fetchWeatherData(latitude: Double, longitude: Double) {
+    private fun fetchWeatherForecastDailyData(latitude: Double, longitude: Double) {
         val apiKey = BuildConfig.OPEN_WEATHER_API_KEY_PRO
 //       val latitude = 0.0 // Replace with your latitude
 //       val longitude = 0.0 // Replace with your longitude
-       mapViewModel.fetchWeatherData(apiKey, latitude, latitude)
+       mapViewModel.fetchWeatherForecastDailyData(apiKey, latitude, latitude)
     }
-    private fun fetchWeatherData2(latitude: Double, longitude: Double) {
+    private fun fetchWeatherForecastHourlyData(latitude: Double, longitude: Double) {
         val apiKey = BuildConfig.OPEN_WEATHER_API_KEY_PRO
 //       val latitude = 0.0 // Replace with your latitude
 //       val longitude = 0.0 // Replace with your longitude
-        mapViewModel.fetchWeatherData2(apiKey, latitude, latitude)
+        mapViewModel.fetchWeatherForecastHourlyData(apiKey, latitude, latitude)
     }
+    private fun fetchCurrentWeatherData(latitude: Double, longitude: Double) {
+        val apiKey = BuildConfig.OPEN_WEATHER_API_KEY_PRO
+//       val latitude = 0.0 // Replace with your latitude
+//       val longitude = 0.0 // Replace with your longitude
+        mapViewModel.fetchCurrentWeatherData(apiKey, latitude, latitude)
+    }
+    private fun fetchWeather16ForecastDailyData(latitude: Double, longitude: Double) {
+        val apiKey = BuildConfig.OPEN_WEATHER_API_KEY_PRO
+//       val latitude = 0.0 // Replace with your latitude
+//       val longitude = 0.0 // Replace with your longitude
+        mapViewModel.featch16DailyWeatherData(apiKey, latitude, latitude)
+    }
+
+
     private fun showLocationErrorDialog() {
         val alertDialog = AlertDialog.Builder(context)
             .setTitle("Location Error")

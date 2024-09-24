@@ -20,6 +20,74 @@ data class ForecastResponse(
     @Embedded val city: City // Embedding city data
 )
 
+data class WeatherResponse(
+    @Embedded val city: City,
+    val cod: String,
+    val message: Double,
+    val cnt: Int,
+    @TypeConverters(WeatherListConverter::class)
+    val list: List<WeatherList>
+)
+
+
+/**
+ * Data class representing a weather forecast.
+ */
+data class WeatherList(
+    val dt: Long,
+    val sunrise: Long,
+    val sunset: Long,
+    @Embedded val temp: Temp,
+    @Embedded val feels_like: FeelsLike,
+    val pressure: Int,
+    val humidity: Int,
+    @TypeConverters(WeatherConditionConverter::class) val weather: List<WeatherCondition>,
+    val speed: Double,
+    val deg: Int,
+    val gust: Double,
+    val clouds: Int,
+    val pop: Double,
+    val rain: Double?
+)
+
+/**
+ * Data class representing temperature data.
+ */
+data class Temp(
+    val day: Double,
+    val min: Double,
+    val max: Double,
+    val night: Double,
+    val eve: Double,
+    val morn: Double
+)
+
+/**
+ * Data class representing perceived temperature data.
+ */
+data class FeelsLike(
+    val day: Double,
+    val night: Double,
+    val eve: Double,
+    val morn: Double
+)
+
+
+/**
+ * Converter for WeatherList.
+ */
+class WeatherListConverter {
+    @TypeConverter
+    fun fromWeatherList(weatherList: List<WeatherList>): String {
+        return Gson().toJson(weatherList)
+    }
+
+    @TypeConverter
+    fun toWeatherList(weatherListString: String): List<WeatherList> {
+        val listType = object : TypeToken<List<WeatherList>>() {}.type
+        return Gson().fromJson(weatherListString, listType)
+    }
+}
 
 /**
  * Represents city information.

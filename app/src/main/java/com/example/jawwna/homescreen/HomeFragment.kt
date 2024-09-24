@@ -1,28 +1,51 @@
 package com.example.jawwna.homescreen
 
 
+import android.app.AlertDialog
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.jawwna.BuildConfig
 import com.example.jawwna.R
 import com.example.jawwna.databinding.FragmentHomeBinding
+import com.example.jawwna.datasource.remotedatasource.ApiResponse
 import com.example.jawwna.datasource.repository.Repository
+import com.example.jawwna.homescreen.adapter.DailyWeatherForecastAdapter
+import com.example.jawwna.homescreen.adapter.HourlyWeatherForecastAdapter
 import com.example.jawwna.homescreen.viewmodel.HomeViewModelFactory
 import com.example.jawwna.homescreen.viewmodel.HomeViewModel
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class HomeFragment : Fragment() {
-
-    private lateinit var  viewModel: HomeViewModel
-    lateinit var binding: FragmentHomeBinding
     private val TAG = "HomeFragment"
+
+    private lateinit var viewModel: HomeViewModel
+    private lateinit var binding: FragmentHomeBinding
+
+    private lateinit var hourlyRecyclerViewAdapter: HourlyWeatherForecastAdapter
+    private lateinit var hourlyRecyclerView: RecyclerView
+
+
+    private lateinit var daliyRecyclerViewAdapter: DailyWeatherForecastAdapter
+    private lateinit var daliyRecyclerView: RecyclerView
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,10 +56,66 @@ class HomeFragment : Fragment() {
         return binding.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel=ViewModelProvider(this, HomeViewModelFactory(requireActivity().application,Repository.getRepository()))
-            .get(HomeViewModel::class.java)
+        viewModel =
+            ViewModelProvider(
+                this,
+                HomeViewModelFactory(requireActivity().application, Repository.getRepository())
+            )[HomeViewModel::class.java]
+        // Initialize the DailyWeatherForecastAdapter and RecyclerView
+        daliyRecyclerView = binding.daliyRecyclerView
+        // Set the LayoutManager for the RecyclerView
+        daliyRecyclerView.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+
+        // Initialize the adapter with an empty list for now
+        daliyRecyclerViewAdapter = DailyWeatherForecastAdapter(
+            emptyList(),
+            requireContext(),
+            object : DailyWeatherForecastAdapter.OnItemClickListener {
+                override fun onItemClick(forecast: com.example.jawwna.datasource.model.DailyForecastData) {
+                    // Handle the item click, show a Toast or navigate to another screen
+                    Toast.makeText(
+                        requireContext(),
+                        "Item clicked: ${forecast.dayName}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            })
+        // Set the adapter to the RecyclerView
+        daliyRecyclerView.adapter = daliyRecyclerViewAdapter
+
+//_________________________________________________________________________
+
+        // Initialize the DailyWeatherForecastAdapter and RecyclerView
+        hourlyRecyclerView = binding.hourlyRecyclerView
+        // Set the LayoutManager for the RecyclerView
+        hourlyRecyclerView.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+
+        // Initialize the adapter with an empty list for now
+        hourlyRecyclerViewAdapter = HourlyWeatherForecastAdapter(
+            emptyList(),
+            requireContext(),
+            object : HourlyWeatherForecastAdapter.OnItemClickListener {
+                override fun onItemClick(forecast: com.example.jawwna.datasource.model.HourlyForecastData) {
+                    // Handle the item click, show a Toast or navigate to another screen
+                    Toast.makeText(
+                        requireContext(),
+                        "Item clicked: ${forecast.Time}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            })
+        // Set the adapter to the RecyclerView
+        hourlyRecyclerView.adapter = hourlyRecyclerViewAdapter
+
+
+        // Observe the LiveData from the ViewModel and update the adapter when data changes
+
+
         // Access the VideoView using View Binding
         // Get current night mode
         val nightModeFlags =
@@ -51,12 +130,6 @@ class HomeFragment : Fragment() {
             viewLifecycleOwner,
             Observer { colorResId ->
                 binding.linearLayoutMainCard.setBackgroundResource(colorResId)
-                binding.dayForecastLinearlayout1.setBackgroundResource(colorResId)
-                binding.dayForecastLinearlayout2.setBackgroundResource(colorResId)
-                binding.dayForecastLinearlayout3.setBackgroundResource(colorResId)
-                binding.dayForecastLinearlayout4.setBackgroundResource(colorResId)
-                binding.dayForecastLinearlayout5.setBackgroundResource(colorResId)
-                binding.dayForecastLinearlayout6.setBackgroundResource(colorResId)
                 binding.constraintLayoutWeatherInformation.setBackgroundResource(colorResId)
 
 
@@ -71,16 +144,81 @@ class HomeFragment : Fragment() {
 
         // Check the current theme mode when view is created
         viewModel.checkThemeMode(resources)
+        viewModel.featch16DailyWeatherData(BuildConfig.OPEN_WEATHER_API_KEY_PRO)
 
-        viewModel.fetchWeatherData(BuildConfig.OPEN_WEATHER_API_KEY_PRO)
-        viewModel.weatherData.observe(viewLifecycleOwner) { weatherData ->
-            Toast.makeText(requireContext(), "${weatherData.main.temp }+ ${weatherData.weather.size}", Toast.LENGTH_SHORT).show()
-            Log.i(TAG, "onViewCreated: $weatherData")
+        lifecycleScope.launch {
+            viewModel.weatherForecast16DailyRow.collect { data ->
+                if (data.size == 7) {
+                    daliyRecyclerViewAdapter.updateData(data)
+                    Log.d(TAG, "onViewCreated: $data")
+                } else {
+                    Log.d(TAG, "No data received")
+
+                }
+            }
+
+
+        }
+viewModel.fetchWeatherForecastHourlyData(BuildConfig.OPEN_WEATHER_API_KEY_PRO)
+        lifecycleScope.launch {
+            viewModel.weatherForecastHourlyRow.collect { data ->
+                if (!data.isEmpty()){
+                    hourlyRecyclerViewAdapter.updateData(data)
+                    Log.d(TAG, "onViewCreated: $data")
+                } else {
+                    Log.d(TAG, "No data received")
+
+                }
+            }
+
+
         }
 
+        viewModel.fetchCurrentWeatherData(BuildConfig.OPEN_WEATHER_API_KEY_PRO)
+
+        lifecycleScope.launch {
+            viewModel.currentWeatherData.collect { response ->
+                when (response) {
+                    is ApiResponse.Loading -> {
+                        // Show loading indicator
+                    }
+
+                    is ApiResponse.Success -> {
+                        // Update UI with the weather data
+                        Toast.makeText(
+                            requireContext(),
+                            "Weather: ${response.data}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        Log.i(TAG, ": Sccesss Current" + response.data)
+                        binding.mainTextTemperature.text = viewModel.checkTemperatureUnit(response.data.main.temp)
+                        binding.textWindSpeed.text =viewModel.checkWindSpeedUnit(response.data.wind.speed)
+                        binding.textHumidity.text = response.data.main.humidity.toString()
+                        binding.textPressure.text = response.data.main.pressure.toString()
+                        binding.textClouds.text = response.data.clouds.all.toString()
+                        binding.cityName.text = response.data.name
 
 
+                        binding.mainTextDes.text = response.data.weather[0].description
+                        binding.currentDate.text =viewModel.getCurrentDate()
+                        binding.currentTime.text = viewModel.getCurrentTime()
 
+
+                    }
+
+                    is ApiResponse.Error -> {
+                        // Show error message
+                        val alertDialog = AlertDialog.Builder(context)
+                            .setTitle("Error")
+                            .setMessage(response.message)
+                            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                            .create()
+                        alertDialog.show()
+                        Log.i(TAG, ":ERROR Current " + response.message)
+                    }
+                }
+            }
+        }
 
 
     }
@@ -105,27 +243,12 @@ class HomeFragment : Fragment() {
 
     private fun updateTextColor(isDarkMode: Boolean) {
         val textColor = ContextCompat.getColor(requireContext(), viewModel.getTextColor(isDarkMode))
-         binding.mainTextTemperature.setTextColor(textColor)
-         binding.dayForecastTextDes1.setTextColor(textColor)
-        binding.dayForecastTextDes2.setTextColor(textColor)
-        binding.dayForecastTextDes3.setTextColor(textColor)
-        binding.dayForecastTextDes4.setTextColor(textColor)
-        binding.dayForecastTextDes5.setTextColor(textColor)
-        binding.dayForecastTextDes6.setTextColor(textColor)
-
-        binding.dayForecastTextTemperature1.setTextColor(textColor)
-        binding.dayForecastTextTemperature2.setTextColor(textColor)
-        binding.dayForecastTextTemperature3.setTextColor(textColor)
-        binding.dayForecastTextTemperature4.setTextColor(textColor)
-        binding.dayForecastTextTemperature5.setTextColor(textColor)
-        binding.dayForecastTextTemperature6.setTextColor(textColor)
+        binding.mainTextTemperature.setTextColor(textColor)
         binding.textWindSpeed.setTextColor(textColor)
         binding.textHumidity.setTextColor(textColor)
         binding.textPressure.setTextColor(textColor)
         binding.textClouds.setTextColor(textColor)
     }
-
-
 
 
 }

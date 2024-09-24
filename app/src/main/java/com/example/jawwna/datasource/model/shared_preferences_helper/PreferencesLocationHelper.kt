@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 
 class PreferencesLocationHelper(context: Context) {
+
     private val sharedPreferences: SharedPreferences =
         context.getSharedPreferences("location_preferences", Context.MODE_PRIVATE)
 

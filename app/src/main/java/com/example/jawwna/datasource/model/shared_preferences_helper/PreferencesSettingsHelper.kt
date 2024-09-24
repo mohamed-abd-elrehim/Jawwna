@@ -18,6 +18,12 @@ class PreferencesSettingsHelper(context: Context) {
     private val KEY_NOTIFICATIONS = "notifications"
     private val KEY_GET_LOCATION_MODE = "get_location_mode"
 
+
+    private val KEY_OLD_TEMPERATURE_UNIT = "old_temperature_unit"
+    private val KEY_OLD_WIND_SPEED_UNIT = "old_wind_speed_unit"
+
+
+
     // Save getLocationMode
     fun saveGetLocationMode(mode: String) {
         sharedPreferences.edit().putString(KEY_GET_LOCATION_MODE, mode).apply()
@@ -35,6 +41,8 @@ class PreferencesSettingsHelper(context: Context) {
 
     // Save temperature unit
     fun saveTemperatureUnit(unit: String) {
+        val oldUnit = getTemperatureUnit()
+        sharedPreferences.edit().putString(KEY_OLD_TEMPERATURE_UNIT, oldUnit).apply() // Save old unit
         sharedPreferences.edit().putString(KEY_TEMPERATURE_UNIT, unit).apply()
     }
 
@@ -42,14 +50,25 @@ class PreferencesSettingsHelper(context: Context) {
     fun getTemperatureUnit(): String? {
         return sharedPreferences.getString(KEY_TEMPERATURE_UNIT, TemperatureUnits.standard.toString()) // Default value
     }
+    //Get old temperature unit
+    fun getOldTemperatureUnit(): String? {
+        return sharedPreferences.getString(KEY_OLD_TEMPERATURE_UNIT, TemperatureUnits.standard.toString())
+    }
     //clear temperature unit
     fun clearTemperatureUnit() {
         sharedPreferences.edit().remove(KEY_TEMPERATURE_UNIT).apply()
     }
+    // Get old wind speed unit
+    fun getOldWindSpeedUnit(): String? {
+        return sharedPreferences.getString(KEY_OLD_WIND_SPEED_UNIT, WindSpeedUnits.metric.toString())
+    }
+
 
 
     // Save wind speed unit
     fun saveWindSpeedUnit(unit: String) {
+        val oldUnit = getWindSpeedUnit()
+        sharedPreferences.edit().putString(KEY_OLD_WIND_SPEED_UNIT, oldUnit).apply() // Save old unit
         sharedPreferences.edit().putString(KEY_WIND_SPEED_UNIT, unit).apply()
     }
 

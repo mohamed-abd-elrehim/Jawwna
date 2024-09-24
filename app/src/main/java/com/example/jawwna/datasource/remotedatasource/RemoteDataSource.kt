@@ -2,7 +2,11 @@ package com.example.jawwna.datasource.remotedatasource
 
 import com.example.jawwna.datasource.model.CurrentWeather
 import com.example.jawwna.datasource.model.ForecastResponse
+import com.example.jawwna.datasource.model.WeatherResponse
 import com.example.jawwna.datasource.network.WeatherApiService
+import com.example.jawwna.datasource.remotedatasource.RemoteDataSource.weatherApiService
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -80,8 +84,11 @@ object  RemoteDataSource: IRemoteDataSource {
         apiKey: String,
         lang: String?,
         units: String?
-    ): ForecastResponse {
-        return weatherApiService.getForecastByLatLon(lat, lon, apiKey, lang, units)
+    ):  Flow<ForecastResponse> {
+        return flow {
+            val response = weatherApiService.getForecastByLatLon(lat, lon, apiKey, lang, units)
+            emit(response)
+        }
     }
 
     // Fetch 5-day/3-hour forecast data by city name
@@ -90,8 +97,11 @@ object  RemoteDataSource: IRemoteDataSource {
         apiKey: String,
         lang: String?,
         units: String?
-    ): ForecastResponse {
-        return weatherApiService.getForecastByCityName(cityName, apiKey, lang, units)
+    ):  Flow<ForecastResponse> {
+        return flow {
+            val response = weatherApiService.getForecastByCityName(cityName, apiKey, lang, units)
+            emit(response)
+        }
     }
 
     // Fetch 5-day/3-hour forecast data by city and country code
@@ -100,8 +110,11 @@ object  RemoteDataSource: IRemoteDataSource {
         apiKey: String,
         lang: String?,
         units: String?
-    ): ForecastResponse {
-        return weatherApiService.getForecastByCityAndCountry(query, apiKey, lang, units)
+    ):  Flow<ForecastResponse> {
+        return flow {
+            val response =  weatherApiService.getForecastByCityAndCountry(query, apiKey, lang, units)
+            emit(response)
+        }
     }
 
     //Hourly forecast data
@@ -112,9 +125,12 @@ object  RemoteDataSource: IRemoteDataSource {
         apiKey: String,
         lang: String?,
         units: String?
-    ): ForecastResponse {
+    ):  Flow<ForecastResponse> {
         useSecondBaseUrl()
-        return weatherApiService.getHourlyForecastByLatLon(lat, lon, apiKey, lang, units)
+        return flow {
+            val response = weatherApiService.getHourlyForecastByLatLon(lat, lon, apiKey, lang, units)
+            emit(response)
+        }
     }
 
     // Fetch hourly forecast data by city name
@@ -123,8 +139,11 @@ object  RemoteDataSource: IRemoteDataSource {
         apiKey: String,
         lang: String?,
         units: String?
-    ): ForecastResponse {
-        return weatherApiService.getHourlyForecastByCityName(cityName, apiKey, lang, units)
+    ):  Flow<ForecastResponse> {
+        return flow {
+            val response = weatherApiService.getHourlyForecastByCityName(cityName, apiKey, lang, units)
+            emit(response)
+        }
     }
 
     // Fetch hourly forecast data by city and country code
@@ -133,8 +152,28 @@ object  RemoteDataSource: IRemoteDataSource {
         apiKey: String,
         lang: String?,
         units: String?
-    ): ForecastResponse {
-        return weatherApiService.getHourlyForecastByCityAndCountry(query, apiKey, lang, units)
+    ): Flow<ForecastResponse> {
+        return flow {
+            val response =weatherApiService.getHourlyForecastByCityAndCountry(query, apiKey, lang, units)
+            emit(response)
+        }
+
+    }
+    //fetch 16-day forecast data by latitude and longitude
+    override suspend fun getForecastDailyByLatLon(
+        lat: Double,
+        lon: Double,
+        apiKey: String,
+        lang: String?,
+        units: String?
+    ): Flow<WeatherResponse> {
+
+        return flow {
+            val response =weatherApiService.getForecastDailyByLatLon(lat, lon, apiKey, lang, units)
+            emit(response)
+        }
+
+
     }
 
 

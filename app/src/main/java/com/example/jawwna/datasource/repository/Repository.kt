@@ -3,8 +3,10 @@ package com.example.jawwna.datasource.repository
 import android.app.Application
 import com.example.jawwna.datasource.model.CurrentWeather
 import com.example.jawwna.datasource.model.ForecastResponse
+import com.example.jawwna.datasource.model.WeatherResponse
 import com.example.jawwna.datasource.remotedatasource.IRemoteDataSource
 import com.example.jawwna.datasource.remotedatasource.RemoteDataSource
+import kotlinx.coroutines.flow.Flow
 
 class Repository private constructor() : IRepository  {
 
@@ -58,7 +60,7 @@ class Repository private constructor() : IRepository  {
         apiKey: String,
         lang: String?,
         units: String?
-    ): ForecastResponse {
+    ):  Flow<ForecastResponse> {
         return RemoteDataSource.getForecastByLatLon(lat, lon, apiKey, lang, units)
     }
 
@@ -67,7 +69,7 @@ class Repository private constructor() : IRepository  {
         apiKey: String,
         lang: String?,
         units: String?
-    ): ForecastResponse {
+    ):  Flow<ForecastResponse> {
         return RemoteDataSource.getForecastByCityName(cityName, apiKey, lang, units)
     }
 
@@ -76,7 +78,7 @@ class Repository private constructor() : IRepository  {
         apiKey: String,
         lang: String?,
         units: String?
-    ): ForecastResponse {
+    ):  Flow<ForecastResponse> {
         return RemoteDataSource.getForecastByCityAndCountry(query, apiKey, lang, units)
     }
 
@@ -86,7 +88,7 @@ class Repository private constructor() : IRepository  {
         apiKey: String,
         lang: String?,
         units: String?
-    ): ForecastResponse {
+    ):  Flow<ForecastResponse> {
         return RemoteDataSource.getHourlyForecastByLatLon(lat, lon, apiKey, lang, units)
     }
 
@@ -95,7 +97,7 @@ class Repository private constructor() : IRepository  {
         apiKey: String,
         lang: String?,
         units: String?
-    ): ForecastResponse {
+    ):  Flow<ForecastResponse> {
         return RemoteDataSource.getHourlyForecastByCityName(cityName, apiKey, lang, units)
     }
 
@@ -104,8 +106,21 @@ class Repository private constructor() : IRepository  {
         apiKey: String,
         lang: String?,
         units: String?
-    ): ForecastResponse {
+    ): Flow<ForecastResponse> {
         return RemoteDataSource.getHourlyForecastByCityAndCountry(query, apiKey, lang, units)
+    }
+
+
+    //16-day-forecast data
+    override suspend fun getForecastDailyByLatLon(
+        lat: Double,
+        lon: Double,
+        apiKey: String,
+        lang: String?,
+        units: String?
+    ): Flow<WeatherResponse> {
+        return RemoteDataSource.getForecastDailyByLatLon(lat, lon, apiKey, lang, units)
+
     }
 
 

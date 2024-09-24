@@ -2,6 +2,8 @@ package com.example.jawwna.datasource.network
 
 import com.example.jawwna.datasource.model.CurrentWeather
 import com.example.jawwna.datasource.model.ForecastResponse
+import com.example.jawwna.datasource.model.WeatherResponse
+import kotlinx.coroutines.flow.Flow
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -53,7 +55,7 @@ interface WeatherApiService {
         @Query("appid") apiKey: String,
         @Query("lang") lang: String? = null, // Optional language
         @Query("units") units: String? = null // Optional units
-    ): ForecastResponse
+    ):ForecastResponse
 
     // Fetch hourly forecast data by city name
     @GET("data/2.5/forecast/hourly")
@@ -71,7 +73,7 @@ interface WeatherApiService {
         @Query("appid") apiKey: String,
         @Query("lang") lang: String? = null,
         @Query("units") units: String? = null
-    ): ForecastResponse
+    ):  ForecastResponse
 
     // Fetch hourly forecast data by city, state, and country code
     @GET("data/2.5/forecast/hourly")
@@ -80,8 +82,7 @@ interface WeatherApiService {
         @Query("appid") apiKey: String,
         @Query("lang") lang: String? = null,
         @Query("units") units: String? = null
-    ): ForecastResponse
-
+    ):  ForecastResponse
 
     //5 day weather forecast
 
@@ -93,7 +94,7 @@ interface WeatherApiService {
         @Query("appid") apiKey: String,
         @Query("lang") lang: String? = null, // Optional language
         @Query("units") units: String? = null // Optional units
-    ): ForecastResponse
+    ):  ForecastResponse
 
     // Fetch 5-day/3-hour forecast data by city name
     @GET("data/2.5/forecast")
@@ -102,7 +103,7 @@ interface WeatherApiService {
         @Query("appid") apiKey: String,
         @Query("lang") lang: String? = null, // Optional language
         @Query("units") units: String? = null // Optional units
-    ): ForecastResponse
+    ):  ForecastResponse
 
     // Fetch 5-day/3-hour forecast data by city and country code
     @GET("data/2.5/forecast")
@@ -121,5 +122,17 @@ interface WeatherApiService {
         @Query("lang") lang: String? = null, // Optional language
         @Query("units") units: String? = null // Optional units
     ): ForecastResponse
+
+
+//Fetch 16-day forecast data by latitude and longitude
+    @GET("data/2.5/forecast/daily")
+    suspend fun getForecastDailyByLatLon(
+        @Query("lat") lat: Double,
+        @Query("lon") lon: Double,
+        @Query("appid") apiKey: String,
+        @Query("lang") lang: String? = null, // Optional language
+        @Query("units") units: String? = null ,// Optional units
+        @Query("cnt") cnt: Int = 16
+    ):WeatherResponse
 
 }
