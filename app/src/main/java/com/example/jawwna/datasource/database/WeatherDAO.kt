@@ -5,9 +5,10 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.jawwna.datasource.model.CurrentWeather
-import com.example.jawwna.datasource.model.FavoriteLocation
-import com.example.jawwna.datasource.model.ForecastResponse
+//import com.example.jawwna.datasource.model.CurrentWeather
+//import com.example.jawwna.datasource.model.FavoriteLocation
+//import com.example.jawwna.datasource.model.ForecastResponse
+import com.example.jawwna.datasource.model.shared_preferences_helper.WeatherResponseEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -16,7 +17,8 @@ interface WeatherDAO {
 
     // Current location weather operations
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertCurrentWeather(currentWeather: CurrentWeather)
+    suspend fun insertWeatherLocalData(currentWeather: WeatherResponseEntity)
+/*
 
     @Query("SELECT * FROM current_weather WHERE id = :id")
     suspend fun getCurrentWeather(id: Long): CurrentWeather?
@@ -46,5 +48,6 @@ interface WeatherDAO {
 
 
 
+*/
 
 }

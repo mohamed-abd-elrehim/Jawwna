@@ -26,6 +26,7 @@ import com.example.jawwna.homescreen.adapter.DailyWeatherForecastAdapter
 import com.example.jawwna.homescreen.adapter.HourlyWeatherForecastAdapter
 import com.example.jawwna.homescreen.viewmodel.HomeViewModelFactory
 import com.example.jawwna.homescreen.viewmodel.HomeViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.launch
@@ -62,7 +63,7 @@ class HomeFragment : Fragment() {
         viewModel =
             ViewModelProvider(
                 this,
-                HomeViewModelFactory(requireActivity().application, Repository.getRepository())
+                HomeViewModelFactory(requireActivity().application, Repository.getRepository(requireActivity().application))
             )[HomeViewModel::class.java]
         // Initialize the DailyWeatherForecastAdapter and RecyclerView
         daliyRecyclerView = binding.daliyRecyclerView
@@ -219,8 +220,11 @@ viewModel.fetchWeatherForecastHourlyData(BuildConfig.OPEN_WEATHER_API_KEY_PRO)
                 }
             }
         }
+        lifecycleScope.launch {
 
-
+            delay(2000) // Delay for 2000 milliseconds (2 seconds)
+            viewModel.insertWeatherResponseEntity() // Call the insert method
+        }
     }
 
     private fun updateIcons(isDarkMode: Boolean) {

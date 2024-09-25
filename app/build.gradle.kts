@@ -1,4 +1,3 @@
-import org.gradle.internal.impldep.org.jsoup.safety.Safelist.basic
 
 plugins {
     alias(libs.plugins.android.application)
@@ -134,7 +133,6 @@ dependencies {
     //material
     implementation ("com.google.android.material:material:1.12.0")
     implementation("com.google.android.material:material:1.10.0-alpha03")
-
 
     // mapbox
     //implementation("com.mapbox.maps:android:11.6.1")

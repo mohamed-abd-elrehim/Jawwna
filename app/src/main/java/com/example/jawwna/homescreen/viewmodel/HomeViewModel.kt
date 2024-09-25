@@ -20,6 +20,7 @@ import com.example.jawwna.datasource.model.HourlyForecastData
 import com.example.jawwna.datasource.model.WeatherResponse
 import com.example.jawwna.datasource.model.shared_preferences_helper.PreferencesLocationHelper
 import com.example.jawwna.datasource.model.shared_preferences_helper.PreferencesSettingsHelper
+import com.example.jawwna.datasource.model.shared_preferences_helper.WeatherResponseEntity
 import com.example.jawwna.datasource.remotedatasource.ApiResponse
 import com.example.jawwna.datasource.repository.IRepository
 import com.example.jawwna.datasource.repository.Repository
@@ -29,12 +30,15 @@ import com.example.jawwna.helper.WindSpeedUnits
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.time.delay
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.TextStyle
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds // Import this for convenience
 
 class HomeViewModel(private val application: Application, private val repository: IRepository) :ViewModel() {
 
@@ -81,6 +85,7 @@ class HomeViewModel(private val application: Application, private val repository
     val weatherForecastHourlyRow: StateFlow<List<HourlyForecastData>> = _weatherForecastHourlyRow
 
 
+    private var weatherResponseEntity: WeatherResponseEntity = WeatherResponseEntity(0,emptyList(),emptyList(),emptyList(),"")
 
 
     fun fetchWeatherForecastHourlyData(apiKey: String) {
@@ -96,6 +101,7 @@ class HomeViewModel(private val application: Application, private val repository
                     Log.d(TAG, "fetchWeatherForecastHourlyData: $hourlyForecastDataList")
 
                     _weatherForecastHourlyData.value = ApiResponse.Success(data)
+                    weatherResponseEntity.hourlyForecastList= listOf(data)
 
                 }
             } catch (e: Exception) {
@@ -112,6 +118,8 @@ class HomeViewModel(private val application: Application, private val repository
                 _currentWeatherData.value = ApiResponse.Loading
                 val data = repository.getCurrenWeatherByLatLon(lat, lon, apiKey, null, null)
                 _currentWeatherData.value = ApiResponse.Success(data)
+                weatherResponseEntity.currentWeatherList= listOf(data)
+
             } catch (e: Exception) {
                 _currentWeatherData.value = ApiResponse.Error(e.message ?: "Unknown error")
             }
@@ -130,6 +138,7 @@ class HomeViewModel(private val application: Application, private val repository
 
                     val dailyForecastDataList = mapToDailyForecastData(data)
                     _weatherForecast16DailyRow.value = dailyForecastDataList
+                    weatherResponseEntity.dailyForecastList= listOf(data)
 
                     Log.d(TAG, "featch16DailyWeatherData: $dailyForecastDataList")
 
@@ -140,6 +149,16 @@ class HomeViewModel(private val application: Application, private val repository
             }
         }
     }
+    fun insertWeatherResponseEntity()
+    {
+        if (!weatherResponseEntity.currentWeatherList.isEmpty()&&!weatherResponseEntity.dailyForecastList.isEmpty()&&!weatherResponseEntity.hourlyForecastList.isEmpty()) {
+            viewModelScope.launch {
+                weatherResponseEntity.cityName=preferencesLocationHelper.getLocationName().toString()
+                repository.insertWeatherLocalData(weatherResponseEntity)
+            }
+        }
+    }
+
 
 
 

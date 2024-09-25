@@ -1,28 +1,34 @@
 package com.example.jawwna.datasource.repository
 
 import android.app.Application
+import com.example.jawwna.datasource.localdatasoource.LocalDataSource
 import com.example.jawwna.datasource.model.CurrentWeather
 import com.example.jawwna.datasource.model.ForecastResponse
 import com.example.jawwna.datasource.model.WeatherResponse
+import com.example.jawwna.datasource.model.shared_preferences_helper.WeatherResponseEntity
 import com.example.jawwna.datasource.remotedatasource.IRemoteDataSource
 import com.example.jawwna.datasource.remotedatasource.RemoteDataSource
 import kotlinx.coroutines.flow.Flow
 
-class Repository private constructor() : IRepository  {
+class Repository private constructor(val application:Application) : IRepository  {
 
     companion object {
         @Volatile
         private var INSTANCE: Repository? = null
 
-        fun getRepository(): Repository {
+        fun getRepository(application: Application): Repository {
             return INSTANCE ?: synchronized(this) {
-                Repository().also {
+                Repository(application).also {
                     INSTANCE = it
                 }
             }
         }
     }
 
+init {
+    LocalDataSource.init(application)
+
+}
 
     // Implement the repository methods here
     // Implement the RemoteDataSource methods here
@@ -121,6 +127,10 @@ class Repository private constructor() : IRepository  {
     ): Flow<WeatherResponse> {
         return RemoteDataSource.getForecastDailyByLatLon(lat, lon, apiKey, lang, units)
 
+    }
+
+    override suspend fun insertWeatherLocalData(currentWeather: WeatherResponseEntity) {
+        LocalDataSource.insertWeatherLocalData(currentWeather)
     }
 
 

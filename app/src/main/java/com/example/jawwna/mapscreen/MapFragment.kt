@@ -62,7 +62,7 @@ class MapFragment : Fragment() {
 
         // Initialize mapViewModel using ViewModelProvider
         mapViewModel = ViewModelProvider(this, MapViewModelFactory(requireActivity().application,
-            Repository.getRepository())).get(
+            Repository.getRepository(requireActivity().application))).get(
             MapViewModel::class.java
         )
 

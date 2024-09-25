@@ -20,6 +20,14 @@ data class ForecastResponse(
     @Embedded val city: City // Embedding city data
 )
 
+/**
+ * Data class representing a weather response from the API.
+ *
+ * @property city Information about the city for which the weather is forecasted.
+ * @property cod Response code from the API (e.g., "200" for success).
+ * @property message Additional message from the API (usually a numeric value).
+ * @property list List of weather forecasts for the specified city.
+ */
 data class WeatherResponse(
     @Embedded val city: City,
     val cod: String,
@@ -29,27 +37,79 @@ data class WeatherResponse(
     val list: List<WeatherList>
 )
 
+@Entity(tableName = "current_weather")
+data class CurrentWeather(
+    @PrimaryKey val id: Long, // Unique identifier for the location (city ID)
+    val name: String,//City name. Please note that built-in geocoder functionality has been deprecated. Learn more here
+    @Embedded val coord: Coord, // Embedded object for coordinates
+    @TypeConverters(WeatherConditionConverter::class) val weather: List<WeatherCondition>, // Converted list of weather conditions
+    @Embedded val main: Main, // Embedded object for main weather data
+    @Embedded val wind: Wind, // Embedded object for wind information
+    @Embedded val clouds: Clouds, // Embedded object for cloud information
+    @Embedded val rain: Rain?,
+    val dt_txt: String?
 
+
+)
+
+
+/**
+ * Data class representing the weather for fav city response from the API, now as a Room Entity.
+ */
+@Entity(tableName = "favorite_locations")
+data class FavoriteLocation(
+    @PrimaryKey val id: Long, // Unique identifier for the location (city ID)
+    val name: String,//City name. Please note that built-in geocoder functionality has been deprecated. Learn more here
+    @Embedded val coord: Coord, // Embedded object for coordinates
+    @TypeConverters(WeatherConditionConverter::class) val weather: List<WeatherCondition>, // Converted list of weather conditions
+    @Embedded val main: Main, // Embedded object for main weather data
+    @Embedded val wind: Wind, // Embedded object for wind information
+    @Embedded val clouds: Clouds, // Embedded object for cloud information
+    @Embedded val rain: Rain?,
+    val dt_txt: String?
+)
+
+/**
+ * Data class representing a weather forecast.
+ *
+ * @property dt Timestamp of the forecast.
+ * @property sunrise Sunrise time for the forecast location.
+ * @property sunset Sunset time for the forecast location.
+ * @property temp Temperature data for the forecast period.
+ * @property pressure Atmospheric pressure at the forecast time (in hPa).
+ * @property humidity Humidity percentage at the forecast time.
+ * @property weather List of weather conditions affecting the forecast.
+ * @property speed Wind speed (in meters per second).
+ * @property deg Wind direction (in degrees).
+ * @property gust Wind gust speed (in meters per second).
+ * @property clouds Cloudiness percentage at the forecast time.
+ * @property pop Probability of precipitation (from 0 to 1).
+ * @property rain Amount of rain (in mm) during the forecast period; null if no rain is expected.
+ */
 /**
  * Data class representing a weather forecast.
  */
 data class WeatherList(
-    val dt: Long,
-    val sunrise: Long,
-    val sunset: Long,
+
     @Embedded val temp: Temp,
-    @Embedded val feels_like: FeelsLike,
     val pressure: Int,
     val humidity: Int,
     @TypeConverters(WeatherConditionConverter::class) val weather: List<WeatherCondition>,
     val speed: Double,
-    val deg: Int,
-    val gust: Double,
     val clouds: Int,
-    val pop: Double,
     val rain: Double?
 )
 
+/**
+ * Data class representing temperature information.
+ *
+ * @property day Temperature during the day.
+ * @property min Minimum temperature for the day.
+ * @property max Maximum temperature for the day.
+ * @property night Temperature during the night.
+ * @property eve Temperature during the evening.
+ * @property morn Temperature during the morning.
+ */
 /**
  * Data class representing temperature data.
  */
@@ -62,32 +122,8 @@ data class Temp(
     val morn: Double
 )
 
-/**
- * Data class representing perceived temperature data.
- */
-data class FeelsLike(
-    val day: Double,
-    val night: Double,
-    val eve: Double,
-    val morn: Double
-)
 
 
-/**
- * Converter for WeatherList.
- */
-class WeatherListConverter {
-    @TypeConverter
-    fun fromWeatherList(weatherList: List<WeatherList>): String {
-        return Gson().toJson(weatherList)
-    }
-
-    @TypeConverter
-    fun toWeatherList(weatherListString: String): List<WeatherList> {
-        val listType = object : TypeToken<List<WeatherList>>() {}.type
-        return Gson().fromJson(weatherListString, listType)
-    }
-}
 
 /**
  * Represents city information.
@@ -102,14 +138,10 @@ class WeatherListConverter {
  * @param sunset Sunset time (UNIX timestamp).
  */
 data class City(
-    val id: Int,
+
     val name: String,
-    val coord: Coord,
-    val country: String,
-    val population: Int,
-    val timezone: Int,
-    val sunrise: Long,
-    val sunset: Long
+    val coord: Coord
+
 )
 
 
@@ -137,54 +169,10 @@ data class City(
  * @param pop Probability of precipitation.
  */
 
-@Entity(tableName = "current_weather")
-data class CurrentWeather(
-    @PrimaryKey val id: Long, // Unique identifier for the location (city ID)
-    val timezone: Int,// Shift in seconds from UTC
-    val name: String,//City name. Please note that built-in geocoder functionality has been deprecated. Learn more here
-    @Embedded val coord: Coord, // Embedded object for coordinates
-    @TypeConverters(WeatherConditionConverter::class) val weather: List<WeatherCondition>, // Converted list of weather conditions
-    @Embedded val main: Main, // Embedded object for main weather data
-    val visibility: Int,// Visibility, meter. The maximum value of the visibility is 10 km
-    @Embedded val wind: Wind, // Embedded object for wind information
-    @Embedded val clouds: Clouds, // Embedded object for cloud information
-    val dt: Long,
-    @Embedded val sys: Sys, // Embedded object for system-related information
-    val pop: Double?,
-    @Embedded val rain: Rain?,
-    val dt_txt: String?
-
-
-)
-
-
-
-/**
- * Data class representing the weather for fav city response from the API, now as a Room Entity.
- */
-@Entity(tableName = "favorite_locations")
-data class FavoriteLocation(
-
-    @PrimaryKey val id: Long, // Unique identifier for the location (city ID)
-    val timezone: Int,// Shift in seconds from UTC
-    val name: String,//City name. Please note that built-in geocoder functionality has been deprecated. Learn more here
-    @Embedded val coord: Coord, // Embedded object for coordinates
-    @TypeConverters(WeatherConditionConverter::class) val weather: List<WeatherCondition>, // Converted list of weather conditions
-    @Embedded val main: Main, // Embedded object for main weather data
-    val visibility: Int,// Visibility, meter. The maximum value of the visibility is 10 km
-    @Embedded val wind: Wind, // Embedded object for wind information
-    @Embedded val clouds: Clouds, // Embedded object for cloud information
-    val dt: Long,
-    @Embedded val sys: Sys, // Embedded object for system-related information
-    val pop: Double?,
-    @Embedded val rain: Rain?,
-    val dt_txt: String? // Embedded object for system-related information
-
-)
 
 /**
  * Data class representing geographical coordinates.
- *
+ *r
  * @param lon Longitude of the location.
  * @param lat Latitude of the location.
  */
@@ -249,15 +237,11 @@ data class Rain(
  */
 data class Main(
     val temp: Double,
-    val feels_like: Double,
     val temp_min: Double,
     val temp_max: Double,
     val pressure: Int,
     val humidity: Int,
-    val sea_level: Int,
-    val grnd_level: Int,
 
-    val temp_kf: Double? = null
 )
 
 /**
@@ -271,9 +255,7 @@ data class Main(
  * Data class representing wind conditions, embedded in `CurrentWeather`.
  */
 data class Wind(
-    val speed: Double,
-    val deg: Int,
-    val gust: Double
+    val speed: Double
 )
 
 
@@ -288,28 +270,22 @@ data class Wind(
 data class Clouds(
     val all: Int
 )
-/**
- * Data class representing system-related information about the weather.
- *
- * @param type Internal parameter (may refer to the type of the weather station).
- * @param id Internal ID of the weather system.
- * @param country Country code (e.g., "IT" for Italy).
- * @param sunrise Sunrise time as a Unix timestamp (seconds since 1970).
- * @param sunset Sunset time as a Unix timestamp (seconds since 1970).
- * @param pod Part of the day (day/night).
 
- */
 /**
- * Data class representing system-related information about the weather, embedded in `CurrentWeather`.
+ * Converter for WeatherList.
  */
-data class Sys(
-    val type: Int?,
-    val country: String?,
-    val sunrise: Long?,
-    val sunset: Long?,
-    val pod: String?
+class WeatherListConverter {
+    @TypeConverter
+    fun fromWeatherList(weatherList: List<WeatherList>): String {
+        return Gson().toJson(weatherList)
+    }
 
-)
+    @TypeConverter
+    fun toWeatherList(weatherListString: String): List<WeatherList> {
+        val listType = object : TypeToken<List<WeatherList>>() {}.type
+        return Gson().fromJson(weatherListString, listType)
+    }
+}
 
 
 class WeatherConditionConverter {

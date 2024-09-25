@@ -11,10 +11,13 @@ import com.example.jawwna.datasource.model.WeatherCondition
 import com.example.jawwna.datasource.model.WeatherConditionConverter
 import com.example.jawwna.datasource.model.WeatherDataConverter
 import com.example.jawwna.datasource.model.WeatherListConverter
+import com.example.jawwna.datasource.model.shared_preferences_helper.ForcastDailyDataConverter
+import com.example.jawwna.datasource.model.shared_preferences_helper.ForcastHourlyDataConverter
+import com.example.jawwna.datasource.model.shared_preferences_helper.WeatherResponseEntity
 
 // Define the database version and the list of entities
-@Database(entities = [CurrentWeather::class, FavoriteLocation::class, WeatherCondition::class], version = 1 )//exportSchema = false)
-@TypeConverters(WeatherConditionConverter::class , WeatherDataConverter::class, WeatherListConverter::class) // Include the WeatherConverter for handling List<Weather>
+@Database(entities = [WeatherResponseEntity::class,CurrentWeather::class, FavoriteLocation::class, WeatherCondition::class], version = 1 )//exportSchema = false)
+@TypeConverters(WeatherDataConverter::class , ForcastDailyDataConverter::class, ForcastHourlyDataConverter::class,WeatherConditionConverter::class , WeatherDataConverter::class, WeatherListConverter::class) // Include the WeatherConverter for handling List<Weather>
 abstract class WeatherDatabase : RoomDatabase() {
 
     // Define abstract DAOs to be implemented elsewhere
