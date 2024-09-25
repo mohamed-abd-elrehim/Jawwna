@@ -3,46 +3,37 @@ package com.example.jawwna.homescreen.viewmodel
 import android.app.Application
 import android.content.res.Configuration
 import android.content.res.Resources
-import android.net.Uri
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.jawwna.R
+import com.example.jawwna.datasource.localdatasoource.shared_preferences_helper.location.PreferencesCurrentLocationHelper
 import com.example.jawwna.datasource.model.CurrentWeather
 import com.example.jawwna.datasource.model.DailyForecastData
 import com.example.jawwna.datasource.model.ForecastResponse
 import com.example.jawwna.datasource.model.HourlyForecastData
 import com.example.jawwna.datasource.model.WeatherResponse
-import com.example.jawwna.datasource.model.shared_preferences_helper.PreferencesLocationHelper
-import com.example.jawwna.datasource.model.shared_preferences_helper.PreferencesSettingsHelper
-import com.example.jawwna.datasource.model.shared_preferences_helper.WeatherResponseEntity
+import com.example.jawwna.datasource.localdatasoource.shared_preferences_helper.location.PreferencesLocationHelper
+import com.example.jawwna.datasource.localdatasoource.shared_preferences_helper.settings.PreferencesSettingsHelper
+import com.example.jawwna.datasource.model.WeatherResponseEntity
 import com.example.jawwna.datasource.remotedatasource.ApiResponse
 import com.example.jawwna.datasource.repository.IRepository
-import com.example.jawwna.datasource.repository.Repository
 import com.example.jawwna.helper.TemperatureUnits
 import com.example.jawwna.helper.UnitConvertHelper
 import com.example.jawwna.helper.WindSpeedUnits
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.time.delay
 import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.format.TextStyle
 import java.util.Calendar
-import java.util.Date
 import java.util.Locale
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds // Import this for convenience
 
 class HomeViewModel(private val application: Application, private val repository: IRepository) :ViewModel() {
 
     private val preferencesLocationHelper = PreferencesLocationHelper(application)
+    private val preferencesCurrentLocationHelperLocationHelper = PreferencesCurrentLocationHelper(application)
     private  val  preferencesSettingHelper = PreferencesSettingsHelper(application)
 
     private val TAG = "HomeViewModel"
@@ -91,8 +82,8 @@ class HomeViewModel(private val application: Application, private val repository
     fun fetchWeatherForecastHourlyData(apiKey: String) {
         viewModelScope.launch {
             try {
-                val lat = preferencesLocationHelper.getLocationLatitude()
-                val lon = preferencesLocationHelper.getLocationLongitude()
+                val lat = preferencesCurrentLocationHelperLocationHelper.getLocationLatitude()
+                val lon = preferencesCurrentLocationHelperLocationHelper.getLocationLongitude()
 
                 _weatherForecastHourlyData.value = ApiResponse.Loading
                 repository.getHourlyForecastByLatLon(lat, lon, apiKey, null, null).collect{data->
@@ -112,12 +103,16 @@ class HomeViewModel(private val application: Application, private val repository
     fun fetchCurrentWeatherData(apiKey: String) {
         viewModelScope.launch {
             try {
-                val lat = preferencesLocationHelper.getLocationLatitude()
-                val lon = preferencesLocationHelper.getLocationLongitude()
+                val lat = preferencesCurrentLocationHelperLocationHelper.getLocationLatitude()
+                val lon = preferencesCurrentLocationHelperLocationHelper.getLocationLongitude()
+
 
                 _currentWeatherData.value = ApiResponse.Loading
                 val data = repository.getCurrenWeatherByLatLon(lat, lon, apiKey, null, null)
                 _currentWeatherData.value = ApiResponse.Success(data)
+                preferencesSettingHelper.setOldTemperatureUnit(TemperatureUnits.metric.toString())
+                preferencesSettingHelper.setOldWindSpeedUnit(WindSpeedUnits.metric.toString())
+
                 weatherResponseEntity.currentWeatherList= listOf(data)
 
             } catch (e: Exception) {
@@ -130,8 +125,8 @@ class HomeViewModel(private val application: Application, private val repository
         viewModelScope.launch {
             try {
                 _weatherForecast16DailyData.value = ApiResponse.Loading
-                val lat = preferencesLocationHelper.getLocationLatitude()
-                val lon = preferencesLocationHelper.getLocationLongitude()
+                val lat = preferencesCurrentLocationHelperLocationHelper.getLocationLatitude()
+                val lon = preferencesCurrentLocationHelperLocationHelper.getLocationLongitude()
 
                 repository.getForecastDailyByLatLon(lat, lon, apiKey, null, null).collect{
                         data->
@@ -153,7 +148,7 @@ class HomeViewModel(private val application: Application, private val repository
     {
         if (!weatherResponseEntity.currentWeatherList.isEmpty()&&!weatherResponseEntity.dailyForecastList.isEmpty()&&!weatherResponseEntity.hourlyForecastList.isEmpty()) {
             viewModelScope.launch {
-                weatherResponseEntity.cityName=preferencesLocationHelper.getLocationName().toString()
+                weatherResponseEntity.cityName=preferencesCurrentLocationHelperLocationHelper.getLocationName().toString()
                 repository.insertWeatherLocalData(weatherResponseEntity)
             }
         }

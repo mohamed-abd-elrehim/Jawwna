@@ -1,5 +1,8 @@
 package com.example.jawwna.helper
 
+import java.math.BigDecimal
+import java.math.RoundingMode
+
 object UnitConvertHelper {
 
     // Temperature conversion based on the TemperatureUnits enum
@@ -39,6 +42,8 @@ object UnitConvertHelper {
 
     // Helper function to round a number to one decimal place
     private fun roundToOneDecimal(value: Double): Double {
-        return String.format("%.1f", value).toDouble()
+        //return String.format("%.1f", value).toDouble()
+        return BigDecimal(value).setScale(1, RoundingMode.HALF_UP).toDouble()
+
     }
 }

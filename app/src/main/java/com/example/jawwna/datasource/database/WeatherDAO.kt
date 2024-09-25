@@ -5,10 +5,11 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.example.jawwna.datasource.model.FavoriteWeatherEntity
 //import com.example.jawwna.datasource.model.CurrentWeather
 //import com.example.jawwna.datasource.model.FavoriteLocation
 //import com.example.jawwna.datasource.model.ForecastResponse
-import com.example.jawwna.datasource.model.shared_preferences_helper.WeatherResponseEntity
+import com.example.jawwna.datasource.model.WeatherResponseEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -18,36 +19,37 @@ interface WeatherDAO {
     // Current location weather operations
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertWeatherLocalData(currentWeather: WeatherResponseEntity)
-/*
 
-    @Query("SELECT * FROM current_weather WHERE id = :id")
-    suspend fun getCurrentWeather(id: Long): CurrentWeather?
+    @Query("SELECT * FROM WeatherLocalData WHERE cityName = :cityName")
+    suspend fun getWeatherLocalData(cityName: String): WeatherResponseEntity?
 
-    @Query("DELETE FROM current_weather WHERE id = :id")
-    suspend fun deleteCurrentWeather(id: Long)
+    @Query("DELETE FROM WeatherLocalData WHERE cityName = :cityName")
+    suspend fun deleteWeatherLocalData(cityName: String)
 
-    @Query("DELETE FROM current_weather")
-    suspend fun deleteAllCurrentWeather()
+    @Query("DELETE FROM WeatherLocalData")
+    suspend fun deleteAllWeatherLocalData()
+
+    @Query("SELECT * FROM WeatherLocalData")
+    fun getAllWeatherLocalData(): Flow<List<WeatherResponseEntity>>
 
 
     // Favorite locations operations
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertFavoriteLocation(favoriteLocation: FavoriteLocation)
+    suspend fun insertFavoriteWeather(favoriteWeather: FavoriteWeatherEntity)
 
-    @Query("SELECT * FROM favorite_locations WHERE id = :id")
-    suspend fun getFavoriteLocation(id: Long): FavoriteLocation?
+    @Query("SELECT * FROM FavoriteWeatherEntity WHERE cityName = :cityName")
+    suspend fun getFavoriteWeather(cityName: String): FavoriteWeatherEntity?
 
-    @Query("SELECT * FROM favorite_locations")
-     fun getAllFavoriteLocations(): Flow<List<FavoriteLocation>>
-
+    @Query("SELECT * FROM FavoriteWeatherEntity")
+    fun getAllFavoriteWeather(): Flow<List<FavoriteWeatherEntity>>
     @Delete
-    suspend fun deleteFavoriteLocation(favoriteLocation: FavoriteLocation)
+    suspend fun deleteFavoriteWeather(favoriteWeather: FavoriteWeatherEntity)
+    @Query("DELETE FROM FavoriteWeatherEntity")
+    suspend fun deleteAllFavoriteWeather()
 
-    @Query("DELETE FROM favorite_locations")
-    suspend fun deleteAllFavoriteLocations()
+    @Query("DELETE FROM FavoriteWeatherEntity WHERE cityName = :cityName")
+    suspend fun deleteFavoriteWeatherByCityName(cityName: String)
 
 
-
-*/
 
 }

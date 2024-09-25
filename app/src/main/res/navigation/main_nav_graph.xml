@@ -20,4 +20,9 @@
         android:name="com.example.jawwna.settingsfragment.SettingsFragment"
         android:label="fragment_settings"
         tools:layout="@layout/fragment_settings" />
+    <fragment
+        android:id="@+id/addFavoriteLocationFragment"
+        android:name="com.example.jawwna.add_favorite_location_screen.AddFavoriteLocationFragment"
+        android:label="fragment_add_favorite_location"
+        tools:layout="@layout/fragment_add_favorite_location" />
 </navigation>

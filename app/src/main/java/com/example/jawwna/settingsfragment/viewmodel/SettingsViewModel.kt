@@ -3,17 +3,13 @@ package com.example.jawwna.settingsfragment.viewmodel
 
 import android.app.Application
 import android.content.res.Configuration
-import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.jawwna.R
-import com.example.jawwna.datasource.model.shared_preferences_helper.PreferencesLocationHelper
-import com.example.jawwna.datasource.model.shared_preferences_helper.PreferencesSettingsHelper
+import com.example.jawwna.datasource.repository.IRepository
 
-class SettingsViewModel(application: Application) : ViewModel() {
-    private val preferencesSettingsHelper: PreferencesSettingsHelper =
-        PreferencesSettingsHelper(application)
+class SettingsViewModel(private val iRepository: IRepository) : ViewModel() {
 
     // LiveData to hold the card settings field background color
     private val _cardSettingsFieldBackgroundLightMode = MutableLiveData<Int>()
@@ -38,12 +34,12 @@ class SettingsViewModel(application: Application) : ViewModel() {
     }
 
     private fun loadSettings() {
-        _temperatureUnit.value = preferencesSettingsHelper.getTemperatureUnit()
-        _windSpeedUnit.value = preferencesSettingsHelper.getWindSpeedUnit()
-        _language.value = preferencesSettingsHelper.getLanguage()
-        _theme.value = preferencesSettingsHelper.getTheme()
-        _notificationsStatus.value = preferencesSettingsHelper.getNotifications()
-        _getLocationMode.value = preferencesSettingsHelper.getGetLocationMode()
+        _temperatureUnit.value = iRepository.getTemperatureUnit()
+        _windSpeedUnit.value = iRepository.getWindSpeedUnit()
+        _language.value = iRepository.getLanguage()
+        _theme.value = iRepository.getTheme()
+        _notificationsStatus.value = iRepository.getNotifications()
+        _getLocationMode.value = iRepository.getGetLocationMode()
     }
 
 
@@ -61,32 +57,32 @@ class SettingsViewModel(application: Application) : ViewModel() {
 
     fun saveSettings(locationMode: String?, temperatureUnit: String?, windSpeedUnit: String?, language: String?, theme: String?, notificationsStatus: String?) {
         if(locationMode != null) {
-            preferencesSettingsHelper.saveGetLocationMode(locationMode)
+            iRepository.saveGetLocationMode(locationMode)
             _getLocationMode.value = locationMode
         }
         if(temperatureUnit != null) {
-            preferencesSettingsHelper.saveTemperatureUnit(temperatureUnit)
+            iRepository.saveTemperatureUnit(temperatureUnit)
             _temperatureUnit.value = temperatureUnit
         }
         if(windSpeedUnit != null) {
-            preferencesSettingsHelper.saveWindSpeedUnit(windSpeedUnit)
+            iRepository.saveWindSpeedUnit(windSpeedUnit)
             _windSpeedUnit.value = windSpeedUnit
         }
         if(language != null) {
-            preferencesSettingsHelper.saveLanguage(language)
+            iRepository.saveLanguage(language)
             _language.value = language
         }
         if(theme != null) {
-            preferencesSettingsHelper.saveTheme(theme)
+            iRepository.saveTheme(theme)
             _theme.value = theme
         }
         if(notificationsStatus != null) {
-            preferencesSettingsHelper.saveNotifications(notificationsStatus)
+            iRepository.saveNotifications(notificationsStatus)
             _notificationsStatus.value = notificationsStatus
         }
     }
     fun resetSettings() {
-        preferencesSettingsHelper.resetSettings()
+        iRepository.resetSettings()
         loadSettings()
     }
 

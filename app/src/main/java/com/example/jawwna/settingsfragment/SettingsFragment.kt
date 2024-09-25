@@ -17,6 +17,7 @@ import com.example.jawwna.R
 import com.example.jawwna.databinding.ActivityMainBinding
 import com.example.jawwna.databinding.FragmentMapBinding
 import com.example.jawwna.databinding.FragmentSettingsBinding
+import com.example.jawwna.datasource.repository.Repository
 import com.example.jawwna.helper.TemperatureUnits
 import com.example.jawwna.helper.WindSpeedUnits
 import com.example.jawwna.settingsfragment.viewmodel.SettingsViewModel
@@ -49,7 +50,7 @@ class SettingsFragment : Fragment() {
 
 
         viewModel =
-            ViewModelProvider(this, SettingsViewModelFactory(requireActivity().application)).get(
+            ViewModelProvider(this, SettingsViewModelFactory(Repository.getRepository(requireActivity().application))).get(
                 SettingsViewModel::class.java
             )
 

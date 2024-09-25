@@ -1,14 +1,10 @@
-package com.example.jawwna.datasource.model.shared_preferences_helper
+package com.example.jawwna.datasource.model
 
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverter
 import androidx.room.TypeConverters
-import com.example.jawwna.datasource.model.CurrentWeather
-import com.example.jawwna.datasource.model.ForecastResponse
-import com.example.jawwna.datasource.model.WeatherDataConverter
-import com.example.jawwna.datasource.model.WeatherResponse
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
@@ -25,7 +21,7 @@ data class WeatherResponseEntity(
     var cityName: String // Name of the city for which the weather is stored
 )
 
-@Entity(tableName = "WeatherLocalData")
+@Entity(tableName = "FavoriteWeatherEntity")
 data class FavoriteWeatherEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     @TypeConverters(WeatherDataConverter::class)

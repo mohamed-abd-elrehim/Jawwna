@@ -1,4 +1,4 @@
-package com.example.jawwna.datasource.model.shared_preferences_helper
+package com.example.jawwna.datasource.localdatasoource.shared_preferences_helper.settings
 
 
 import android.content.Context
@@ -6,7 +6,7 @@ import android.content.SharedPreferences
 import com.example.jawwna.helper.TemperatureUnits
 import com.example.jawwna.helper.WindSpeedUnits
 
-class PreferencesSettingsHelper(context: Context) {
+class PreferencesSettingsHelper(context: Context) : IPreferencesSettingsHelper {
     private val sharedPreferences: SharedPreferences =
         context.getSharedPreferences("settings_preferences", Context.MODE_PRIVATE)
 
@@ -25,111 +25,119 @@ class PreferencesSettingsHelper(context: Context) {
 
 
     // Save getLocationMode
-    fun saveGetLocationMode(mode: String) {
+    override fun saveGetLocationMode(mode: String) {
         sharedPreferences.edit().putString(KEY_GET_LOCATION_MODE, mode).apply()
     }
     // Get getLocationMode
-    fun getGetLocationMode(): String? {
+    override fun getGetLocationMode(): String? {
         return sharedPreferences.getString(KEY_GET_LOCATION_MODE, "MAP")
     }
     //clear getLocationMode
-    fun clearGetLocationMode() {
+    override fun clearGetLocationMode() {
         sharedPreferences.edit().remove(KEY_GET_LOCATION_MODE).apply()
     }
 
+    override fun setOldTemperatureUnit(unit: String) {
+        sharedPreferences.edit().putString(KEY_OLD_TEMPERATURE_UNIT, unit).apply()
+
+
+    }
+    override fun setOldWindSpeedUnit(unit: String) {
+        sharedPreferences.edit().putString(KEY_OLD_WIND_SPEED_UNIT, unit).apply()
+    }
 
 
     // Save temperature unit
-    fun saveTemperatureUnit(unit: String) {
+    override fun saveTemperatureUnit(unit: String) {
         val oldUnit = getTemperatureUnit()
         sharedPreferences.edit().putString(KEY_OLD_TEMPERATURE_UNIT, oldUnit).apply() // Save old unit
         sharedPreferences.edit().putString(KEY_TEMPERATURE_UNIT, unit).apply()
     }
 
     // Get temperature unit
-    fun getTemperatureUnit(): String? {
+    override fun getTemperatureUnit(): String? {
         return sharedPreferences.getString(KEY_TEMPERATURE_UNIT, TemperatureUnits.standard.toString()) // Default value
     }
     //Get old temperature unit
-    fun getOldTemperatureUnit(): String? {
+    override fun getOldTemperatureUnit(): String? {
         return sharedPreferences.getString(KEY_OLD_TEMPERATURE_UNIT, TemperatureUnits.standard.toString())
     }
     //clear temperature unit
-    fun clearTemperatureUnit() {
+    override fun clearTemperatureUnit() {
         sharedPreferences.edit().remove(KEY_TEMPERATURE_UNIT).apply()
     }
     // Get old wind speed unit
-    fun getOldWindSpeedUnit(): String? {
+    override fun getOldWindSpeedUnit(): String? {
         return sharedPreferences.getString(KEY_OLD_WIND_SPEED_UNIT, WindSpeedUnits.metric.toString())
     }
 
 
 
     // Save wind speed unit
-    fun saveWindSpeedUnit(unit: String) {
+    override fun saveWindSpeedUnit(unit: String) {
         val oldUnit = getWindSpeedUnit()
         sharedPreferences.edit().putString(KEY_OLD_WIND_SPEED_UNIT, oldUnit).apply() // Save old unit
         sharedPreferences.edit().putString(KEY_WIND_SPEED_UNIT, unit).apply()
     }
 
     // Get wind speed unit
-    fun getWindSpeedUnit(): String? {
+    override fun getWindSpeedUnit(): String? {
         return sharedPreferences.getString(KEY_WIND_SPEED_UNIT, WindSpeedUnits.metric.toString()) // Default value
     }
     //clear wind speed unit
-    fun clearWindSpeedUnit() {
+    override fun clearWindSpeedUnit() {
         sharedPreferences.edit().remove(KEY_WIND_SPEED_UNIT).apply()
     }
 
     // Save app language
-    fun saveLanguage(language: String) {
+    override fun saveLanguage(language: String) {
         sharedPreferences.edit().putString(KEY_LANGUAGE, language).apply()
     }
 
     // Get app language
-    fun getLanguage(): String? {
+    override fun getLanguage(): String? {
         return sharedPreferences.getString(KEY_LANGUAGE, "en") // Default value
     }
     //clear language
-    fun clearLanguage() {
+    override fun clearLanguage() {
         sharedPreferences.edit().remove(KEY_LANGUAGE).apply()
     }
 
     // Save theme selection
-    fun saveTheme(theme: String) {
+    override fun saveTheme(theme: String) {
         sharedPreferences.edit().putString(KEY_THEME, theme).apply()
     }
 
     // Get theme selection
-    fun getTheme(): String? {
+    override fun getTheme(): String? {
         return sharedPreferences.getString(KEY_THEME, "Light") // Default value
     }
     //clear theme
-    fun clearTheme() {
+    override fun clearTheme() {
         sharedPreferences.edit().remove(KEY_THEME).apply()
     }
 
     // Save notifications preference
-    fun saveNotifications(status: String) {
+    override fun saveNotifications(status: String) {
         sharedPreferences.edit().putString(KEY_NOTIFICATIONS, status).apply()
     }
 
     // Get notifications preference
-    fun getNotifications(): String? {
+    override fun getNotifications(): String? {
         return sharedPreferences.getString(KEY_NOTIFICATIONS, "disabled") // Default value
     }
     //clear notifications
-    fun clearNotifications() {
+    override fun clearNotifications() {
         sharedPreferences.edit().remove(KEY_NOTIFICATIONS).apply()
     }
 
     // Clear all preferences
-    fun clearAllPreferences() {
+    override fun clearAllSettings() {
         sharedPreferences.edit().clear().apply()
     }
 
     //reset Settings
-    fun resetSettings(){
+    override fun resetSettings(){
         sharedPreferences.edit().putString(KEY_THEME, "Light").apply()
         sharedPreferences.edit().putString(KEY_LANGUAGE, "en").apply()
         sharedPreferences.edit().putString(KEY_TEMPERATURE_UNIT, TemperatureUnits.standard.toString()).apply()
