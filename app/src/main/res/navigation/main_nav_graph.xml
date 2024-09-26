@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_nav_host"
-    app:startDestination="@id/homeFragment">
+    app:startDestination="@id/addFavoriteLocationFragment">
 
     <fragment
         android:id="@+id/homeFragment"
@@ -14,7 +14,15 @@
         android:id="@+id/mapFragment"
         android:name="com.example.jawwna.mapscreen.MapFragment"
         android:label="fragment_map"
-        tools:layout="@layout/fragment_map" />
+        tools:layout="@layout/fragment_map" >
+        <action
+            android:id="@+id/action_mapFragment_to_addFavoriteLocationFragment"
+            app:destination="@id/addFavoriteLocationFragment" />
+        <argument
+            android:name="actionFav"
+            app:argType="com.example.jawwna.helper.PreferencesLocationEum"
+            android:defaultValue="FAVOURITE" />
+    </fragment>
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.example.jawwna.settingsfragment.SettingsFragment"
@@ -24,5 +32,14 @@
         android:id="@+id/addFavoriteLocationFragment"
         android:name="com.example.jawwna.add_favorite_location_screen.AddFavoriteLocationFragment"
         android:label="fragment_add_favorite_location"
-        tools:layout="@layout/fragment_add_favorite_location" />
+        tools:layout="@layout/fragment_add_favorite_location" >
+        <action
+            android:id="@+id/action_addFavoriteLocationFragment_to_mapFragment"
+            app:destination="@id/mapFragment" />
+        <argument
+            android:name="Latitude"
+            app:argType="float" />
+        <argument android:name="Longitud"
+            app:argType="float" />
+    </fragment>
 </navigation>

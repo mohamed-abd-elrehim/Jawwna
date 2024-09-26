@@ -4,23 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Video Background -->
-    <VideoView
-        android:id="@+id/videoBackground"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_centerInParent="true"
-        android:clipToOutline="true" />
 
     <!-- RecyclerView for Favorite Locations -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewFavorites"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/fabAddLocation"
-        android:layout_marginBottom="64dp"
-        android:padding="16dp"
-        android:background="@android:color/transparent" />
+        android:background="@android:color/transparent"
+        android:padding="16dp" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddLocation"

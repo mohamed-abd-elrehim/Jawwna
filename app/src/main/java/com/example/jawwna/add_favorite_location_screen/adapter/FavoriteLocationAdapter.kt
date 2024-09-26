@@ -18,7 +18,7 @@ import com.example.jawwna.datasource.model.FavoriteLocation
 import com.example.jawwna.datasource.model.FavoriteLocationModel
 
 class FavoriteLocationAdapter(
-    private var forecastList: List<FavoriteLocationModel>,
+    private var forecastList: MutableList<FavoriteLocationModel>,
     private val context: Context,
     private val itemClickListener: OnItemClickListener,
     private val deleteItemClickListener: OnDeleteItemClickListener
@@ -96,8 +96,11 @@ class FavoriteLocationAdapter(
         }
     }
 
-    fun updateData(newForecastList: List<FavoriteLocationModel>) {
+    fun updateData(newForecastList: MutableList<FavoriteLocationModel>) {
         forecastList = newForecastList
+
         notifyDataSetChanged() // Consider using DiffUtil for more efficient updates
     }
+
+
 }

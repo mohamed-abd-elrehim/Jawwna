@@ -17,8 +17,11 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.navArgs
 import com.example.jawwna.BuildConfig
 import com.example.jawwna.R
+import com.example.jawwna.add_favorite_location_screen.AddFavoriteLocationFragmentDirections
 import com.example.jawwna.databinding.FragmentMapBinding
 import com.example.jawwna.datasource.remotedatasource.ApiResponse
 import com.example.jawwna.datasource.repository.Repository
@@ -38,16 +41,16 @@ import java.util.Locale
 class MapFragment : Fragment() {
     private val TAG = "MapFragment"
     private val DEFAULT_ZOOM = 15f
+
     private var currentPlaceName: String? = null
     lateinit var search_for_place: SearchView
-
-
     // View binding property
     lateinit var binding: FragmentMapBinding
 
     // ViewModel for MapFragment
     private lateinit var mapViewModel: MapViewModel
     private lateinit var googleMap: GoogleMap
+    private val args: MapFragmentArgs by navArgs() //  Safe Args
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -61,6 +64,7 @@ class MapFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
 
         // Initialize mapViewModel using ViewModelProvider
         mapViewModel = ViewModelProvider(
@@ -91,6 +95,8 @@ class MapFragment : Fragment() {
                 return true
             }
         })
+
+
 
         // Observe background color for SearchView and Button
         mapViewModel.setCardSettingsFieldBackgroundLightMode(requireContext().packageName, nightModeFlags)
@@ -209,13 +215,24 @@ class MapFragment : Fragment() {
                     currentPlaceName!!,
                     latitude,
                     longitude,
-                    PreferencesLocationEum.CURRENT
+                    args.actionFav
                 )
+
                 Toast.makeText(
                     requireContext(),
                     "Location saved: $currentPlaceName",
                     Toast.LENGTH_SHORT
                 ).show()
+
+
+                when (args.actionFav) {
+                    PreferencesLocationEum.FAVOURITE -> {
+                        val action = MapFragmentDirections.actionMapFragmentToAddFavoriteLocationFragment(latitude.toFloat(), longitude.toFloat())
+                        view?.findNavController()?.navigate(action)
+                    }else -> {
+
+                }
+                }
 
             } else {
                 Log.e(TAG, "Current location or place name is not set.")

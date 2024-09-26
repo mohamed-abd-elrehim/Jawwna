@@ -20,6 +20,7 @@ import com.example.jawwna.datasource.localdatasoource.shared_preferences_helper.
 import com.example.jawwna.datasource.model.WeatherResponseEntity
 import com.example.jawwna.datasource.remotedatasource.ApiResponse
 import com.example.jawwna.datasource.repository.IRepository
+import com.example.jawwna.helper.PreferencesLocationEum
 import com.example.jawwna.helper.TemperatureUnits
 import com.example.jawwna.helper.UnitConvertHelper
 import com.example.jawwna.helper.WindSpeedUnits
@@ -30,22 +31,18 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
-class HomeViewModel(private val application: Application, private val repository: IRepository) :ViewModel() {
-
-    private val preferencesLocationHelper = PreferencesLocationHelper(application)
-    private val preferencesCurrentLocationHelperLocationHelper = PreferencesCurrentLocationHelper(application)
-    private  val  preferencesSettingHelper = PreferencesSettingsHelper(application)
+class HomeViewModel( private val repository: IRepository) :ViewModel() {
 
     private val TAG = "HomeViewModel"
 
 
     // LiveData to hold the card settings field background color
-    private val _cardSettingsFieldBackgroundLightMode = MutableLiveData<Int>()
-    val cardSettingsFieldBackgroundLightModeLiveData: LiveData<Int> get() = _cardSettingsFieldBackgroundLightMode
+    private val _cardSettingsFieldBackgroundLightMode = MutableStateFlow<Int>(0)
+    val cardSettingsFieldBackgroundLightModeLiveData: StateFlow<Int> get() = _cardSettingsFieldBackgroundLightMode
 
     // LiveData to observe theme mode changes
-    private val _isDarkMode = MutableLiveData<Boolean>()
-    val isDarkMode: LiveData<Boolean> get() = _isDarkMode
+    private val _isDarkMode = MutableStateFlow<Boolean>(false)
+    val isDarkMode: StateFlow<Boolean> get() = _isDarkMode
 
 
     //LiveDataGetWhterData
@@ -76,14 +73,15 @@ class HomeViewModel(private val application: Application, private val repository
     val weatherForecastHourlyRow: StateFlow<List<HourlyForecastData>> = _weatherForecastHourlyRow
 
 
-    private var weatherResponseEntity: WeatherResponseEntity = WeatherResponseEntity(0,emptyList(),emptyList(),emptyList(),"")
+    private var weatherResponseEntity: WeatherResponseEntity = WeatherResponseEntity("",emptyList(),emptyList(),emptyList(),0.0,0.0)
 
 
     fun fetchWeatherForecastHourlyData(apiKey: String) {
         viewModelScope.launch {
             try {
-                val lat = preferencesCurrentLocationHelperLocationHelper.getLocationLatitude()
-                val lon = preferencesCurrentLocationHelperLocationHelper.getLocationLongitude()
+                repository.execute(PreferencesLocationEum.CURRENT)
+                val lat = repository.getLocationLatitude()
+                val lon = repository.getLocationLongitude()
 
                 _weatherForecastHourlyData.value = ApiResponse.Loading
                 repository.getHourlyForecastByLatLon(lat, lon, apiKey, null, null).collect{data->
@@ -103,15 +101,16 @@ class HomeViewModel(private val application: Application, private val repository
     fun fetchCurrentWeatherData(apiKey: String) {
         viewModelScope.launch {
             try {
-                val lat = preferencesCurrentLocationHelperLocationHelper.getLocationLatitude()
-                val lon = preferencesCurrentLocationHelperLocationHelper.getLocationLongitude()
+                repository.execute(PreferencesLocationEum.CURRENT)
+                val lat = repository.getLocationLatitude()
+                val lon = repository.getLocationLongitude()
 
 
                 _currentWeatherData.value = ApiResponse.Loading
                 val data = repository.getCurrenWeatherByLatLon(lat, lon, apiKey, null, null)
                 _currentWeatherData.value = ApiResponse.Success(data)
-                preferencesSettingHelper.setOldTemperatureUnit(TemperatureUnits.metric.toString())
-                preferencesSettingHelper.setOldWindSpeedUnit(WindSpeedUnits.metric.toString())
+                repository.setOldTemperatureUnit(TemperatureUnits.metric.toString())
+                repository.setOldWindSpeedUnit(WindSpeedUnits.metric.toString())
 
                 weatherResponseEntity.currentWeatherList= listOf(data)
 
@@ -125,8 +124,10 @@ class HomeViewModel(private val application: Application, private val repository
         viewModelScope.launch {
             try {
                 _weatherForecast16DailyData.value = ApiResponse.Loading
-                val lat = preferencesCurrentLocationHelperLocationHelper.getLocationLatitude()
-                val lon = preferencesCurrentLocationHelperLocationHelper.getLocationLongitude()
+                repository.execute(PreferencesLocationEum.CURRENT)
+
+                val lat = repository.getLocationLatitude()
+                val lon = repository.getLocationLongitude()
 
                 repository.getForecastDailyByLatLon(lat, lon, apiKey, null, null).collect{
                         data->
@@ -148,7 +149,12 @@ class HomeViewModel(private val application: Application, private val repository
     {
         if (!weatherResponseEntity.currentWeatherList.isEmpty()&&!weatherResponseEntity.dailyForecastList.isEmpty()&&!weatherResponseEntity.hourlyForecastList.isEmpty()) {
             viewModelScope.launch {
-                weatherResponseEntity.cityName=preferencesCurrentLocationHelperLocationHelper.getLocationName().toString()
+                repository.execute(PreferencesLocationEum.CURRENT)
+                repository.deleteAllWeatherLocalData()
+                weatherResponseEntity.cityName=repository.getLocationName().toString()
+                weatherResponseEntity.latitude=repository.getLocationLatitude()
+                weatherResponseEntity.longitude=repository.getLocationLongitude()
+                Log.d(TAG, "insertWeatherResponseEntity: $weatherResponseEntity")
                 repository.insertWeatherLocalData(weatherResponseEntity)
             }
         }
@@ -224,17 +230,17 @@ class HomeViewModel(private val application: Application, private val repository
 
 
      fun checkTemperatureUnit(temp:Double): String {
-        return when (preferencesSettingHelper.getTemperatureUnit()) {
-            TemperatureUnits.metric.toString() ->return "${UnitConvertHelper.convertTemperature(temp,preferencesSettingHelper.getOldTemperatureUnit(),TemperatureUnits.metric)}°C"
-            TemperatureUnits.imperial.toString()->return "${UnitConvertHelper.convertTemperature(temp,preferencesSettingHelper.getOldTemperatureUnit(),TemperatureUnits.imperial)}°F"
-            else -> "${UnitConvertHelper.convertTemperature(temp,preferencesSettingHelper.getOldTemperatureUnit(),TemperatureUnits.standard)}°K"
+        return when (repository.getTemperatureUnit()) {
+            TemperatureUnits.metric.toString() ->return "${UnitConvertHelper.convertTemperature(temp,repository.getOldTemperatureUnit(),TemperatureUnits.metric)}°C"
+            TemperatureUnits.imperial.toString()->return "${UnitConvertHelper.convertTemperature(temp,repository.getOldTemperatureUnit(),TemperatureUnits.imperial)}°F"
+            else -> "${UnitConvertHelper.convertTemperature(temp,repository.getOldTemperatureUnit(),TemperatureUnits.standard)}°K"
         }
     }
      fun checkWindSpeedUnit(windSpeed:Double): String {
-        return when (preferencesSettingHelper.getWindSpeedUnit()) {
-            WindSpeedUnits.metric.toString() ->return "${UnitConvertHelper.convertWindSpeed(windSpeed,preferencesSettingHelper.getOldWindSpeedUnit(),
+        return when (repository.getWindSpeedUnit()) {
+            WindSpeedUnits.metric.toString() ->return "${UnitConvertHelper.convertWindSpeed(windSpeed,repository.getOldWindSpeedUnit(),
                 WindSpeedUnits.metric)} m/s"
-            else -> "${UnitConvertHelper.convertWindSpeed(windSpeed,preferencesSettingHelper.getOldWindSpeedUnit(),WindSpeedUnits.imperial)} mph"
+            else -> "${UnitConvertHelper.convertWindSpeed(windSpeed,repository.getOldWindSpeedUnit(),WindSpeedUnits.imperial)} mph"
         }
     }
 

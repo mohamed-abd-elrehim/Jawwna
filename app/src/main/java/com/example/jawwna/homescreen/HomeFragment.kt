@@ -63,7 +63,7 @@ class HomeFragment : Fragment() {
         viewModel =
             ViewModelProvider(
                 this,
-                HomeViewModelFactory(requireActivity().application, Repository.getRepository(requireActivity().application))
+                HomeViewModelFactory( Repository.getRepository(requireActivity().application))
             )[HomeViewModel::class.java]
         // Initialize the DailyWeatherForecastAdapter and RecyclerView
         daliyRecyclerView = binding.daliyRecyclerView
@@ -127,22 +127,26 @@ class HomeFragment : Fragment() {
             requireContext().packageName,
             nightModeFlags
         )
-        viewModel.cardSettingsFieldBackgroundLightModeLiveData.observe(
-            viewLifecycleOwner,
-            Observer { colorResId ->
+        lifecycleScope.launch {
+
+
+
+        viewModel.cardSettingsFieldBackgroundLightModeLiveData.collect{ colorResId ->
                 binding.linearLayoutMainCard.setBackgroundResource(colorResId)
                 binding.constraintLayoutWeatherInformation.setBackgroundResource(colorResId)
 
 
-            })
+            }
+        }
+        lifecycleScope.launch {
 
         // Observe the theme mode from ViewModel
-        viewModel.isDarkMode.observe(viewLifecycleOwner) { isDarkMode ->
+        viewModel.isDarkMode.collect{ isDarkMode ->
             updateIcons(isDarkMode)
             updateTextColor(isDarkMode)
 
         }
-
+    }
         // Check the current theme mode when view is created
         viewModel.checkThemeMode(resources)
         viewModel.featch16DailyWeatherData(BuildConfig.OPEN_WEATHER_API_KEY_PRO)
