@@ -1,5 +1,6 @@
 package com.example.jawwna.splashscreen
 
+import NetworkChangeReceiver
 import android.content.Intent
 import android.content.res.Configuration
 import android.location.LocationManager
@@ -36,11 +37,22 @@ import android.location.Location
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import android.Manifest
+import android.content.IntentFilter
+import android.net.ConnectivityManager
 import android.util.Log
+import android.view.View
+import com.example.jawwna.customui.CustomPopup
+import com.example.jawwna.helper.broadcastreceiver.NetworkStateChangeListener
+import com.example.jawwna.helper.broadcastreceiver.SharedConnctionStateViewModel
 import com.google.android.gms.maps.model.LatLng
 
-class SplashActivity : AppCompatActivity() {
+class SplashActivity : AppCompatActivity() , NetworkStateChangeListener {
+    private lateinit var networkChangeReceiver: NetworkChangeReceiver
+    private val sharedConnctionStateViewModel: SharedConnctionStateViewModel by viewModels()
+    private var isNetworkAvailable: Boolean = true
+    private lateinit var rootLayout: View
 
+    private  lateinit var customPopup: CustomPopup
     private lateinit var binding: ActivitySplashScreenBinding
     private lateinit var lottieAnimationView: LottieAnimationView
     private lateinit var welcomeText: TextView
@@ -54,6 +66,11 @@ class SplashActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Initialize View Binding
+        binding = ActivitySplashScreenBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        rootLayout = binding.root
+        customPopup = CustomPopup(this)
         viewModel =
             ViewModelProvider(
                 this,
@@ -70,6 +87,16 @@ class SplashActivity : AppCompatActivity() {
                 applyThemeBasedOnLocaleAndMode()
             }
         }
+        // Collect the current location
+        lifecycleScope.launch {
+            sharedConnctionStateViewModel.sharedConnctionState.collect { isConnected ->
+                if (!isConnected) {
+                    isNetworkAvailable=false
+                } else {
+                  isNetworkAvailable=true
+                }
+            }
+        }
 
         // Check if current location is available
         viewModel.IsCurrenLocationAvailable()
@@ -79,9 +106,8 @@ class SplashActivity : AppCompatActivity() {
             }
         }
 
-        // Initialize View Binding
-        binding = ActivitySplashScreenBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+
+        networkChangeReceiver = NetworkChangeReceiver(this)
 
         // Initialize the FusedLocationProviderClient
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
@@ -119,6 +145,10 @@ class SplashActivity : AppCompatActivity() {
 
             override fun onAnimationEnd(animation: Animation?) {
                 if (!isCurrenLocationAvailable) {
+                    if (!isNetworkAvailable) {
+                        customPopup.showPopup(rootLayout,getString(R.string.no_internet_connection),"please check your internet connection and try again", isNightMode)
+                        finish()
+                    }
                     customAlert.showDialog(
                         message = getString(R.string.location_dialog_message),
                         title = getString(R.string.location_dialog_title),
@@ -204,11 +234,6 @@ class SplashActivity : AppCompatActivity() {
         recreate()  // Restart the activity to apply the new theme
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        // Cancel the animation when the activity is destroyed
-        lottieAnimationView.cancelAnimation()
-    }
 
     // Check if GPS is enabled
     private fun checkGpsEnabled() {
@@ -302,5 +327,29 @@ class SplashActivity : AppCompatActivity() {
     // Open location settings
     private fun openLocationSettings() {
         startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+    }
+    override fun onNetworkStateChanged(isConnected: Boolean) {
+        lifecycleScope.launch {
+            sharedConnctionStateViewModel.updateSharedData(isConnected)
+        }
+    }
+
+
+    override fun onStart() {
+        super.onStart()
+        val filter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
+        registerReceiver(networkChangeReceiver, filter)
+    }
+    override fun onStop() {
+        super.onStop()
+        unregisterReceiver(networkChangeReceiver)
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // Cancel the animation when the activity is destroyed
+        lottieAnimationView.cancelAnimation()
+
     }
 }

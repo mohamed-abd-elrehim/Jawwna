@@ -52,16 +52,16 @@ class MainActivity : AppCompatActivity() , NetworkStateChangeListener {
     private lateinit var mBinding: ActivityMainBinding
     private lateinit var viewModel: MainActivityViewModel
     private lateinit var navController: NavController
-    private lateinit var rootLayout: View
     private  var isNightMode= false
     private lateinit var bottomNavigationView: BottomNavigationView
-
-    private var isNetworkAvailable: Boolean = true
-
-    private val sharedConnctionStateViewModel: SharedConnctionStateViewModel by viewModels()
     private val scaleDuration: Long = 250
     private val TAG = "MainActivity"
+
+
+    private lateinit var rootLayout: View
+    private var isNetworkAvailable: Boolean = true
     private lateinit var networkChangeReceiver: NetworkChangeReceiver
+    private val sharedConnctionStateViewModel: SharedConnctionStateViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
