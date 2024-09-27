@@ -1,6 +1,8 @@
 package com.example.jawwna.datasource.repository
 
 import android.app.Application
+import android.util.Log
+import androidx.compose.ui.text.intl.Locale
 import com.example.jawwna.datasource.localdatasoource.LocalDataSource
 import com.example.jawwna.datasource.localdatasoource.shared_preferences_helper.location.IPreferencesLocationHelper
 import com.example.jawwna.datasource.localdatasoource.shared_preferences_helper.location.PreferencesCurrentLocationHelper
@@ -16,6 +18,7 @@ import com.example.jawwna.datasource.model.WeatherResponseEntity
 import com.example.jawwna.datasource.remotedatasource.ApiResponse
 import com.example.jawwna.datasource.remotedatasource.RemoteDataSource
 import com.example.jawwna.helper.PreferencesLocationEum
+import com.example.jawwna.helper.UpdateLocale
 import com.example.jawwna.mapscreen.geocodingservice.GeocodingService
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.flow.Flow
@@ -54,7 +57,7 @@ class Repository private constructor(val application: Application) : IRepository
         lang: String?,
         units: String?
     ): CurrentWeather {
-        return RemoteDataSource.getCurrenWeatherByLatLon(lat, lon, apiKey, lang, units)
+        return RemoteDataSource.getCurrenWeatherByLatLon(lat, lon, apiKey, getLanguageCode(), units)
     }
 
     override suspend fun getCurrenWeatherByCityName(
@@ -63,7 +66,7 @@ class Repository private constructor(val application: Application) : IRepository
         lang: String?,
         units: String?
     ): CurrentWeather {
-        return RemoteDataSource.getCurrenWeatherByCityName(cityName, apiKey, lang, units)
+        return RemoteDataSource.getCurrenWeatherByCityName(cityName, apiKey,  getLanguageCode(), units)
     }
 
     override suspend fun getCurrenWeatherByCityAndCountry(
@@ -72,7 +75,7 @@ class Repository private constructor(val application: Application) : IRepository
         lang: String?,
         units: String?
     ): CurrentWeather {
-        return RemoteDataSource.getCurrenWeatherByCityAndCountry(query, apiKey, lang, units)
+        return RemoteDataSource.getCurrenWeatherByCityAndCountry(query, apiKey,  getLanguageCode(), units)
     }
 
     override suspend fun getForecastByLatLon(
@@ -82,7 +85,7 @@ class Repository private constructor(val application: Application) : IRepository
         lang: String?,
         units: String?
     ): Flow<ForecastResponse> {
-        return RemoteDataSource.getForecastByLatLon(lat, lon, apiKey, lang, units)
+        return RemoteDataSource.getForecastByLatLon(lat, lon, apiKey,  getLanguageCode(), units)
     }
 
     override suspend fun getForecastByCityName(
@@ -91,7 +94,7 @@ class Repository private constructor(val application: Application) : IRepository
         lang: String?,
         units: String?
     ): Flow<ForecastResponse> {
-        return RemoteDataSource.getForecastByCityName(cityName, apiKey, lang, units)
+        return RemoteDataSource.getForecastByCityName(cityName, apiKey,  getLanguageCode(), units)
     }
 
     override suspend fun getForecastByCityAndCountry(
@@ -100,7 +103,7 @@ class Repository private constructor(val application: Application) : IRepository
         lang: String?,
         units: String?
     ): Flow<ForecastResponse> {
-        return RemoteDataSource.getForecastByCityAndCountry(query, apiKey, lang, units)
+        return RemoteDataSource.getForecastByCityAndCountry(query, apiKey,  getLanguageCode(), units)
     }
 
     override suspend fun getHourlyForecastByLatLon(
@@ -110,7 +113,7 @@ class Repository private constructor(val application: Application) : IRepository
         lang: String?,
         units: String?
     ): Flow<ForecastResponse> {
-        return RemoteDataSource.getHourlyForecastByLatLon(lat, lon, apiKey, lang, units)
+        return RemoteDataSource.getHourlyForecastByLatLon(lat, lon, apiKey,  getLanguageCode(), units)
     }
 
     override suspend fun getHourlyForecastByCityName(
@@ -119,7 +122,7 @@ class Repository private constructor(val application: Application) : IRepository
         lang: String?,
         units: String?
     ): Flow<ForecastResponse> {
-        return RemoteDataSource.getHourlyForecastByCityName(cityName, apiKey, lang, units)
+        return RemoteDataSource.getHourlyForecastByCityName(cityName, apiKey,  getLanguageCode(), units)
     }
 
     override suspend fun getHourlyForecastByCityAndCountry(
@@ -128,7 +131,7 @@ class Repository private constructor(val application: Application) : IRepository
         lang: String?,
         units: String?
     ): Flow<ForecastResponse> {
-        return RemoteDataSource.getHourlyForecastByCityAndCountry(query, apiKey, lang, units)
+        return RemoteDataSource.getHourlyForecastByCityAndCountry(query, apiKey,  getLanguageCode(), units)
     }
 
 
@@ -140,7 +143,7 @@ class Repository private constructor(val application: Application) : IRepository
         lang: String?,
         units: String?
     ): Flow<WeatherResponse> {
-        return RemoteDataSource.getForecastDailyByLatLon(lat, lon, apiKey, lang, units)
+        return RemoteDataSource.getForecastDailyByLatLon(lat, lon, apiKey,  getLanguageCode(), units)
 
     }
 
@@ -360,6 +363,16 @@ class Repository private constructor(val application: Application) : IRepository
         return geocodingService.getCountryNameFromLatLong(latitude, longitude)
 
     }
+
+    override fun getLanguageCode(): String {
+        return when (getLanguage()) {
+            "en" -> "en"
+            "ar" -> "ar"
+            else -> "en"
+        }
+    }
+
+
 
 
 }

@@ -1,5 +1,6 @@
 package com.example.jawwna.add_favorite_location_screen
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -16,6 +17,7 @@ import com.example.jawwna.BuildConfig
 import com.example.jawwna.R
 import com.example.jawwna.add_favorite_location_screen.viewmodel.AddFavoriteLocationViewModel
 import com.example.jawwna.add_favorite_location_screen.viewmodel.AddFavoriteLocationViewModelFactory
+import com.example.jawwna.customui.CustomAlertDialog
 import com.example.jawwna.databinding.FragmentAddFavoriteLocationBinding
 import com.example.jawwna.databinding.FragmentHomeBinding
 import com.example.jawwna.databinding.FragmentMapBinding
@@ -38,6 +40,7 @@ class AddFavoriteLocationFragment : Fragment() {
 
     private lateinit var favoriteLocationAdapter: FavoriteLocationAdapter
     private lateinit var favoriteLocationRecyclerView: RecyclerView
+    private var isDarkMode=false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,6 +57,7 @@ class AddFavoriteLocationFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val customAlert = CustomAlertDialog(requireContext())
 
         viewModel =
             ViewModelProvider(
@@ -74,6 +78,8 @@ class AddFavoriteLocationFragment : Fragment() {
             requireContext(),
             object : FavoriteLocationAdapter.OnItemClickListener {
                 override fun onItemClick(favorites: FavoriteLocationModel) {
+
+
                     // Handle the item click, show a Toast or navigate to another screen
                     Toast.makeText(
                         requireContext(),
@@ -82,13 +88,24 @@ class AddFavoriteLocationFragment : Fragment() {
                     ).show()
                 }
             }, object : FavoriteLocationAdapter.OnDeleteItemClickListener {
+
+
                 override fun onItemClick(favorites: FavoriteLocationModel) {
-                    // Handle the item click, show a Toast or navigate to another screen
-                    Toast.makeText(
-                        requireContext(),
-                        "Item clicked: ${favorites.placeName}",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    customAlert.showDialog(
+                        message = getString(R.string.are_you_sure),
+                        isDarkTheme = isDarkMode,
+                        positiveAction = {
+                            // Call updateSettings with the selected values
+                            viewModel.deleteFavoriteWeather(favorites)
+                            Toast.makeText(requireContext(),
+                                getString(R.string.item_deleted), Toast.LENGTH_SHORT).show()
+                        },
+                        negativeAction = {
+                            Toast.makeText(requireContext(), getString(R.string.cancel), Toast.LENGTH_SHORT).show()
+
+
+                        })
+
                 }
 
             })
@@ -100,6 +117,12 @@ class AddFavoriteLocationFragment : Fragment() {
             resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK
 
 
+        if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES) {
+            isDarkMode=true
+        }else{
+            isDarkMode=false
+
+        }
         // Observe background color for SearchView and Button
         viewModel.setCardSettingsFieldBackgroundLightMode(
             requireContext().packageName,

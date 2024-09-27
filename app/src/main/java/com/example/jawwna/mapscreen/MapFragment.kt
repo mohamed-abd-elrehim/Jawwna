@@ -3,6 +3,7 @@ package com.example.jawwna.mapscreen
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.res.Configuration
 import android.location.Address
 import android.location.Geocoder
 import android.os.Bundle
@@ -22,6 +23,7 @@ import androidx.navigation.fragment.navArgs
 import com.example.jawwna.BuildConfig
 import com.example.jawwna.R
 import com.example.jawwna.add_favorite_location_screen.AddFavoriteLocationFragmentDirections
+import com.example.jawwna.customui.CustomAlertDialog
 import com.example.jawwna.databinding.FragmentMapBinding
 import com.example.jawwna.datasource.remotedatasource.ApiResponse
 import com.example.jawwna.datasource.repository.Repository
@@ -44,8 +46,10 @@ class MapFragment : Fragment() {
 
     private var currentPlaceName: String? = null
     lateinit var search_for_place: SearchView
+
     // View binding property
     lateinit var binding: FragmentMapBinding
+    private var isDarkMode = false
 
     // ViewModel for MapFragment
     private lateinit var mapViewModel: MapViewModel
@@ -81,6 +85,13 @@ class MapFragment : Fragment() {
             resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK
         mapViewModel.getMapStyle(requireContext().packageName, nightModeFlags)
 
+        if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES) {
+            isDarkMode = true
+        } else {
+            isDarkMode = false
+
+        }
+
         // Initialize SearchView
         search_for_place = binding.searchLocation
         search_for_place.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -97,9 +108,11 @@ class MapFragment : Fragment() {
         })
 
 
-
         // Observe background color for SearchView and Button
-        mapViewModel.setCardSettingsFieldBackgroundLightMode(requireContext().packageName, nightModeFlags)
+        mapViewModel.setCardSettingsFieldBackgroundLightMode(
+            requireContext().packageName,
+            nightModeFlags
+        )
         mapViewModel.setIcon(requireContext().packageName, nightModeFlags)
 
         lifecycleScope.launch {
@@ -124,7 +137,7 @@ class MapFragment : Fragment() {
                     googleMap.clear()
                     // Fetch the place name based on coordinates
                     mapViewModel.fetchPlaceName(latLng.latitude, latLng.longitude)
-                    Log.i(TAG, "onViewCreatedssss: "+ currentPlaceName)
+                    Log.i(TAG, "onViewCreatedssss: " + currentPlaceName)
                     googleMap.addMarker(MarkerOptions().position(latLng).title(currentPlaceName))
                     googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng))
                     googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, DEFAULT_ZOOM))
@@ -140,7 +153,7 @@ class MapFragment : Fragment() {
         // Observe changes in the location LiveData from ViewModel
 
         lifecycleScope.launch {
-            mapViewModel.location.collect{ location ->
+            mapViewModel.location.collect { location ->
                 googleMap.clear() // Clear any existing markers
                 googleMap.addMarker(MarkerOptions().position(location).title(currentPlaceName))
                 googleMap.moveCamera(CameraUpdateFactory.newLatLng(location))
@@ -169,7 +182,7 @@ class MapFragment : Fragment() {
             }
         }
         lifecycleScope.launch {
-            mapViewModel.icon.collect{ iconResId ->
+            mapViewModel.icon.collect { iconResId ->
                 binding.saveLocationButton.setImageResource(iconResId)
             }
 
@@ -191,6 +204,7 @@ class MapFragment : Fragment() {
 
 
         binding.saveLocationButton.setOnClickListener {
+            val customAlert = CustomAlertDialog(requireContext())
             // Scale down animation
             binding.saveLocationButton.animate()
                 .scaleX(0.9f)
@@ -204,45 +218,63 @@ class MapFragment : Fragment() {
                         .setDuration(100)
                         .start()
                 }
+            customAlert.showDialog(
+                message = getString(R.string.are_you_sure),
+                isDarkTheme = isDarkMode,
+                positiveAction = {
 
-            // Check if place name and camera position are available
-            if (currentPlaceName != null) {
-                val latitude = googleMap.cameraPosition.target.latitude
-                val longitude = googleMap.cameraPosition.target.longitude
-
-                // Save the location data using ViewModel
-                mapViewModel.saveLocationData(
-                    currentPlaceName!!,
-                    latitude,
-                    longitude,
-                    args.actionFav
-                )
-
-                Toast.makeText(
-                    requireContext(),
-                    "Location saved: $currentPlaceName",
-                    Toast.LENGTH_SHORT
-                ).show()
+                    // Check if place name and camera position are available
+                    if (currentPlaceName != null) {
+                        val latitude = googleMap.cameraPosition.target.latitude
+                        val longitude = googleMap.cameraPosition.target.longitude
 
 
-                when (args.actionFav) {
-                    PreferencesLocationEum.FAVOURITE -> {
-                        val action = MapFragmentDirections.actionMapFragmentToAddFavoriteLocationFragment(latitude.toFloat(), longitude.toFloat())
-                        view?.findNavController()?.navigate(action)
-                    }else -> {
+                        // Save the location data using ViewModel
+                        mapViewModel.saveLocationData(
+                            currentPlaceName!!,
+                            latitude,
+                            longitude,
+                            args.actionFav
+                        )
+
+                        Toast.makeText(
+                            requireContext(),
+                            getString(R.string.location_saved, currentPlaceName),
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+
+                        when (args.actionFav) {
+                            PreferencesLocationEum.FAVOURITE -> {
+                                val action =
+                                    MapFragmentDirections.actionMapFragmentToAddFavoriteLocationFragment(
+                                        latitude.toFloat(),
+                                        longitude.toFloat()
+                                    )
+                                view?.findNavController()?.navigate(action)
+                            }
+
+                            else -> {
+
+                            }
+                        }
+
+                    } else {
+                        Log.e(TAG, "Current location or place name is not set.")
+                    }
+
+
+                },
+                negativeAction = {
+                    Toast.makeText(requireContext(), getString(R.string.cancel), Toast.LENGTH_SHORT)
+                        .show()
 
                 }
-                }
+            )
 
-            } else {
-                Log.e(TAG, "Current location or place name is not set.")
-            }
         }
 
     }
-
-
-
 
 
     private fun searchPlace(query: String) {
@@ -252,9 +284,6 @@ class MapFragment : Fragment() {
         mapViewModel.searchPlace(query)
 
     }
-
-
-
 
 
 }

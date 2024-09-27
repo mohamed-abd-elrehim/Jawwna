@@ -17,6 +17,7 @@ import com.example.jawwna.datasource.model.HourlyForecastData
 import com.example.jawwna.datasource.model.WeatherResponse
 import com.example.jawwna.datasource.localdatasoource.shared_preferences_helper.location.PreferencesLocationHelper
 import com.example.jawwna.datasource.localdatasoource.shared_preferences_helper.settings.PreferencesSettingsHelper
+import com.example.jawwna.datasource.model.TemperatureResult
 import com.example.jawwna.datasource.model.WeatherResponseEntity
 import com.example.jawwna.datasource.remotedatasource.ApiResponse
 import com.example.jawwna.datasource.repository.IRepository
@@ -229,14 +230,26 @@ class HomeViewModel( private val repository: IRepository) :ViewModel() {
 
 
 
-     fun checkTemperatureUnit(temp:Double): String {
-        return when (repository.getTemperatureUnit()) {
-            TemperatureUnits.metric.toString() ->return "${UnitConvertHelper.convertTemperature(temp,repository.getOldTemperatureUnit(),TemperatureUnits.metric)}°C"
-            TemperatureUnits.imperial.toString()->return "${UnitConvertHelper.convertTemperature(temp,repository.getOldTemperatureUnit(),TemperatureUnits.imperial)}°F"
-            else -> "${UnitConvertHelper.convertTemperature(temp,repository.getOldTemperatureUnit(),TemperatureUnits.standard)}°K"
+
+    fun checkTemperatureUnit(temp: Double): TemperatureResult {
+        val temperatureUnit = repository.getTemperatureUnit()
+        val convertedTemperature = when (temperatureUnit) {
+            TemperatureUnits.metric.toString() -> UnitConvertHelper.convertTemperature(temp, repository.getOldTemperatureUnit(), TemperatureUnits.metric)
+            TemperatureUnits.imperial.toString() -> UnitConvertHelper.convertTemperature(temp, repository.getOldTemperatureUnit(), TemperatureUnits.imperial)
+            else -> UnitConvertHelper.convertTemperature(temp, repository.getOldTemperatureUnit(), TemperatureUnits.standard)
         }
+
+        val unit = when (temperatureUnit) {
+            TemperatureUnits.metric.toString() -> "°C"
+            TemperatureUnits.imperial.toString() -> "°F"
+            else -> "°K"
+        }
+
+        return TemperatureResult(convertedTemperature, unit)
     }
-     fun checkWindSpeedUnit(windSpeed:Double): String {
+
+
+    fun checkWindSpeedUnit(windSpeed:Double): String {
         return when (repository.getWindSpeedUnit()) {
             WindSpeedUnits.metric.toString() ->return "${UnitConvertHelper.convertWindSpeed(windSpeed,repository.getOldWindSpeedUnit(),
                 WindSpeedUnits.metric)} m/s"
@@ -254,7 +267,7 @@ class HomeViewModel( private val repository: IRepository) :ViewModel() {
             HourlyForecastData(
                 icon = currentWeather.weather?.firstOrNull()?.icon,
                 Time = time, // Converted time with AM/PM
-                temp = currentWeather.main?.temp?.let { checkTemperatureUnit(it) },
+                temp = currentWeather.main?.temp?.let { checkTemperatureUnit(it) }!!,
                 //tempUnit = "°K" // Assuming Kelvin (convert if needed)
             )
         }

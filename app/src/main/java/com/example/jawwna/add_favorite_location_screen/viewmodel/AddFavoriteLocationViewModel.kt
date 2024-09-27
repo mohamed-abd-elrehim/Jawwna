@@ -174,6 +174,18 @@ class AddFavoriteLocationViewModel (private val repository: IRepository) : ViewM
         }
     }
 
+    fun deleteFavoriteWeather(favoriteLocationModel: FavoriteLocationModel) {
+        viewModelScope.launch {
+            val favoriteWeatherEntity = favoriteLocationModel.placeName?.let {
+                repository.getFavoriteWeather(
+                    it
+                )
+            }
+            if (favoriteWeatherEntity != null) {
+                repository.deleteFavoriteWeather(favoriteWeatherEntity)
+            }
+        }
+    }
 
     fun insertWeatherResponseEntity() {
         if (favoriteWeatherEntity.currentWeatherList.isNotEmpty() &&

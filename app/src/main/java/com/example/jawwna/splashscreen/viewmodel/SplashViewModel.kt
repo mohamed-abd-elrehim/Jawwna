@@ -4,15 +4,26 @@ import android.content.res.Configuration
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.example.jawwna.R
+import com.example.jawwna.datasource.repository.IRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
-class SplashViewModel(application: Application) : AndroidViewModel(application) {
+class SplashViewModel(private val repository: IRepository) : ViewModel() {
 
-    private val _animationResource = MutableLiveData<Int>()
-    val animationResource: LiveData<Int> get() = _animationResource
+    private val _animationResource = MutableStateFlow<Int>(0)
+    val animationResource: StateFlow<Int> get() = _animationResource
 
-    private val _navigateToMainActivity = MutableLiveData<Boolean>()
-    val navigateToMainActivity: LiveData<Boolean> get() = _navigateToMainActivity
+    private val _navigateToMainActivity = MutableStateFlow<Boolean>(false)
+    val navigateToMainActivity: StateFlow<Boolean> get() = _navigateToMainActivity
+
+    private val _updateLocale = MutableStateFlow<String>("")
+    val updateLocale: StateFlow<String> get() = _updateLocale
+
+    fun setUpdateLocale(language: String) {
+        _updateLocale.value = repository.getLanguage()!!
+    }
 
     fun setAnimationResource(nightModeFlags: Int) {
         val resource = when (nightModeFlags) {

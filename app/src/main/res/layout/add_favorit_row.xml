@@ -17,7 +17,6 @@
             type="com.example.jawwna.homescreen.adapter.FavoriteLocationAdapter.OnDeleteItemClickListener" />
     </data>
 
-
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -29,63 +28,68 @@
         app:cardElevation="8dp"
         app:cardBackgroundColor="@android:color/white">
 
-        <FrameLayout
+        <LinearLayout
             android:id="@+id/favoriteLocationLayout"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="wrap_content"
             android:background="@drawable/card_settings_field_background_light_mode"
+            android:orientation="vertical"
             android:padding="16dp">
 
             <TextView
                 android:id="@+id/favorite_location_text_placename"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{favoriteLocationModel.placeName}"
-                android:textSize="22sp"
-                android:textColor="@android:color/black"
+                android:layout_gravity="center_horizontal"
                 android:layout_marginStart="10dp"
                 android:layout_marginBottom="10dp"
-                android:layout_gravity="center|top" />
+                android:text="@{favoriteLocationModel.placeName}"
+                android:textSize="22sp" />
 
             <TextView
                 android:id="@+id/favorite_location_text_des"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="start"
                 android:layout_marginStart="15dp"
                 android:text="@{favoriteLocationModel.description}"
-                android:textSize="16sp"
-                android:textColor="@android:color/darker_gray"
-                android:layout_gravity="center|start" />
+                android:textColor="@android:color/holo_blue_dark"
+                android:textSize="16sp" />
 
-            <ImageView
-                android:id="@+id/favorite_location_image_weather"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:src="@{favoriteLocationModel.icon}"
-                android:layout_marginTop="10dp"
-                android:layout_gravity="left|bottom" />
-
-            <TextView
-                android:id="@+id/favorite_location_text_temperature"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:textColor="@android:color/holo_red_dark"
-                android:layout_gravity="left|bottom"
-                android:layout_marginBottom="20dp"
-                android:text="@{favoriteLocationModel.temp}"
-                android:layout_marginLeft="90dp" />
+                android:layout_marginTop="10dp"
+                android:gravity="bottom"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/favorite_location_image_weather"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:contentDescription="@string/image_weather"
+                    android:src="@{favoriteLocationModel.icon}" />
+
+                <TextView
+                    android:id="@+id/favorite_location_text_temperature"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="15dp"
+                    android:text="@{favoriteLocationModel.temp}"
+                    android:textColor="@android:color/holo_blue_dark"
+                    android:textSize="16sp" />
+            </LinearLayout>
 
             <ImageView
                 android:id="@+id/delete_favorite"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:src="@drawable/ic_delete_light_mode"
-                android:layout_gravity="bottom|end"
-                android:layout_margin="8dp"
+                android:layout_gravity="end"
+                android:contentDescription="@string/delete_favorite"
                 android:onClick="@{() -> deleteItemClickListener.onItemClick(favoriteLocationModel)}"
-                android:contentDescription="@string/delete_favorite" />
+                android:src="@drawable/ic_delete_light_mode" />
 
-        </FrameLayout>
+        </LinearLayout>
     </androidx.cardview.widget.CardView>
 </layout>

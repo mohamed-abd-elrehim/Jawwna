@@ -1,18 +1,18 @@
 <resources>
-    <string name="app_name">Jawwna</string>
-    <string name="welcome_text">Welcome to Jawwna</string>
+    <string name="app_name" translatable="false">Jawwna</string>
+    <string name="welcome_text" translatable="false">Welcome to Jawwna</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
 
 
-    <string name="location_selection">Location Selection</string>
-    <string name="temperature_units">Temperature Units</string>
-    <string name="wind_speed_units">Wind Speed Units</string>
-    <string name="app_language">App Language</string>
-    <string name="theme_selection">Theme Selection</string>
-    <string name="notifications">Notifications</string>
-    <string name="gps">GPS</string>
-    <string name="map">Map</string>
+    <string name="location_selection" translatable="false">Location Selection</string>
+    <string name="temperature_units" translatable="false">Temperature Units</string>
+    <string name="wind_speed_units" translatable="false">Wind Speed Units</string>
+    <string name="app_language" translatable="false">App Language</string>
+    <string name="theme_selection" translatable="false">Theme Selection</string>
+    <string name="notifications" translatable="false">Notifications</string>
+    <string name="gps" translatable="false">GPS</string>
+    <string name="map" translatable="false">Map</string>
     <string name="kelvin">Kelvin</string>
     <string name="celsius">Celsius</string>
     <string name="fahrenheit">Fahrenheit</string>
@@ -48,6 +48,27 @@
     <string name="setting">Setting</string>
     <string name="favorite">Favorite</string>
     <string name="delete_favorite">Delete Favorite</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="alert_message">Alert Message</string>
+    <string name="popup_message">Popup Message</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="are_you_sure">Are you sure?</string>
+    <string name="settings_reset">Settings reset</string>
+    <string name="settings_saved" translatable="false">Settings saved</string>
+    <string name="location_saved" translatable="false">Location saved: %1$s</string>
+    <string name="item_deleted" translatable="false">Item deleted</string>
+    <string name="restart_required" translatable="false">Restart Required</string>
+    <string name="the_language_has_been_updated_please_restart_the_app_for_the_changes_to_take_effect" translatable="false">The language has been updated. Please restart the app for the changes to take effect.</string>
+    <string name="language_will_change_later" translatable="false">language will change later</string>
 
+    <string name="temperature_format">%.0f%s</string>
+    <string name="temperature_format_daily_forecast">Max: %.0f%s\nMin: %.0f%s</string>
+
+    <string name="wind_speed_format">%d%s</string>
+    <string name="wather_description">%d</string>
+
+    <string name="image_weather">Image Weather</string>
+    <string name="search_for_a_location">Search for a location</string>
 
 </resources>

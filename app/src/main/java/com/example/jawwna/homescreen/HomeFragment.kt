@@ -196,11 +196,15 @@ viewModel.fetchWeatherForecastHourlyData(BuildConfig.OPEN_WEATHER_API_KEY_PRO)
                             Toast.LENGTH_SHORT
                         ).show()
                         Log.i(TAG, ": Sccesss Current" + response.data)
-                        binding.mainTextTemperature.text = viewModel.checkTemperatureUnit(response.data.main.temp)
+                        val result = viewModel.checkTemperatureUnit(response.data.main.temp)
+                        binding.mainTextTemperature.text = getString(R.string.temperature_format, result.value, result.unit)
+
                         binding.textWindSpeed.text =viewModel.checkWindSpeedUnit(response.data.wind.speed)
-                        binding.textHumidity.text = response.data.main.humidity.toString()
-                        binding.textPressure.text = response.data.main.pressure.toString()
-                        binding.textClouds.text = response.data.clouds.all.toString()
+
+                        binding.textHumidity.text = getString(R.string.wather_description,response.data.main.humidity)
+                        binding.textPressure.text =  getString(R.string.wather_description,response.data.main.pressure)
+                        binding.textClouds.text =  getString(R.string.wather_description,response.data.clouds.all)
+
                         binding.cityName.text = response.data.name
 
 

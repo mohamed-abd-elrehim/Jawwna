@@ -8,29 +8,33 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.jawwna.R
 import com.example.jawwna.datasource.repository.IRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 class SettingsViewModel(private val iRepository: IRepository) : ViewModel() {
 
     // LiveData to hold the card settings field background color
-    private val _cardSettingsFieldBackgroundLightMode = MutableLiveData<Int>()
-    val cardSettingsFieldBackgroundLightModeLiveData: LiveData<Int> get() = _cardSettingsFieldBackgroundLightMode
+    private val _cardSettingsFieldBackgroundLightMode = MutableStateFlow<Int>(0)
+    val cardSettingsFieldBackgroundLightModeLiveData: StateFlow<Int> get() = _cardSettingsFieldBackgroundLightMode
+    var currentLanguage:String? =""
 
     // LiveData properties to observe settings
-    private val _temperatureUnit = MutableLiveData<String?>()
-    val temperatureUnit: LiveData<String?> get() = _temperatureUnit
-    private val _windSpeedUnit = MutableLiveData<String?>()
-    val windSpeedUnit: LiveData<String?> get() = _windSpeedUnit
-    private val _language = MutableLiveData<String?>()
-    val language: LiveData<String?> get() = _language
-    private val _theme = MutableLiveData<String?>()
-    val theme: LiveData<String?> get() = _theme
-    private val _notificationsStatus = MutableLiveData<String?>()
-    val notificationsStatus: LiveData<String?> get() = _notificationsStatus
-    private val _getLocationMode = MutableLiveData<String?>()
-    val getLocationMode: LiveData<String?> get() = _getLocationMode
+    private val _temperatureUnit = MutableStateFlow<String?>("")
+    val temperatureUnit: StateFlow<String?> get() = _temperatureUnit
+    private val _windSpeedUnit = MutableStateFlow<String?>("")
+    val windSpeedUnit: StateFlow<String?> get() = _windSpeedUnit
+    private val _language = MutableStateFlow<String?>("")
+    val language: StateFlow<String?> get() = _language
+    private val _theme = MutableStateFlow<String?>("")
+    val theme: StateFlow<String?> get() = _theme
+    private val _notificationsStatus = MutableStateFlow<String?>("")
+    val notificationsStatus: StateFlow<String?> get() = _notificationsStatus
+    private val _getLocationMode = MutableStateFlow<String?>("")
+    val getLocationMode: StateFlow<String?> get() = _getLocationMode
 
     init {
         loadSettings()
+        currentLanguage = iRepository.getLanguage()
     }
 
     private fun loadSettings() {
@@ -69,8 +73,10 @@ class SettingsViewModel(private val iRepository: IRepository) : ViewModel() {
             _windSpeedUnit.value = windSpeedUnit
         }
         if(language != null) {
+
             iRepository.saveLanguage(language)
-            _language.value = language
+                _language.value = language
+
         }
         if(theme != null) {
             iRepository.saveTheme(theme)
@@ -81,9 +87,14 @@ class SettingsViewModel(private val iRepository: IRepository) : ViewModel() {
             _notificationsStatus.value = notificationsStatus
         }
     }
-    fun resetSettings() {
+    fun resetSettings():Boolean {
         iRepository.resetSettings()
         loadSettings()
+        if (currentLanguage!= iRepository.getLanguage()) {
+            return true
+        }else {
+            return false
+        }
     }
 
 }

@@ -52,7 +52,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="@{String.format(&quot;%s&quot;,hourlyForecastData.temp)}"
+            android:text="@{String.format(@string/temperature_format, hourlyForecastData.temp.value, hourlyForecastData.temp.unit)}"
+
             android:textColor="@android:color/holo_blue_dark"
             android:textSize="14sp" />
     </LinearLayout>

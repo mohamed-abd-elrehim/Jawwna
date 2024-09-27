@@ -1,6 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<!--    <string name="app_name">جوّنا</string> -->
+    <string name="app_name">جوّنا</string>
+    <string name="welcome_text">مرحباً بك في جوّنا</string>
+    <string name="hello_blank_fragment">مرحبا بك في الفراغ</string>
+    <string name="location_selection">اختيار الموقع</string>
+    <string name="temperature_units">وحدات الحرارة</string>
+    <string name="wind_speed_units">وحدات سرعة الرياح</string>
+    <string name="app_language">لغة التطبيق</string>
+    <string name="theme_selection">اختيار السمة</string>
+    <string name="notifications">الإشعارات</string>
+    <string name="gps">نظام تحديد المواقع</string>
+    <string name="map">خريطة</string>
+    <string name="kelvin">كيلفن</string>
+    <string name="celsius">سيلسيوس</string>
+    <string name="fahrenheit">فهرنهايت</string>
+    <string name="meter_per_second">متر/ثانية</string>
+    <string name="miles_per_hour">ميل/ساعة</string>
+    <string name="arabic">العربية</string>
+    <string name="english">الإنجليزية</string>
+    <string name="light">فاتح</string>
+    <string name="dark">داكن</string>
+    <string name="enable">تمكين</string>
+    <string name="disable">تعطيل</string>
+    <string name="save">حفظ</string>
+    <string name="resetting">إعادة تعيين</string>
+    <string name="save_location">حفظ الموقع</string>
+    <string name="_12_00_pm">12:00 ظهراً</string>
+    <string name="_25_c">25°م</string>
+    <string name="current_date">السبت، 21 سبتمبر\n</string>
+    <string name="current_time">10:45 مساءً</string>
+    <string name="giza">الجيزة</string>
+    <string name="tomorrow">غداً</string>
+    <string name="cloudy">غائم</string>
+    <string name="weather_information">معلومات الطقس</string>
+    <string name="humidity_value">70%</string>
+    <string name="wind_speed_value">10 كم/ساعة</string>
+    <string name="pressure_value">1013 هيكتوباسكال</string>
+    <string name="clouds_value">50%</string>
+    <string name="humidity">رطوبة</string>
+    <string name="clouds">سحب</string>
+    <string name="pressure">ضغط</string>
+    <string name="wind">رياح</string>
+    <string name="fab_add">إضافة عنصر</string>
+    <string name="home">الرئيسية</string>
+    <string name="setting">الإعدادات</string>
+    <string name="favorite">المفضلة</string>
+    <string name="delete_favorite">حذف المفضلة</string>
+    <string name="ok">حسناً</string>
+    <string name="cancel">إلغاء</string>
+    <string name="alert_message">رسالة تنبيه</string>
+    <string name="popup_message">رسالة منبثقة</string>
+    <string name="dismiss">إغلاق</string>
+    <string name="are_you_sure">هل أنت متأكد؟</string>
+    <string name="settings_reset">تمت إعادة تعيين الإعدادات</string>
+    <string name="settings_saved">تم حفظ الإعدادات</string>
+    <string name="location_saved">تم حفظ الموقع: %1$s</string>
+    <string name="item_deleted">تم حذف العنصر</string>
+    <string name="restart_required">إعادة التشغيل مطلوبة</string>
+    <string name="the_language_has_been_updated_please_restart_the_app_for_the_changes_to_take_effect">لقد تم تحديث اللغة. يرجى إعادة تشغيل التطبيق لتفعيل التغييرات.</string>
+    <string name="language_will_change_later">ستتغير اللغة لاحقاً</string>
+    <string name="temperature_format">%.0f%s</string>
+    <string name="image_weather">صورة الطقس</string>
+    <string name="temperature_format_daily_forecast">الحد الأقصى: %.0f%s\nالحد الأدنى: %.0f%s</string>
+    <string name="wind_speed_format">%d%s</string>
+    <string name="wather_description">%d</string>
+    <string name="search_for_a_location">ابحث عن موقع</string>
 
 
 </resources>
+

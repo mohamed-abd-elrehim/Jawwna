@@ -26,7 +26,7 @@
         android:background="@drawable/card_settings_field_background_light_mode"
         android:elevation="6dp"
         android:iconifiedByDefault="false"
-        android:queryHint="Search for a location" />
+        android:queryHint="@string/search_for_a_location" />
 
     <!-- Floating Action Button to save location and fetch weather -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton

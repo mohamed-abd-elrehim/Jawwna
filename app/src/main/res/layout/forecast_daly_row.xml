@@ -24,51 +24,48 @@
         app:cardElevation="6dp"
         app:cardBackgroundColor="@android:color/transparent">
 
-        <FrameLayout
+        <LinearLayout
             android:id="@+id/dayForecastLayout"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
-        android:background="@drawable/card_settings_field_background_light_mode"
-        android:padding="16dp">
-
-        <TextView
-            android:id="@+id/day_forecast_text_day"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{dailyForecastData.dayName}"
-            android:textSize="20sp"
-            android:layout_marginStart="10dp"
-            android:layout_marginBottom="20dp"
-        android:layout_gravity="center|start" />
+            android:background="@drawable/card_settings_field_background_light_mode"
+            android:padding="16dp"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/day_forecast_text_des"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:text="@{dailyForecastData.description}"
-        android:textSize="16sp"
+            <TextView
+                android:id="@+id/day_forecast_text_day"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{dailyForecastData.dayName}"
+                android:textSize="20sp"
+                android:layout_marginStart="10dp"
+                android:layout_marginBottom="20dp"
+                android:layout_gravity="center|start" />
 
-        android:layout_gravity="top|start"
-        android:layout_marginTop="40dp" />
+            <TextView
+                android:id="@+id/day_forecast_text_des"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:text="@{dailyForecastData.description}"
+                android:textSize="16sp"
+                android:layout_gravity="top|start"
+                android:layout_marginTop="10dp" />
 
-        <ImageView
-            android:id="@+id/day_forecast_image_weather"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:src="@{dailyForecastData.icon}"
-            android:layout_gravity="center" />
+            <ImageView
+                android:id="@+id/day_forecast_image_weather"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@{dailyForecastData.icon}"
+                android:layout_gravity="center" />
 
-        <TextView
-            android:id="@+id/day_forecast_text_temperature"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:layout_gravity="center"
-            android:text='@{String.format("%s\n%s", dailyForecastData.tempMax, dailyForecastData.tempMin)}'
-            android:layout_marginLeft="90dp" />
-
-    </FrameLayout>
-</androidx.cardview.widget.CardView>
-    </layout>
-<!--    android:text="@{String.format(&quot;%.1f %s / %.1f %s&quot;, dailyForecastData.tempMax, dailyForecastData.tempUnit, dailyForecastData.tempMin, dailyForecastData.tempUnit)}"-->
+            <TextView
+                android:id="@+id/day_forecast_text_temperature"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:layout_gravity="center"
+                android:text="@{String.format(@string/temperature_format_daily_forecast, dailyForecastData.tempMax.value, dailyForecastData.tempMax.unit, dailyForecastData.tempMin.value, dailyForecastData.tempMin.unit)}" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+</layout>

@@ -1,5 +1,6 @@
 package com.example.jawwna.settingsfragment
 
+import android.content.Intent
 import android.content.res.Configuration
 import android.media.MediaPlayer
 import android.os.Bundle
@@ -13,20 +14,27 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.example.jawwna.R
+import com.example.jawwna.customui.CustomAlertDialog
 import com.example.jawwna.databinding.ActivityMainBinding
 import com.example.jawwna.databinding.FragmentMapBinding
 import com.example.jawwna.databinding.FragmentSettingsBinding
 import com.example.jawwna.datasource.repository.Repository
 import com.example.jawwna.helper.TemperatureUnits
 import com.example.jawwna.helper.WindSpeedUnits
+import com.example.jawwna.mainactivity.MainActivity
 import com.example.jawwna.settingsfragment.viewmodel.SettingsViewModel
 import com.example.jawwna.settingsfragment.viewmodel.SettingsViewModelFactory
+import kotlinx.coroutines.launch
 
 
 class SettingsFragment : Fragment() {
     private lateinit var binding: FragmentSettingsBinding
     lateinit var viewModel: SettingsViewModel
+    private var isDarkMode = false
+    private var isArabic = false
+    private var isEnglish = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,79 +58,91 @@ class SettingsFragment : Fragment() {
 
 
         viewModel =
-            ViewModelProvider(this, SettingsViewModelFactory(Repository.getRepository(requireActivity().application))).get(
+            ViewModelProvider(
+                this,
+                SettingsViewModelFactory(Repository.getRepository(requireActivity().application))
+            ).get(
                 SettingsViewModel::class.java
             )
 
-
+lifecycleScope.launch {
         //Observe getLocationMode changes
-        viewModel.getLocationMode.observe(viewLifecycleOwner, Observer { mode ->
+        viewModel.getLocationMode.collect{ mode ->
             when (mode) {
                 "MAP" -> binding.radioMap.isChecked = true
                 "GPS" -> binding.radioGps.isChecked = true
                 else -> binding.radioMap.isChecked = true
             }
-        })
+        }
+}
+        lifecycleScope.launch {
 
         // Observe temperature unit changes
-        viewModel.temperatureUnit.observe(viewLifecycleOwner, Observer { unit ->
+        viewModel.temperatureUnit.collect { unit ->
             when (unit) {
                 TemperatureUnits.standard.toString() -> binding.radioKelvin.isChecked = true
                 TemperatureUnits.metric.toString() -> binding.radioCelsius.isChecked = true
                 TemperatureUnits.imperial.toString() -> binding.radioFahrenheit.isChecked = true
                 else -> binding.radioKelvin.isChecked = true
             }
-        })
+        }}
+        lifecycleScope.launch {
         // Observe language changes
-        viewModel.language.observe(viewLifecycleOwner, Observer { language ->
+        viewModel.language.collect { language ->
             when (language) {
                 "en" -> binding.radioEnglish.isChecked = true
                 "ar" -> binding.radioArabic.isChecked = true
                 else -> binding.radioEnglish.isChecked = true
             }
-        })
+        }}
 
+        lifecycleScope.launch {
         // Observe theme changes
-        viewModel.theme.observe(viewLifecycleOwner, Observer { theme ->
+        viewModel.theme.collect { theme ->
             when (theme) {
                 "light" -> binding.radioLight.isChecked = true
                 "dark" -> binding.radioDark.isChecked = true
                 else -> binding.radioLight.isChecked = true
             }
-        })
+        }}
+        lifecycleScope.launch {
         // Observe notification changes
-        viewModel.notificationsStatus.observe(viewLifecycleOwner, Observer { status ->
+        viewModel.notificationsStatus.collect { status ->
             when (status) {
                 "enabled" -> binding.radioEnable.isChecked = true
                 "disabled" -> binding.radioDisable.isChecked = true
                 else -> binding.radioDisable.isChecked = true
             }
-        })
+        }}
+        lifecycleScope.launch {
         // Observe wind speed unit changes
-        viewModel.windSpeedUnit.observe(viewLifecycleOwner, Observer { unit ->
+        viewModel.windSpeedUnit.collect { unit ->
             when (unit) {
                 WindSpeedUnits.metric.toString() -> binding.radioMeterPerSec.isChecked = true
                 WindSpeedUnits.imperial.toString() -> binding.radioMilesPerHour.isChecked = true
             }
-        })
-
+        }}
 
 
         // Get current night mode
         val nightModeFlags =
             resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK
 
-        // Set the video URI in the ViewModel based on the night mode
+        if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES) {
+            isDarkMode = true
+        } else {
+            isDarkMode = false
 
+        }
+        // Set the video URI in the ViewModel based on the night mode
 
 
         viewModel.setCardSettingsFieldBackgroundLightMode(
             requireContext().packageName,
             nightModeFlags
         )
-        viewModel.cardSettingsFieldBackgroundLightModeLiveData.observe(
-            viewLifecycleOwner,
-            Observer { colorResId ->
+        lifecycleScope.launch {
+        viewModel.cardSettingsFieldBackgroundLightModeLiveData.collect { colorResId ->
                 binding.locationBackground.background =
                     ContextCompat.getDrawable(requireContext(), colorResId)
                 binding.temperatureBackground.background =
@@ -138,16 +158,38 @@ class SettingsFragment : Fragment() {
                 binding.resettingbut.background =
                     ContextCompat.getDrawable(requireContext(), colorResId)
                 binding.savebut.background = ContextCompat.getDrawable(requireContext(), colorResId)
-                    if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES) {
-                        binding.resettingbut.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorTextNightMode))
-                        binding.savebut.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorTextNightMode))
-                    }else{
-                        binding.resettingbut.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorText))
-                        binding.savebut.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorText))
-                    }
-            })
+                if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES) {
+                    binding.resettingbut.setTextColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.colorTextNightMode
+                        )
+                    )
+                    binding.savebut.setTextColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.colorTextNightMode
+                        )
+                    )
+                } else {
+                    binding.resettingbut.setTextColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.colorText
+                        )
+                    )
+                    binding.savebut.setTextColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.colorText
+                        )
+                    )
+                }
+            }}
 
         binding.savebut.setOnClickListener {
+            val customAlert = CustomAlertDialog(requireContext())
+
             // Scale down animation
             binding.savebut.animate()
                 .scaleX(0.9f)
@@ -161,6 +203,7 @@ class SettingsFragment : Fragment() {
                         .setDuration(100)
                         .start()
                 }
+
 
             // Get the currently selected settings
             val locationMode = when (binding.radioGroupLocation.checkedRadioButtonId) {
@@ -188,6 +231,19 @@ class SettingsFragment : Fragment() {
                 else -> null
             }
 
+            when (binding.radioGroupLanguage.checkedRadioButtonId) {
+                R.id.radio_arabic -> {
+                    isArabic = true
+                    isEnglish = false
+                }
+
+                R.id.radio_english -> {
+                    isArabic = false
+                    isEnglish = true
+                }
+
+                else -> null
+            }
             val theme = when (binding.radioGroupTheme.checkedRadioButtonId) {
                 R.id.radio_light -> "light"
                 R.id.radio_dark -> "dark"
@@ -200,12 +256,40 @@ class SettingsFragment : Fragment() {
                 else -> null
             }
 
-            // Call updateSettings with the selected values
-            updateSettings(locationMode, temperatureUnit, windSpeedUnit, language, theme, notificationsStatus)
-            Toast.makeText(requireContext(), "Settings saved", Toast.LENGTH_SHORT).show()
+            customAlert.showDialog(
+                message = getString(R.string.are_you_sure),
+                isDarkTheme = isDarkMode,
+                positiveAction = {
+
+                    // Call updateSettings with the selected values
+                    updateSettings(
+                        locationMode,
+                        temperatureUnit,
+                        windSpeedUnit,
+                        language,
+                        theme,
+                        notificationsStatus
+                    )
+                    if (isArabic || isEnglish) {
+                        showRestartDialog(isDarkMode)
+                    }
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.settings_saved), Toast.LENGTH_SHORT
+                    ).show()
+                },
+                negativeAction = {
+                    Toast.makeText(requireContext(), getString(R.string.cancel), Toast.LENGTH_SHORT)
+                        .show()
+
+
+                })
+
+
         }
 
         binding.resettingbut.setOnClickListener {
+            val customAlert = CustomAlertDialog(requireContext())
             // Scale down animation
             binding.resettingbut.animate()
                 .scaleX(0.9f)
@@ -219,9 +303,29 @@ class SettingsFragment : Fragment() {
                         .setDuration(100)
                         .start()
                 }
+            customAlert.showDialog(
+                message = getString(R.string.are_you_sure),
+                isDarkTheme = isDarkMode,
+                positiveAction = {
 
-            viewModel.resetSettings()
-            Toast.makeText(requireContext(), "Settings reset", Toast.LENGTH_SHORT).show()
+                   val  isLanguageReset= viewModel.resetSettings()
+                    if (isLanguageReset) {
+                        showRestartDialog(isDarkMode)
+                    }
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.settings_reset), Toast.LENGTH_SHORT
+                    ).show()
+
+                },
+                negativeAction = {
+                    Toast.makeText(requireContext(), getString(R.string.cancel), Toast.LENGTH_SHORT)
+                        .show()
+
+
+                }
+            )
+
 
         }
 
@@ -247,6 +351,31 @@ class SettingsFragment : Fragment() {
         )
     }
 
+    // Function to show a restart dialog
+    private fun showRestartDialog(isDarkMode: Boolean) {
+        val customAlert = CustomAlertDialog(requireContext())
+
+        customAlert.showDialog(
+            title = requireContext().getString(R.string.restart_required),
+            message = requireContext().getString(R.string.the_language_has_been_updated_please_restart_the_app_for_the_changes_to_take_effect),
+            isDarkTheme = isDarkMode,
+            positiveAction = {
+                // Restart the app
+                val intent = Intent(requireContext(), MainActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                requireContext().startActivity(intent)
+            },
+            negativeAction = {
+                Toast.makeText(
+                    requireContext(),
+                    requireContext().getString(R.string.language_will_change_later),
+                    Toast.LENGTH_SHORT
+                ).show()
+
+            })
+
+
+    }
 
     companion object {
 

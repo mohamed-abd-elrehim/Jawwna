@@ -56,6 +56,9 @@ class HourlyWeatherForecastAdapter(
             itemView.setOnClickListener{
                 itemClickListener.onItemClick(forecast)
             }
+
+
+//            forecast.temp2=  getString(R.string.temperature_format, forecast.temp.value, forecast.temp.unit)
             binding.hourlyForecastData = forecast
             binding.executePendingBindings()
 

@@ -105,7 +105,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="25°C"
+                android:text="@string/_25_c"
                 android:textColor="@android:color/holo_blue_dark"
                 android:textSize="60sp" />
 

@@ -73,14 +73,13 @@ class FavoriteLocationAdapter(
                 R.drawable.card_settings_field_background_light_mode
             }
             binding.favoriteLocationLayout.setBackgroundResource(backgroundResource)
-
             val textColor = if (isDarkModeEnabled(context)) {
                 ContextCompat.getColor(context, android.R.color.holo_blue_bright)
             } else {
                 ContextCompat.getColor(context, android.R.color.holo_blue_dark)
             }
-            //binding.dayForecastTextDes.setTextColor(textColor)
-            //binding.dayForecastTextTemperature.setTextColor(textColor)
+            binding.favoriteLocationTextDes.setTextColor(textColor)
+            binding.favoriteLocationTextTemperature.setTextColor(textColor)
 
             itemView.setOnClickListener {
                 itemClickListener.onItemClick(forecast)
