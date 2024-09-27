@@ -1,15 +1,22 @@
 package com.example.jawwna.mainactivity
 
+import NetworkChangeReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.res.Configuration
 import android.graphics.Rect
 import android.media.MediaPlayer
+import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.view.animation.LinearInterpolator
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContentProviderCompat.requireContext
@@ -22,31 +29,45 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.example.jawwna.R
+import com.example.jawwna.customui.CustomAlertDialog
+import com.example.jawwna.customui.CustomSnackbar
 import com.example.jawwna.databinding.ActivityMainBinding
 import com.example.jawwna.datasource.repository.Repository
 import com.example.jawwna.helper.UpdateLocale
+import com.example.jawwna.helper.broadcastreceiver.NetworkStateChangeListener
+import com.example.jawwna.helper.broadcastreceiver.SharedConnctionStateViewModel
 import com.example.jawwna.mainactivity.viewmodel.MainActivityViewModel
 import com.example.jawwna.mainactivity.viewmodel.MainActivityViewModelFactory
 import com.example.jawwna.settingsfragment.viewmodel.SettingsViewModel
 import com.example.jawwna.settingsfragment.viewmodel.SettingsViewModelFactory
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.util.Locale
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity() , NetworkStateChangeListener {
 
     private lateinit var mBinding: ActivityMainBinding
     private lateinit var viewModel: MainActivityViewModel
     private lateinit var navController: NavController
+    private lateinit var rootLayout: View
+    private  var isNightMode= false
     private lateinit var bottomNavigationView: BottomNavigationView
 
+    private var isNetworkAvailable: Boolean = true
 
+    private val sharedConnctionStateViewModel: SharedConnctionStateViewModel by viewModels()
     private val scaleDuration: Long = 250
     private val TAG = "MainActivity"
+    private lateinit var networkChangeReceiver: NetworkChangeReceiver
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        networkChangeReceiver = NetworkChangeReceiver(this)
+        val customAlert = CustomAlertDialog(this)
 
 
         viewModel =
@@ -57,11 +78,23 @@ class MainActivity : AppCompatActivity() {
                 MainActivityViewModel::class.java
             )
 
+
+        viewModel.isNetworkAvailable()
+        lifecycleScope.launch {
+            viewModel.isNetworkAvailable.collect { isNetworkAvailable ->
+                Log.i(TAG, "isNetworkAvailable: $isNetworkAvailable")
+                when (isNetworkAvailable) {
+                    true -> Log.i(TAG, "Network is available")
+                    false -> Log.i(TAG, "Network is not available")
+                }
+            }
+        }
         viewModel.setUpdateLocale(Locale.getDefault().language)
         lifecycleScope.launch {
             viewModel.updateLocale.collect { language ->
                 setLocale(language)
               //  setFount()
+                applyThemeBasedOnLocaleAndMode()
 
             }
         }
@@ -71,6 +104,8 @@ class MainActivity : AppCompatActivity() {
         // Initialize the binding
         mBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(mBinding.root)
+        rootLayout = mBinding.root
+
         // Access the VideoView using View Binding
         val videoView = mBinding.backgroundVideo
 
@@ -115,9 +150,8 @@ class MainActivity : AppCompatActivity() {
 
 
                 R.id.menuFavorite -> {
-
                     videoView.stopPlayback()
-                    navController.navigate(R.id.mapFragment)
+                    navController.navigate(R.id.addFavoriteLocationFragment)
                     true
                 }
 
@@ -131,6 +165,56 @@ class MainActivity : AppCompatActivity() {
         // Get current night mode
         val nightModeFlags =
             resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK
+        if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES) {
+            Log.i(TAG, "onCreate: Night mode is enabled")
+            isNightMode = true
+        } else {
+            Log.i(TAG, "onCreate: Night mode is disabled")
+            isNightMode = false
+        }
+
+        lifecycleScope.launch {
+            sharedConnctionStateViewModel.sharedConnctionState.collect {isConnected ->
+                if (isConnected) {
+                    CustomSnackbar.show(
+                        view = rootLayout, // Pass the root view of the activity
+                        message = getString(R.string.connected_to_the_internet),
+                        isDarkTheme = isNightMode, // You can pass true or false based on the current theme
+                        buttonText = getString(R.string.ok),
+                        duration = Snackbar.LENGTH_LONG,
+                        showButton = false
+                    )   // Action to perform on button click, for example, retrying a request
+                } else {
+                    CustomSnackbar.show(
+                        view = rootLayout, // Pass the root view of the activity
+                        message = getString(R.string.no_internet_connection),
+                        isDarkTheme = isNightMode, // You can pass true or false based on the current theme
+                        buttonText = getString(R.string.open_network),
+                        duration = Snackbar.LENGTH_LONG,
+                        {
+                            customAlert.showDialog(
+                                message = getString(R.string.do_you_want_to_open_network_settings),
+                                title = getString(R.string.alert_message),
+                                isDarkTheme = isNightMode,
+                                positiveText= getString(R.string.open_wifi),
+                                negativeText = getString(R.string.open_data),
+                                positiveAction = {
+                                    val intent = Intent(Settings.ACTION_WIFI_SETTINGS)
+                                    startActivity(intent)
+
+                                },negativeAction = {
+                                    val intent = Intent(Settings.ACTION_DATA_ROAMING_SETTINGS)
+                                    startActivity(intent)
+                                })
+                        },
+                        showButton = true)
+                }
+            }
+
+
+        }
+
+
 // Set button background based on the night mode
         viewModel.setbuttonBackground(this.packageName, nightModeFlags)
 
@@ -210,6 +294,16 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
+    override fun onStart() {
+        super.onStart()
+        val filter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
+        registerReceiver(networkChangeReceiver, filter)
+    }
+    override fun onStop() {
+        super.onStop()
+        unregisterReceiver(networkChangeReceiver)
+    }
+
     // Function to set the application's locale
      fun setLocale(language:String) {
         // Create a Locale object for the specified language code
@@ -231,19 +325,52 @@ class MainActivity : AppCompatActivity() {
 
 
     }
-    fun setFount(){
-        // Check current locale
-         val currentLocale = getResources().getConfiguration().locale;
-        if (currentLocale.getLanguage().equals("ar")) {
-            // If Arabic, apply the Arabic text appearance style
-            setTheme(R.style.AppTextAppearanceArabic);
+    private fun applyThemeBasedOnLocaleAndMode() {
+        // Detect current locale
+        val currentLocale = resources.configuration.locales[0]
+
+        // Detect if the UI is in night mode
+        val nightModeFlags = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        val isNightMode = nightModeFlags == Configuration.UI_MODE_NIGHT_YES
+
+        // Apply the correct theme
+        if (currentLocale.language == "ar") {
+            if (isNightMode) {
+                setTheme(R.style.Theme_Jawwna_Arabic_Night)  // Arabic Night mode theme
+            } else {
+                setTheme(R.style.Theme_Jawwna_Arabic)  // Arabic Light mode theme
+            }
         } else {
-            // Default font for other languages
-            setTheme(R.style.AppTextAppearance);
+            if (isNightMode) {
+                setTheme(R.style.Theme_Jawwna_Night)  // Default locale Night mode theme
+            } else {
+                setTheme(R.style.Theme_Jawwna)  // Default locale Light mode theme
+            }
         }
 
-        setContentView(R.layout.activity_main);  // Load the UI after setting the theme
+        lifecycleScope.launch {
+            sharedConnctionStateViewModel.sharedConnctionState.collect { isConnected ->
+                Log.i(TAG, "applyThemeBasedOnLocaleAndMode: $isConnected")
+                isNetworkAvailable = isConnected
+            }
+        }
     }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        // Reapply the correct theme when the configuration changes (e.g., night mode)
+        applyThemeBasedOnLocaleAndMode()
+        recreate()  // Restart the activity to apply the new theme
+    }
+
+    override fun onNetworkStateChanged(isConnected: Boolean) {
+        lifecycleScope.launch {
+            sharedConnctionStateViewModel.updateSharedData(isConnected)
+        }
+    }
+
+
+
 
 
 }

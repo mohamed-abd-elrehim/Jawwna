@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.jawwna.R
 import com.example.jawwna.datasource.repository.IRepository
+import com.example.jawwna.helper.PreferencesLocationEum
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -20,6 +21,14 @@ class SplashViewModel(private val repository: IRepository) : ViewModel() {
 
     private val _updateLocale = MutableStateFlow<String>("")
     val updateLocale: StateFlow<String> get() = _updateLocale
+
+    private val _isCurrenLocationAvailable = MutableStateFlow<Boolean>(false)
+    val isCurrenLocationAvailable: StateFlow<Boolean> get() = _isCurrenLocationAvailable
+
+    fun IsCurrenLocationAvailable() {
+        repository.execute(PreferencesLocationEum.CURRENT)
+        _isCurrenLocationAvailable.value =  repository.isLocationSaved()
+    }
 
     fun setUpdateLocale(language: String) {
         _updateLocale.value = repository.getLanguage()!!

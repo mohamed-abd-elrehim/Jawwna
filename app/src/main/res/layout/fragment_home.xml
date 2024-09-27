@@ -190,7 +190,7 @@
                         android:layout_marginTop="8dp"
                         android:text="@string/humidity_value"
                         android:textColor="@android:color/holo_blue_dark"
-                        android:textSize="12sp"
+                        android:textSize="15sp"
                         app:layout_constraintEnd_toEndOf="@+id/icon_humidity"
                         app:layout_constraintStart_toStartOf="@+id/icon_humidity"
                         app:layout_constraintTop_toBottomOf="@+id/icon_humidity" />
@@ -224,7 +224,7 @@
                         android:layout_marginTop="8dp"
                         android:text="@string/wind_speed_value"
                         android:textColor="@android:color/holo_blue_dark"
-                        android:textSize="12sp"
+                        android:textSize="15sp"
                         app:layout_constraintEnd_toEndOf="@+id/icon_wind_speed"
                         app:layout_constraintStart_toStartOf="@+id/icon_wind_speed"
                         app:layout_constraintTop_toBottomOf="@+id/icon_wind_speed" />
@@ -247,7 +247,7 @@
                         android:layout_marginTop="8dp"
                         android:text="@string/pressure_value"
                         android:textColor="@android:color/holo_blue_dark"
-                        android:textSize="12sp"
+                        android:textSize="15sp"
                         app:layout_constraintEnd_toEndOf="@+id/icon_pressure"
                         app:layout_constraintStart_toStartOf="@+id/icon_pressure"
                         app:layout_constraintTop_toBottomOf="@+id/icon_pressure" />
@@ -270,7 +270,7 @@
                         android:layout_marginTop="8dp"
                         android:text="@string/clouds_value"
                         android:textColor="@android:color/holo_blue_dark"
-                        android:textSize="12sp"
+                        android:textSize="15sp"
                         app:layout_constraintEnd_toEndOf="@+id/icon_clouds"
                         app:layout_constraintStart_toStartOf="@+id/icon_clouds"
                         app:layout_constraintTop_toBottomOf="@+id/icon_clouds" />

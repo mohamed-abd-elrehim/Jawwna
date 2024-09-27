@@ -4,5 +4,5 @@ data class FavoriteLocationModel (
     val placeName: String?,
     val icon: String?,
     val description: String?,
-    val temp: String?
+    val temp: TemperatureResult
 )

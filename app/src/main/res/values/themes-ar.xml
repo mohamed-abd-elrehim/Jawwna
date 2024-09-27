@@ -9,7 +9,7 @@
         <item name="android:fontFamily">@font/cairobold</item> &lt;!&ndash; Arabic font &ndash;&gt;
     </style>-->
 
-    <style name="Theme.Jawwna" parent="Theme.Material3.Light.NoActionBar">
+    <style name="Theme.Jawwna.Arabic" parent="Theme.Material3.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="android:windowTranslucentStatus">true</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -19,7 +19,8 @@
         <!-- Button Text Color -->  <!-- Add Material Component support -->
 
 
-        <item name="android:fontFamily">@font/normativeprobold</item>
+        <item name="android:fontFamily">@font/cairobold</item> <!-- Arabic font -->
+
     </style>
 
 

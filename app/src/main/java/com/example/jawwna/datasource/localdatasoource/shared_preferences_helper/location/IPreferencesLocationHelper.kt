@@ -14,7 +14,7 @@ interface IPreferencesLocationHelper {
     fun saveLocationLatitude(latitude: Double)
 
     // Get location latitude
-    fun getLocationLatitude(): Double
+    fun getLocationLatitude(): Double?
 
     // Clear location latitude
     fun clearLocationLatitude()
@@ -23,11 +23,15 @@ interface IPreferencesLocationHelper {
     fun saveLocationLongitude(longitude: Double)
 
     // Get location longitude
-    fun getLocationLongitude(): Double
+    fun getLocationLongitude(): Double?
 
     // Clear location longitude
     fun clearLocationLongitude()
 
     // Clear all preferences
     fun clearAllLocation()
+
+    // Check if no location is saved
+    fun isLocationSaved(): Boolean
+
 }

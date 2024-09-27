@@ -62,10 +62,23 @@
     <string name="temperature_format">%.0f%s</string>
     <string name="image_weather">صورة الطقس</string>
     <string name="temperature_format_daily_forecast">الحد الأقصى: %.0f%s\nالحد الأدنى: %.0f%s</string>
-    <string name="wind_speed_format">%d%s</string>
+    <string name="wind_speed_format">%.0f%s</string>
     <string name="wather_description">%d</string>
     <string name="search_for_a_location">ابحث عن موقع</string>
+    <string name="cityName">%s</string>
+    <string name="error">خطأ</string>
+    <string name="no_internet_connection">لا يوجد اتصال بالإنترنت!</string>
+    <string name="connected_to_the_internet">متصل بالإنترنت!</string>
+    <string name="open_network">فتح الشبكة</string>
+    <string name="open_wifi">فتح الواي فاي</string>
+    <string name="open_data">فتح البيانات</string>
+    <string name="do_you_want_to_open_network_settings">هل تريد فتح إعدادات الشبكة؟</string>
+    <string name="location_permission_required_title">مطلوب إذن الموقع</string>
+    <string name="location_permission_required_message">تتطلب هذه التطبيق إذن الموقع للعمل بشكل صحيح. يرجى تمكين الوصول إلى الموقع في إعدادات التطبيق.</string>
+    <string name="settings">الإعدادات</string>
 
-
+    <!-- New strings for location dialog in Arabic -->
+    <string name="location_dialog_title">الموقع غير متاح</string>
+    <string name="location_dialog_message">اختر موقعك من الخريطة أو GPS</string>
 </resources>
 

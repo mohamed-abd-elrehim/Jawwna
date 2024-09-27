@@ -62,4 +62,13 @@ class PreferencesLocationHelper(context: Context) : IPreferencesLocationHelper {
         sharedPreferences.edit().clear().apply()
     }
 
+    // Check if no location is saved
+    override fun isLocationSaved(): Boolean {
+        val name = getLocationName()
+        val latitude = getLocationLatitude()
+        val longitude = getLocationLongitude()
+
+        return name != null && latitude != null && longitude != null
+    }
+
 }

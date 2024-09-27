@@ -1,6 +1,7 @@
 package com.example.jawwna.datasource.repository
 
 import android.app.Application
+import android.content.Context
 import android.util.Log
 import androidx.compose.ui.text.intl.Locale
 import com.example.jawwna.datasource.localdatasoource.LocalDataSource
@@ -19,6 +20,7 @@ import com.example.jawwna.datasource.remotedatasource.ApiResponse
 import com.example.jawwna.datasource.remotedatasource.RemoteDataSource
 import com.example.jawwna.helper.PreferencesLocationEum
 import com.example.jawwna.helper.UpdateLocale
+import com.example.jawwna.helper.broadcastreceiver.NetworkManager
 import com.example.jawwna.mapscreen.geocodingservice.GeocodingService
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.flow.Flow
@@ -28,6 +30,7 @@ class Repository private constructor(val application: Application) : IRepository
     private lateinit var iPreferencesSettingsHelper: IPreferencesSettingsHelper
     private lateinit var iPreferencesLocationHelper: IPreferencesLocationHelper
     private val geocodingService = GeocodingService(application)
+    private val  networkManager = NetworkManager(application)
 
     companion object {
         @Volatile
@@ -289,19 +292,16 @@ class Repository private constructor(val application: Application) : IRepository
         iPreferencesSettingsHelper.resetSettings()
     }
 
-
     override fun execute(preferencesLocationEum: PreferencesLocationEum) {
-        when (preferencesLocationEum) {
-            PreferencesLocationEum.FAVOURITE -> iPreferencesLocationHelper =
-                PreferencesFavLocationHelper(application)
-            // Calls ClassA's implementation
-            PreferencesLocationEum.CURRENT -> iPreferencesLocationHelper =
-                PreferencesCurrentLocationHelper(application)
-            // Calls ClassC's implementation
-            else -> iPreferencesLocationHelper = PreferencesLocationHelper(application)
+        Log.i("execute", "execute: $preferencesLocationEum")
 
+        iPreferencesLocationHelper = when (preferencesLocationEum) {
+            PreferencesLocationEum.FAVOURITE -> PreferencesFavLocationHelper(application)
+            PreferencesLocationEum.CURRENT -> PreferencesCurrentLocationHelper(application)
+            else -> PreferencesLocationHelper(application)
         }
     }
+
 
 
     override fun saveLocationName(name: String) {
@@ -324,7 +324,7 @@ class Repository private constructor(val application: Application) : IRepository
 
     }
 
-    override fun getLocationLatitude(): Double {
+    override fun getLocationLatitude(): Double? {
         return iPreferencesLocationHelper.getLocationLatitude()
 
     }
@@ -344,7 +344,7 @@ class Repository private constructor(val application: Application) : IRepository
 
     }
 
-    override fun getLocationLongitude(): Double {
+    override fun getLocationLongitude(): Double? {
         return  iPreferencesLocationHelper.getLocationLongitude()
 
     }
@@ -355,12 +355,21 @@ class Repository private constructor(val application: Application) : IRepository
 
     }
 
+    override fun isLocationSaved(): Boolean {
+        return iPreferencesLocationHelper.isLocationSaved()
+    }
+
     override fun searchPlace(query: String): Flow<LatLng?> {
         return geocodingService.searchPlace(query)
     }
 
     override suspend fun getCountryNameFromLatLong(latitude: Double, longitude: Double): String? {
         return geocodingService.getCountryNameFromLatLong(latitude, longitude)
+
+    }
+
+    override fun isNetworkAvailable(): Boolean {
+        return networkManager.isNetworkAvailable()
 
     }
 

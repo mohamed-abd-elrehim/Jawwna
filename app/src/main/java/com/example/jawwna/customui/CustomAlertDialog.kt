@@ -9,10 +9,17 @@ import android.widget.Button
 import android.view.animation.AlphaAnimation
 import androidx.core.content.ContextCompat
 import com.example.jawwna.R
-
 class CustomAlertDialog(private val context: Context) {
     @SuppressLint("MissingInflatedId")
-    fun showDialog(title: String? = null,message: String, isDarkTheme: Boolean, positiveAction: (() -> Unit)? = null, negativeAction: (() -> Unit)? = null) {
+    fun showDialog(
+        title: String? = null,
+        message: String,
+        isDarkTheme: Boolean,
+        positiveText: String = context.getString(R.string.ok), // Default text for positive button
+        negativeText: String = context.getString(R.string.cancel), // Default text for negative button
+        positiveAction: (() -> Unit)? = null,
+        negativeAction: (() -> Unit)? = null
+    ) {
         val builder = AlertDialog.Builder(context)
 
         // Inflate custom layout for the AlertDialog
@@ -22,7 +29,7 @@ class CustomAlertDialog(private val context: Context) {
 
         // Set message
         val textViewMessage = dialogView.findViewById<TextView>(R.id.alert_message)
-        val  textViewTitle = dialogView.findViewById<TextView>(R.id.alert_title)
+        val textViewTitle = dialogView.findViewById<TextView>(R.id.alert_title)
         textViewMessage.text = message
         textViewTitle.text = title
 
@@ -41,12 +48,14 @@ class CustomAlertDialog(private val context: Context) {
         val positiveButton = dialogView.findViewById<Button>(R.id.positive_button)
         val negativeButton = dialogView.findViewById<Button>(R.id.negative_button)
 
+        // Set button texts
+        positiveButton.text = positiveText
+        negativeButton.text = negativeText
 
+        // Set text color based on theme
         val colorResId = if (isDarkTheme) R.color.colorTextNightMode else R.color.colorText
-
         positiveButton.setTextColor(ContextCompat.getColor(context, colorResId))
         negativeButton.setTextColor(ContextCompat.getColor(context, colorResId))
-
 
         positiveButton.setOnClickListener {
             positiveAction?.invoke()

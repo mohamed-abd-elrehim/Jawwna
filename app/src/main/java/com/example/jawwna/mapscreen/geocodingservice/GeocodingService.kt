@@ -1,13 +1,13 @@
 package com.example.jawwna.mapscreen.geocodingservice
 
 import android.content.Context
+import android.location.Address
+import android.location.Geocoder
+import android.util.Log
+import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import java.util.Locale
-import android.location.Geocoder
-import android.location.Address
-import android.util.Log
-import com.google.android.gms.maps.model.LatLng
 
 class GeocodingService(private val context: Context) : IGeocodingService {
     private val TAG = "GeocodingService"
@@ -16,6 +16,7 @@ class GeocodingService(private val context: Context) : IGeocodingService {
         val geocoder = Geocoder(context)
         try {
             val addresses: List<Address>? = geocoder.getFromLocationName(query, 1)
+
             if (!addresses.isNullOrEmpty()) {
                 val address = addresses[0]
                 val latLng = LatLng(address.latitude, address.longitude)
@@ -38,7 +39,10 @@ class GeocodingService(private val context: Context) : IGeocodingService {
 
             // If the address list is not empty, return the country name
             if (!addresses.isNullOrEmpty()) {
-                addresses[0].getAddressLine(0) ?: "Unknown Place"
+               // val city = addresses[0].locality // اسم المدينة أو المنطقة
+                val province = addresses[0].adminArea // اسم المحافظة
+                return " $province" // دم
+
             } else {
                 null
             }

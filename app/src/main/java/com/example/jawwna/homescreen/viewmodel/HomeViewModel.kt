@@ -19,6 +19,7 @@ import com.example.jawwna.datasource.localdatasoource.shared_preferences_helper.
 import com.example.jawwna.datasource.localdatasoource.shared_preferences_helper.settings.PreferencesSettingsHelper
 import com.example.jawwna.datasource.model.TemperatureResult
 import com.example.jawwna.datasource.model.WeatherResponseEntity
+import com.example.jawwna.datasource.model.WindResult
 import com.example.jawwna.datasource.remotedatasource.ApiResponse
 import com.example.jawwna.datasource.repository.IRepository
 import com.example.jawwna.helper.PreferencesLocationEum
@@ -82,17 +83,20 @@ class HomeViewModel( private val repository: IRepository) :ViewModel() {
             try {
                 repository.execute(PreferencesLocationEum.CURRENT)
                 val lat = repository.getLocationLatitude()
+                
                 val lon = repository.getLocationLongitude()
 
                 _weatherForecastHourlyData.value = ApiResponse.Loading
-                repository.getHourlyForecastByLatLon(lat, lon, apiKey, null, null).collect{data->
-                    val hourlyForecastDataList = mapToHourlyForecastData(data)
-                    _weatherForecastHourlyRow.value = hourlyForecastDataList
-                    Log.d(TAG, "fetchWeatherForecastHourlyData: $hourlyForecastDataList")
+                if (lat != null && lon != null) {
+                    repository.getHourlyForecastByLatLon(lat, lon, apiKey, null, null).collect{data->
+                        val hourlyForecastDataList = mapToHourlyForecastData(data)
+                        _weatherForecastHourlyRow.value = hourlyForecastDataList
+                        Log.d(TAG, "fetchWeatherForecastHourlyData: $hourlyForecastDataList")
 
-                    _weatherForecastHourlyData.value = ApiResponse.Success(data)
-                    weatherResponseEntity.hourlyForecastList= listOf(data)
+                        _weatherForecastHourlyData.value = ApiResponse.Success(data)
+                        weatherResponseEntity.hourlyForecastList= listOf(data)
 
+                    }
                 }
             } catch (e: Exception) {
                 _weatherForecastHourlyData.value = ApiResponse.Error(e.message ?: "Unknown error")
@@ -108,8 +112,12 @@ class HomeViewModel( private val repository: IRepository) :ViewModel() {
 
 
                 _currentWeatherData.value = ApiResponse.Loading
-                val data = repository.getCurrenWeatherByLatLon(lat, lon, apiKey, null, null)
-                _currentWeatherData.value = ApiResponse.Success(data)
+                val data = lat?.let { latitude ->
+                    lon?.let { longitude ->
+                        repository.getCurrenWeatherByLatLon(latitude, longitude, apiKey, null, null)
+                    }
+                }
+                _currentWeatherData.value = ApiResponse.Success(data!!)
                 repository.setOldTemperatureUnit(TemperatureUnits.metric.toString())
                 repository.setOldWindSpeedUnit(WindSpeedUnits.metric.toString())
 
@@ -130,16 +138,17 @@ class HomeViewModel( private val repository: IRepository) :ViewModel() {
                 val lat = repository.getLocationLatitude()
                 val lon = repository.getLocationLongitude()
 
-                repository.getForecastDailyByLatLon(lat, lon, apiKey, null, null).collect{
-                        data->
+                if (lat != null && lon != null) {
+                    repository.getForecastDailyByLatLon(lat, lon, apiKey, null, null).collect{ data->
 
-                    val dailyForecastDataList = mapToDailyForecastData(data)
-                    _weatherForecast16DailyRow.value = dailyForecastDataList
-                    weatherResponseEntity.dailyForecastList= listOf(data)
+                        val dailyForecastDataList = mapToDailyForecastData(data)
+                        _weatherForecast16DailyRow.value = dailyForecastDataList
+                        weatherResponseEntity.dailyForecastList= listOf(data)
 
-                    Log.d(TAG, "featch16DailyWeatherData: $dailyForecastDataList")
+                        Log.d(TAG, "featch16DailyWeatherData: $dailyForecastDataList")
 
-                    _weatherForecast16DailyData.value = ApiResponse.Success(data)
+                        _weatherForecast16DailyData.value = ApiResponse.Success(data)
+                    }
                 }
             } catch (e: Exception) {
                 _weatherForecast16DailyData.value = ApiResponse.Error(e.message ?: "Unknown error")
@@ -153,8 +162,8 @@ class HomeViewModel( private val repository: IRepository) :ViewModel() {
                 repository.execute(PreferencesLocationEum.CURRENT)
                 repository.deleteAllWeatherLocalData()
                 weatherResponseEntity.cityName=repository.getLocationName().toString()
-                weatherResponseEntity.latitude=repository.getLocationLatitude()
-                weatherResponseEntity.longitude=repository.getLocationLongitude()
+                weatherResponseEntity.latitude= repository.getLocationLatitude()!!
+                weatherResponseEntity.longitude= repository.getLocationLongitude()!!
                 Log.d(TAG, "insertWeatherResponseEntity: $weatherResponseEntity")
                 repository.insertWeatherLocalData(weatherResponseEntity)
             }
@@ -249,12 +258,22 @@ class HomeViewModel( private val repository: IRepository) :ViewModel() {
     }
 
 
-    fun checkWindSpeedUnit(windSpeed:Double): String {
-        return when (repository.getWindSpeedUnit()) {
-            WindSpeedUnits.metric.toString() ->return "${UnitConvertHelper.convertWindSpeed(windSpeed,repository.getOldWindSpeedUnit(),
-                WindSpeedUnits.metric)} m/s"
-            else -> "${UnitConvertHelper.convertWindSpeed(windSpeed,repository.getOldWindSpeedUnit(),WindSpeedUnits.imperial)} mph"
+    fun checkWindSpeedUnit(windSpeed:Double): WindResult {
+        val windUnit = repository.getWindSpeedUnit()
+
+        val convertedWindSpeed = when (windUnit) {
+            WindSpeedUnits.imperial.toString() ->  UnitConvertHelper.convertWindSpeed(windSpeed,repository.getOldWindSpeedUnit(),
+                WindSpeedUnits.imperial)
+            WindSpeedUnits.metric.toString() -> UnitConvertHelper.convertWindSpeed(windSpeed,repository.getOldWindSpeedUnit(),
+                WindSpeedUnits.metric)
+            else -> UnitConvertHelper.convertWindSpeed(windSpeed,repository.getOldWindSpeedUnit(),WindSpeedUnits.imperial)
         }
+        val unit = when (windUnit) {
+            WindSpeedUnits.metric.toString() -> "m/s"
+            else -> "mph"
+        }
+        return WindResult(convertedWindSpeed, unit)
+
     }
 
     // Function to map CurrentWeather to HourlyForecastData

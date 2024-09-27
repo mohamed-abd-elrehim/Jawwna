@@ -6,9 +6,10 @@ import com.example.jawwna.datasource.localdatasoource.shared_preferences_helper.
 import com.example.jawwna.datasource.remotedatasource.IRemoteDataSource
 import com.example.jawwna.helper.IUpdateLocale
 import com.example.jawwna.helper.PreferencesLocationEum
+import com.example.jawwna.helper.broadcastreceiver.INetworkManager
 import com.example.jawwna.mapscreen.geocodingservice.IGeocodingService
 
-interface IRepository: IRemoteDataSource, ILocalDataSource ,IPreferencesSettingsHelper,IPreferencesLocationHelper,IGeocodingService{
+interface IRepository: IRemoteDataSource, ILocalDataSource ,IPreferencesSettingsHelper,IPreferencesLocationHelper,IGeocodingService,INetworkManager{
     fun execute(preferencesLocationEum: PreferencesLocationEum)
     fun getLanguageCode() : String
     }

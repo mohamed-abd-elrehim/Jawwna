@@ -2,6 +2,7 @@ package com.example.jawwna.homescreen
 
 
 import android.app.AlertDialog
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -19,6 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.jawwna.BuildConfig
 import com.example.jawwna.R
+import com.example.jawwna.customui.CustomPopup
 import com.example.jawwna.databinding.FragmentHomeBinding
 import com.example.jawwna.datasource.remotedatasource.ApiResponse
 import com.example.jawwna.datasource.repository.Repository
@@ -46,6 +48,8 @@ class HomeFragment : Fragment() {
 
     private lateinit var daliyRecyclerViewAdapter: DailyWeatherForecastAdapter
     private lateinit var daliyRecyclerView: RecyclerView
+    private lateinit var customPopup: CustomPopup
+    private var isDarkMode = false
 
 
     override fun onCreateView(
@@ -55,15 +59,18 @@ class HomeFragment : Fragment() {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
         // Inflate the layout for this fragment
         return binding.root
+
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        customPopup = CustomPopup(requireContext())
+
         viewModel =
             ViewModelProvider(
                 this,
-                HomeViewModelFactory( Repository.getRepository(requireActivity().application))
+                HomeViewModelFactory(Repository.getRepository(requireActivity().application))
             )[HomeViewModel::class.java]
         // Initialize the DailyWeatherForecastAdapter and RecyclerView
         daliyRecyclerView = binding.daliyRecyclerView
@@ -122,6 +129,13 @@ class HomeFragment : Fragment() {
         val nightModeFlags =
             resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK
 
+        if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES) {
+            isDarkMode = true
+        } else {
+            isDarkMode = false
+        }
+
+
 
         viewModel.setCardSettingsFieldBackgroundLightMode(
             requireContext().packageName,
@@ -130,8 +144,7 @@ class HomeFragment : Fragment() {
         lifecycleScope.launch {
 
 
-
-        viewModel.cardSettingsFieldBackgroundLightModeLiveData.collect{ colorResId ->
+            viewModel.cardSettingsFieldBackgroundLightModeLiveData.collect { colorResId ->
                 binding.linearLayoutMainCard.setBackgroundResource(colorResId)
                 binding.constraintLayoutWeatherInformation.setBackgroundResource(colorResId)
 
@@ -140,13 +153,13 @@ class HomeFragment : Fragment() {
         }
         lifecycleScope.launch {
 
-        // Observe the theme mode from ViewModel
-        viewModel.isDarkMode.collect{ isDarkMode ->
-            updateIcons(isDarkMode)
-            updateTextColor(isDarkMode)
+            // Observe the theme mode from ViewModel
+            viewModel.isDarkMode.collect { isDarkMode ->
+                updateIcons(isDarkMode)
+                updateTextColor(isDarkMode)
 
+            }
         }
-    }
         // Check the current theme mode when view is created
         viewModel.checkThemeMode(resources)
         viewModel.featch16DailyWeatherData(BuildConfig.OPEN_WEATHER_API_KEY_PRO)
@@ -164,10 +177,10 @@ class HomeFragment : Fragment() {
 
 
         }
-viewModel.fetchWeatherForecastHourlyData(BuildConfig.OPEN_WEATHER_API_KEY_PRO)
+        viewModel.fetchWeatherForecastHourlyData(BuildConfig.OPEN_WEATHER_API_KEY_PRO)
         lifecycleScope.launch {
             viewModel.weatherForecastHourlyRow.collect { data ->
-                if (!data.isEmpty()){
+                if (!data.isEmpty()) {
                     hourlyRecyclerViewAdapter.updateData(data)
                     Log.d(TAG, "onViewCreated: $data")
                 } else {
@@ -197,32 +210,49 @@ viewModel.fetchWeatherForecastHourlyData(BuildConfig.OPEN_WEATHER_API_KEY_PRO)
                         ).show()
                         Log.i(TAG, ": Sccesss Current" + response.data)
                         val result = viewModel.checkTemperatureUnit(response.data.main.temp)
-                        binding.mainTextTemperature.text = getString(R.string.temperature_format, result.value, result.unit)
+                        binding.mainTextTemperature.text =
+                            getString(R.string.temperature_format, result.value, result.unit)
 
-                        binding.textWindSpeed.text =viewModel.checkWindSpeedUnit(response.data.wind.speed)
+                        val resultWind = viewModel.checkWindSpeedUnit(response.data.wind.speed)
+                        binding.textWindSpeed.text = getString(
+                            R.string.wind_speed_format,
+                            resultWind.value,
+                            resultWind.speedUnit
+                        )
 
-                        binding.textHumidity.text = getString(R.string.wather_description,response.data.main.humidity)
-                        binding.textPressure.text =  getString(R.string.wather_description,response.data.main.pressure)
-                        binding.textClouds.text =  getString(R.string.wather_description,response.data.clouds.all)
+                        binding.textHumidity.text =
+                            getString(R.string.wather_description, response.data.main.humidity)
+                        binding.textPressure.text =
+                            getString(R.string.wather_description, response.data.main.pressure)
+                        binding.textClouds.text =
+                            getString(R.string.wather_description, response.data.clouds.all)
 
                         binding.cityName.text = response.data.name
 
 
                         binding.mainTextDes.text = response.data.weather[0].description
-                        binding.currentDate.text =viewModel.getCurrentDate()
+                        binding.currentDate.text = viewModel.getCurrentDate()
                         binding.currentTime.text = viewModel.getCurrentTime()
 
 
                     }
 
                     is ApiResponse.Error -> {
+                        Toast.makeText(
+                            requireContext(),
+                            "Error: ${response.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
                         // Show error message
-                        val alertDialog = AlertDialog.Builder(context)
-                            .setTitle("Error")
-                            .setMessage(response.message)
-                            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
-                            .create()
-                        alertDialog.show()
+                        customPopup.showPopup(
+                            view,
+                            getString(R.string.error),
+                            response.message,
+                            isDarkMode
+                        ) // Change isDarkTheme as needed
+
+
+
                         Log.i(TAG, ":ERROR Current " + response.message)
                     }
                 }

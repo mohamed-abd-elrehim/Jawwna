@@ -58,7 +58,9 @@ class MapViewModel(private val repository: IRepository) : ViewModel() {
         val defaultLatitude = repository.getLocationLatitude()
         val defaultLongitude = repository.getLocationLongitude()
         // Update the LocationData singleton
-        _location.value = LatLng(defaultLatitude, defaultLongitude)
+        if (defaultLatitude != null && defaultLongitude != null) {
+            _location.value = LatLng(defaultLatitude, defaultLongitude)
+        }
         _placeName.value = defaultName ?: "Unknown Place"
 
     }
@@ -137,6 +139,7 @@ class MapViewModel(private val repository: IRepository) : ViewModel() {
             PreferencesLocationEum.FAVOURITE -> {
                 repository.execute(mode)
                 repository.saveLocationLatitude(latitude)
+
                 repository.saveLocationLongitude(longitude)
                 repository.saveLocationName(placeName)
             }

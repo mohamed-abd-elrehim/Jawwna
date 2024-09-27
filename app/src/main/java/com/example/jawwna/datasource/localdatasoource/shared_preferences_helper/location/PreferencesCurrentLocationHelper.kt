@@ -2,18 +2,16 @@ package com.example.jawwna.datasource.localdatasoource.shared_preferences_helper
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.example.jawwna.datasource.remotedatasource.ApiResponse
 
 class PreferencesCurrentLocationHelper(context: Context) : IPreferencesLocationHelper {
 
     private val sharedPreferences: SharedPreferences =
-        context.getSharedPreferences("location_preferences", Context.MODE_PRIVATE)
+        context.getSharedPreferences("location_current_preferences", Context.MODE_PRIVATE)
 
     // Constants for keys
     private val KEY_LOCATION_LATITUDE = "location_latitude"
     private val KEY_LOCATION_LONGITUDE = "location_longitude"
     private val KEY_LOCATION_NAME = "location_name"
-
 
     // Save location name
     override fun saveLocationName(name: String) {
@@ -22,7 +20,7 @@ class PreferencesCurrentLocationHelper(context: Context) : IPreferencesLocationH
 
     // Get location name
     override fun getLocationName(): String? {
-        return sharedPreferences.getString(KEY_LOCATION_NAME,"Cairo" )
+        return sharedPreferences.getString(KEY_LOCATION_NAME, null)
     }
 
     // Clear location name
@@ -36,8 +34,8 @@ class PreferencesCurrentLocationHelper(context: Context) : IPreferencesLocationH
     }
 
     // Get location latitude
-    override fun getLocationLatitude(): Double {
-        return sharedPreferences.getString(KEY_LOCATION_LATITUDE, "30.0444")?.toDouble() ?: 30.0444
+    override fun getLocationLatitude(): Double? {
+        return sharedPreferences.getString(KEY_LOCATION_LATITUDE, null)?.toDoubleOrNull()
     }
 
     // Clear location latitude
@@ -51,8 +49,8 @@ class PreferencesCurrentLocationHelper(context: Context) : IPreferencesLocationH
     }
 
     // Get location longitude
-    override fun getLocationLongitude(): Double {
-        return sharedPreferences.getString(KEY_LOCATION_LONGITUDE, "31.2357")?.toDouble() ?: 31.2357
+    override fun getLocationLongitude(): Double? {
+        return sharedPreferences.getString(KEY_LOCATION_LONGITUDE, null)?.toDoubleOrNull()
     }
 
     // Clear location longitude
@@ -65,4 +63,12 @@ class PreferencesCurrentLocationHelper(context: Context) : IPreferencesLocationH
         sharedPreferences.edit().clear().apply()
     }
 
+    // Check if no location is saved
+   override fun isLocationSaved(): Boolean {
+        val name = getLocationName()
+        val latitude = getLocationLatitude()
+        val longitude = getLocationLongitude()
+
+        return name != null && latitude != null && longitude != null
+    }
 }

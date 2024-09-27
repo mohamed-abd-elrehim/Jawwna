@@ -29,6 +29,9 @@ class MainActivityViewModel(private val repository: IRepository) : ViewModel() {
     private val _updateLocale = MutableStateFlow<String>("")
     val updateLocale: StateFlow<String> get() = _updateLocale
 
+    private val _isNetworkAvailable = MutableStateFlow<Boolean>(false)
+    val isNetworkAvailable: StateFlow<Boolean> get() = _isNetworkAvailable
+
     fun setVideoUri(packageName: String, nightModeFlags: Int) {
         val uri = when (nightModeFlags) {
             Configuration.UI_MODE_NIGHT_YES -> Uri.parse("android.resource://$packageName/${R.raw.nightmodebacground}")
@@ -81,6 +84,9 @@ class MainActivityViewModel(private val repository: IRepository) : ViewModel() {
         _buttonNavigationBar.value = colorResId
 
 
+    }
+    fun isNetworkAvailable() {
+        _isNetworkAvailable.value = repository.isNetworkAvailable()
     }
 
 

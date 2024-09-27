@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+<!--
+    <style name="AppTextAppearance" parent="TextAppearance.AppCompat">
+        <item name="android:fontFamily">@font/normativeprobold</item> &lt;!&ndash; Default font &ndash;&gt;
+    </style>
+
+    <style name="AppTextAppearanceArabic" parent="TextAppearance.AppCompat">
+        <item name="android:fontFamily">@font/cairobold</item> &lt;!&ndash; Arabic font &ndash;&gt;
+    </style>
+-->
+
+
+    <style name="Theme.Jawwna.Arabic.Night" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimaryNightMode</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="colorAccent">@color/colorAccentNightMode</item>
+        <item name="android:colorBackground">@color/colorBackgroundNightMode</item>
+        <item name="android:textColor">@color/colorTextNightMode</item>
+
+        <item name="android:fontFamily">@font/cairobold</item> <!-- Arabic font -->
+
+    </style>
+</resources>

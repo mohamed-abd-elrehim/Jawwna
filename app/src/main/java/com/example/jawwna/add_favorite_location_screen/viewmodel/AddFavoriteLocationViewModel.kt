@@ -9,6 +9,7 @@ import com.example.jawwna.datasource.model.CurrentWeather
 import com.example.jawwna.datasource.model.FavoriteLocationModel
 import com.example.jawwna.datasource.model.FavoriteWeatherEntity
 import com.example.jawwna.datasource.model.ForecastResponse
+import com.example.jawwna.datasource.model.TemperatureResult
 import com.example.jawwna.datasource.model.WeatherResponse
 import com.example.jawwna.datasource.remotedatasource.ApiResponse
 import com.example.jawwna.datasource.repository.IRepository
@@ -74,11 +75,12 @@ class AddFavoriteLocationViewModel (private val repository: IRepository) : ViewM
                 val lon = repository.getLocationLongitude()
 
                 _weatherForecastHourlyData.value = ApiResponse.Loading
-                repository.getHourlyForecastByLatLon(lat, lon, apiKey, null, null).collect{data->
+                if (lat != null&&lon != null) {
+                        repository.getHourlyForecastByLatLon(lat, lon, apiKey, null, null).collect{data->
+                            _weatherForecastHourlyData.value = ApiResponse.Success(data)
+                            favoriteWeatherEntity.hourlyForecastList= listOf(data)
 
-
-                    _weatherForecastHourlyData.value = ApiResponse.Success(data)
-                    favoriteWeatherEntity.hourlyForecastList= listOf(data)
+                        }
 
                 }
             } catch (e: Exception) {
@@ -95,14 +97,17 @@ class AddFavoriteLocationViewModel (private val repository: IRepository) : ViewM
 
 
                 _currentWeatherData.value = ApiResponse.Loading
-                val data = repository.getCurrenWeatherByLatLon(lat, lon, apiKey, null, null)
-               /* val favoriteLocationModelDataList = mapToFavoriteData(data)
+                val data = lat?.let { latitude ->
+                    lon?.let { longitude ->
+                        repository.getCurrenWeatherByLatLon(latitude, longitude, apiKey, null, null)
+                    }
+                }  /* val favoriteLocationModelDataList = mapToFavoriteData(data)
                 _weatherFavoriteRow.value=favoriteLocationModelDataList
 
                 Log.d(TAG, "_weatherFavoriteRow: $favoriteLocationModelDataList")
 */
 
-                _currentWeatherData.value = ApiResponse.Success(data)
+                _currentWeatherData.value = ApiResponse.Success(data!!)
                 repository.setOldTemperatureUnit(TemperatureUnits.metric.toString())
                 repository.setOldWindSpeedUnit(WindSpeedUnits.metric.toString())
 
@@ -123,17 +128,20 @@ class AddFavoriteLocationViewModel (private val repository: IRepository) : ViewM
                 val lat = repository.getLocationLatitude()
                 val lon = repository.getLocationLongitude()
 
-                repository.getForecastDailyByLatLon(lat, lon, apiKey, null, null).collect{
-                        data->
+                if (lat != null && lon != null) {
+                    repository.getForecastDailyByLatLon(lat, lon, apiKey, null, null).collect{ data->
 
-                    favoriteWeatherEntity.dailyForecastList= listOf(data)
-                    _weatherForecast16DailyData.value = ApiResponse.Success(data)
+                        favoriteWeatherEntity.dailyForecastList= listOf(data)
+                        _weatherForecast16DailyData.value = ApiResponse.Success(data)
+                    }
                 }
             } catch (e: Exception) {
                 _weatherForecast16DailyData.value = ApiResponse.Error(e.message ?: "Unknown error")
             }
         }
     }
+
+
 
     private fun mapToFavoriteData(response: CurrentWeather): MutableList<FavoriteLocationModel> {
         // Assuming there's only one weather entry; otherwise, handle accordingly
@@ -150,6 +158,8 @@ class AddFavoriteLocationViewModel (private val repository: IRepository) : ViewM
         // Return a list containing the favoriteLocationModel
         return mutableListOf(favoriteLocationModel)
     }
+
+
 
     private fun mapToFavoriteDatav2(response: List<FavoriteWeatherEntity>): MutableList<FavoriteLocationModel> {
         return response.flatMap { weatherEntity -> // Iterate through each FavoriteWeatherEntity
@@ -194,8 +204,8 @@ class AddFavoriteLocationViewModel (private val repository: IRepository) : ViewM
             viewModelScope.launch {
                 repository.execute(PreferencesLocationEum.FAVOURITE)
                 favoriteWeatherEntity.cityName = repository.getLocationName().toString()
-                favoriteWeatherEntity.latitude = repository.getLocationLatitude()
-                favoriteWeatherEntity.longitude = repository.getLocationLongitude()
+                favoriteWeatherEntity.latitude = repository.getLocationLatitude()!!
+                favoriteWeatherEntity.longitude = repository.getLocationLongitude()!!
 
                 // Log the entity before insertion for debugging
                 Log.d(TAG, "Inserting FavoriteWeatherEntity: $favoriteWeatherEntity")
@@ -207,14 +217,32 @@ class AddFavoriteLocationViewModel (private val repository: IRepository) : ViewM
         }
     }
 
+    fun checkTemperatureUnit(temp: Double) : TemperatureResult {
+        val temperatureUnit = repository.getTemperatureUnit()
 
-    fun checkTemperatureUnit(temp:Double): String {
+        val convertedTemperature = when ( temperatureUnit) {
+            TemperatureUnits.metric.toString() -> UnitConvertHelper.convertTemperature(temp, repository.getOldTemperatureUnit(), TemperatureUnits.metric)
+            TemperatureUnits.imperial.toString() -> UnitConvertHelper.convertTemperature(temp, repository.getOldTemperatureUnit(), TemperatureUnits.imperial)
+            else -> UnitConvertHelper.convertTemperature(temp, repository.getOldTemperatureUnit(), TemperatureUnits.standard)
+        }
+
+        val unit = when (temperatureUnit) {
+            TemperatureUnits.metric.toString() -> "°C"
+            TemperatureUnits.imperial.toString() -> "°F"
+            else -> "°K"
+        }
+
+        return TemperatureResult(convertedTemperature, unit)
+    }
+
+
+   /* fun checkTemperatureUnit(temp:Double): String {
         return when (repository.getTemperatureUnit()) {
             TemperatureUnits.metric.toString() ->return "${UnitConvertHelper.convertTemperature(temp,repository.getOldTemperatureUnit(),TemperatureUnits.metric)}°C"
             TemperatureUnits.imperial.toString()->return "${UnitConvertHelper.convertTemperature(temp,repository.getOldTemperatureUnit(),TemperatureUnits.imperial)}°F"
             else -> "${UnitConvertHelper.convertTemperature(temp,repository.getOldTemperatureUnit(),TemperatureUnits.standard)}°K"
         }
-    }
+    }*/
 
     fun setCardSettingsFieldBackgroundLightMode(packageName: String, nightModeFlags: Int) {
         val colorResId = when (nightModeFlags) {
