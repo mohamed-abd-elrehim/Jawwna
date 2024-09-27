@@ -87,5 +87,8 @@
     <!-- New strings for location dialog -->
     <string name="location_dialog_title">Location is not available</string>
     <string name="location_dialog_message">Choose your location from map or GPS</string>
+    <string name="failed_to_retrieve_your_current_location_please_check_your_network_connection_or_select_a_location_from_the_map_manually">" Failed to retrieve your current location. Please check your network connection or select a location from the map manually"</string>
+    <string name="warning">Warning</string>
+    <string name="check_network">Check Network</string>
 
 </resources>

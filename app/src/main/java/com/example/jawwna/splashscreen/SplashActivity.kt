@@ -37,6 +37,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import android.Manifest
 import android.util.Log
+import com.google.android.gms.maps.model.LatLng
 
 class SplashActivity : AppCompatActivity() {
 
@@ -227,15 +228,33 @@ class SplashActivity : AppCompatActivity() {
             fusedLocationClient.lastLocation
                 .addOnSuccessListener { location: Location? ->
                     if (location != null) {
-                        // Use the location here
                         val latitude = location.latitude
                         val longitude = location.longitude
-                        // You can now use the coordinates (latitude, longitude)
-                    } else {
-                        // Handle case where location is null
+                        viewModel.setCurrenLocation(LatLng(latitude, longitude))
+                        startActivity(Intent(this@SplashActivity, MainActivity::class.java))
+                        finish()
                     }
                 }
                 .addOnFailureListener { e ->
+                    val customAlert = CustomAlertDialog(this)
+                    customAlert .showDialog(
+                        message = getString(R.string.failed_to_retrieve_your_current_location_please_check_your_network_connection_or_select_a_location_from_the_map_manually),
+                        title = getString(R.string.warning),
+                        isDarkTheme = isNightMode,
+                        positiveText = getString(R.string.map),
+                        positiveAction = {
+                            // Navigate to MainActivity
+                            startActivity(Intent(this@SplashActivity, MainActivity::class.java).apply {
+                                putExtra("MapFragment", "mapFragment") // Pass any data if necessary
+                            })
+                        },
+                        negativeText = getString(R.string.check_network),
+                        negativeAction = {
+                            val intent = Intent(Settings.ACTION_SETTINGS)
+                            startActivity(intent)
+                        }
+                    )
+
                     // Handle failure to get location
                     Log.e("SplashActivity", "Failed to get location: ${e.message}")
                 }
@@ -261,17 +280,17 @@ class SplashActivity : AppCompatActivity() {
 
     // Show a dialog to the user to grant location permission
     private fun showLocationPermissionDeniedDialog() {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle(getString(R.string.location_permission_required_title))
-            .setMessage(getString(R.string.location_permission_required_message))
-            .setPositiveButton(getString(R.string.settings)) { dialog, _ ->
+        val customAlert = CustomAlertDialog(this)
+        customAlert.showDialog(
+            message = getString(R.string.location_permission_required_message),
+            title = getString(R.string.location_permission_required_title),
+            isDarkTheme = isNightMode,
+            positiveText = getString(R.string.settings),
+            positiveAction = {
                 openAppSettings()
-                dialog.dismiss()
             }
-            .setNegativeButton(getString(R.string.cancel)) { dialog, _ -> dialog.dismiss() }
-        builder.create().show()
+        )
     }
-
     // Open the app settings for the user to enable permissions
     private fun openAppSettings() {
         val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
