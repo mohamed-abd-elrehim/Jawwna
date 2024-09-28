@@ -1,11 +1,7 @@
 // MapFragment.kt
 package com.example.jawwna.mapscreen
 
-import android.app.AlertDialog
-import android.content.Context
 import android.content.res.Configuration
-import android.location.Address
-import android.location.Geocoder
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,18 +10,13 @@ import android.view.ViewGroup
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
-import com.example.jawwna.BuildConfig
 import com.example.jawwna.R
-import com.example.jawwna.add_favorite_location_screen.AddFavoriteLocationFragmentDirections
 import com.example.jawwna.customui.CustomAlertDialog
 import com.example.jawwna.databinding.FragmentMapBinding
-import com.example.jawwna.datasource.remotedatasource.ApiResponse
 import com.example.jawwna.datasource.repository.Repository
 import com.example.jawwna.helper.PreferencesLocationEum
 import com.example.jawwna.mapscreen.viewmodel.MapViewModel
@@ -34,11 +25,9 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.coroutines.launch
-import java.util.Locale
 
 class MapFragment : Fragment() {
     private val TAG = "MapFragment"
@@ -50,6 +39,7 @@ class MapFragment : Fragment() {
     // View binding property
     lateinit var binding: FragmentMapBinding
     private var isDarkMode = false
+    private var locationActionMode= PreferencesLocationEum.MAP
 
     // ViewModel for MapFragment
     private lateinit var mapViewModel: MapViewModel
@@ -68,7 +58,19 @@ class MapFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        if (arguments != null) {
+            if (arguments!!.containsKey("actionCurrent"))
+            {
+                locationActionMode =
+                arguments!!.getString("actionCurrent")?.let { PreferencesLocationEum.valueOf(it) }!! // Retrieve String from Bundle
+            }else if (arguments!!.containsKey("actionFav")) {
+                    locationActionMode = PreferencesLocationEum.FAVOURITE
+            }else  {
+                locationActionMode = PreferencesLocationEum.MAP
+            }
 
+        }
+        Log.i("locationActionMode", "onViewCreated: " + locationActionMode)
 
         // Initialize mapViewModel using ViewModelProvider
         mapViewModel = ViewModelProvider(
@@ -234,7 +236,7 @@ class MapFragment : Fragment() {
                             currentPlaceName!!,
                             latitude,
                             longitude,
-                            args.actionFav
+                            locationActionMode
                         )
 
                         Toast.makeText(
@@ -244,7 +246,7 @@ class MapFragment : Fragment() {
                         ).show()
 
 
-                        when (args.actionFav) {
+                        when (locationActionMode) {
                             PreferencesLocationEum.FAVOURITE -> {
                                 val action =
                                     MapFragmentDirections.actionMapFragmentToAddFavoriteLocationFragment(
@@ -253,8 +255,13 @@ class MapFragment : Fragment() {
                                     )
                                 view?.findNavController()?.navigate(action)
                             }
-
-                            else -> {
+                            PreferencesLocationEum.CURRENT -> {
+                                val action =
+                                    MapFragmentDirections.actionMapFragmentToHomeFragment(
+                                        latitude.toFloat(),
+                                        longitude.toFloat())
+                                view?.findNavController()?.navigate(action)
+                            }else -> {
 
                             }
                         }

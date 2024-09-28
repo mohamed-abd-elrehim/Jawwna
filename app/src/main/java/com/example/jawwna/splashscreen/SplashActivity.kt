@@ -1,6 +1,5 @@
 package com.example.jawwna.splashscreen
 
-import NetworkChangeReceiver
 import android.content.Intent
 import android.content.res.Configuration
 import android.location.LocationManager
@@ -42,6 +41,7 @@ import android.net.ConnectivityManager
 import android.util.Log
 import android.view.View
 import com.example.jawwna.customui.CustomPopup
+import com.example.jawwna.helper.broadcastreceiver.NetworkChangeReceiver
 import com.example.jawwna.helper.broadcastreceiver.NetworkStateChangeListener
 import com.example.jawwna.helper.broadcastreceiver.SharedConnctionStateViewModel
 import com.google.android.gms.maps.model.LatLng

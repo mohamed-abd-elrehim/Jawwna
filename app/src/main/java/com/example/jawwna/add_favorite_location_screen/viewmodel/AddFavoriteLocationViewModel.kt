@@ -4,11 +4,13 @@ import android.content.res.Configuration
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.jawwna.BuildConfig
 import com.example.jawwna.R
 import com.example.jawwna.datasource.model.CurrentWeather
 import com.example.jawwna.datasource.model.FavoriteLocationModel
 import com.example.jawwna.datasource.model.FavoriteWeatherEntity
 import com.example.jawwna.datasource.model.ForecastResponse
+import com.example.jawwna.datasource.model.LocationDataHolder
 import com.example.jawwna.datasource.model.TemperatureResult
 import com.example.jawwna.datasource.model.WeatherResponse
 import com.example.jawwna.datasource.remotedatasource.ApiResponse
@@ -37,11 +39,6 @@ class AddFavoriteLocationViewModel (private val repository: IRepository) : ViewM
     private val _forecastList = MutableStateFlow<MutableList<FavoriteLocationModel>>(mutableListOf())
     val forecastList: StateFlow<MutableList<FavoriteLocationModel>> get() = _forecastList
 
-    fun addFavoriteLocation(location: FavoriteLocationModel) {
-        _forecastList.value.add(location) // Add the new location
-        _forecastList.value = _forecastList.value // Trigger re-emission of StateFlow
-    }
-
 
     //LiveDataGetWhterData
 
@@ -66,6 +63,24 @@ class AddFavoriteLocationViewModel (private val repository: IRepository) : ViewM
     val weatherFavoriteRow: StateFlow< MutableList<FavoriteLocationModel>> = _weatherFavoriteRow
 
     private var favoriteWeatherEntity: FavoriteWeatherEntity = FavoriteWeatherEntity("",emptyList(),emptyList(),emptyList(),0.0,0.0)
+
+    private val _isConnectionAvailable = MutableStateFlow<Boolean>(true)
+    private val _updateFavoriteWeather = MutableStateFlow<List<LocationDataHolder>>(emptyList())
+
+
+
+
+
+    fun setIsConnectionAvailable(isConnected: Boolean) {
+        _isConnectionAvailable.value = isConnected
+    }
+
+
+     fun addFavoriteLocation(location: FavoriteLocationModel) {
+           _forecastList.value.add(location) // Add the new location
+          _forecastList.value = _forecastList.value // Trigger re-emission of StateFlow
+    }
+
 
     fun fetchWeatherForecastHourlyData(apiKey: String) {
         viewModelScope.launch {
@@ -119,18 +134,16 @@ class AddFavoriteLocationViewModel (private val repository: IRepository) : ViewM
         }
     }
 
+
     fun featch16DailyWeatherData(apiKey: String) {
         viewModelScope.launch {
             try {
                 _weatherForecast16DailyData.value = ApiResponse.Loading
                 repository.execute(PreferencesLocationEum.FAVOURITE)
-
                 val lat = repository.getLocationLatitude()
                 val lon = repository.getLocationLongitude()
-
                 if (lat != null && lon != null) {
                     repository.getForecastDailyByLatLon(lat, lon, apiKey, null, null).collect{ data->
-
                         favoriteWeatherEntity.dailyForecastList= listOf(data)
                         _weatherForecast16DailyData.value = ApiResponse.Success(data)
                     }
@@ -160,8 +173,33 @@ class AddFavoriteLocationViewModel (private val repository: IRepository) : ViewM
     }
 
 
-
     private fun mapToFavoriteDatav2(response: List<FavoriteWeatherEntity>): MutableList<FavoriteLocationModel> {
+        return response.flatMap { weatherEntity -> // Iterate through each FavoriteWeatherEntity
+            weatherEntity.currentWeatherList.map { weatherList -> // Map each weatherList entry
+                FavoriteLocationModel(
+                    placeName = weatherEntity.displayName, // Get city name for each entity
+                    icon = weatherList.weather.firstOrNull()?.icon, // Safely retrieves the first weather icon
+                    description = weatherList.weather.firstOrNull()?.description, // Safely retrieves the description
+                    temp = checkTemperatureUnit(weatherList.main.temp) // Applies unit conversion/check to temperature
+                )
+            }
+        }.toMutableList() // Convert to MutableList
+    }
+
+
+    private fun mapToFavoriteDataLatLong(response: List<FavoriteWeatherEntity>): MutableList<LocationDataHolder> {
+        return response.flatMap { weatherEntity -> // Iterate through each FavoriteWeatherEntity
+            weatherEntity.currentWeatherList.map { weatherList -> // Map each weatherList entry
+                LocationDataHolder(
+                    locationName = weatherEntity.cityName, // Get city name for each entity
+                    latitude = weatherList.coord.lat, // Safely retrieves the first weather icon
+                    longitude = weatherList.coord.lon, // Safely retrieves the description
+                )
+            }
+        }.toMutableList() // Convert to MutableList
+    }
+
+    private fun mapToFavoriteLatandLon(response: List<FavoriteWeatherEntity>): MutableList<FavoriteLocationModel> {
         return response.flatMap { weatherEntity -> // Iterate through each FavoriteWeatherEntity
             weatherEntity.currentWeatherList.map { weatherList -> // Map each weatherList entry
                 FavoriteLocationModel(
@@ -174,11 +212,17 @@ class AddFavoriteLocationViewModel (private val repository: IRepository) : ViewM
         }.toMutableList() // Convert to MutableList
     }
 
-
     fun getAllFavoriteWeather() {
         viewModelScope.launch {
-            repository.getAllFavoriteWeather().collect { favoriteWeatherList ->
-
+                repository.getAllFavoriteWeather().collect { favoriteWeatherList ->
+                    if (_isConnectionAvailable.value) {
+                        _updateFavoriteWeather.value= mapToFavoriteDataLatLong(favoriteWeatherList)
+                        Log.d(TAG, "_updateFavoriteWeather: ${_updateFavoriteWeather.value}")
+                        fetchCurrentWeatherDataUbdate(BuildConfig.OPEN_WEATHER_API_KEY_PRO)
+                        fetchWeatherForecastHourlyDataUbdate(BuildConfig.OPEN_WEATHER_API_KEY_PRO)
+                        featch16DailyWeatherDataUbdate(BuildConfig.OPEN_WEATHER_API_KEY_PRO)
+                        insertWeatherResponseEntityUbdate()
+                    }
                 _weatherFavoriteRow.value = mapToFavoriteDatav2(favoriteWeatherList)
             }
         }
@@ -260,6 +304,116 @@ class AddFavoriteLocationViewModel (private val repository: IRepository) : ViewM
             else -> R.drawable.add_to_favorites_light_mode
         }
         _icon.value = colorResId
+    }
+
+
+
+
+
+
+    fun fetchWeatherForecastHourlyDataUbdate(apiKey: String) {
+        viewModelScope.launch {
+            try {
+                var lat = 0.0
+                var lon = 0.0
+                var cityName = ""
+                var updatedCityName=""
+                for(location in _updateFavoriteWeather.value){
+                    lat=location.latitude
+                    lon=location.longitude
+                    cityName=location.locationName!!
+                    updatedCityName = repository.getCountryNameFromLatLong( lat, lon)!!
+                }
+                _weatherForecastHourlyData.value = ApiResponse.Loading
+                if (lat != 0.0&&lon != 0.0&&cityName.isNotEmpty()) {
+                    repository.getHourlyForecastByLatLon(lat, lon, apiKey, null, null).collect{data->
+                        _weatherForecastHourlyData.value = ApiResponse.Success(data)
+                        favoriteWeatherEntity.hourlyForecastList= listOf(data)
+                        favoriteWeatherEntity.cityName=cityName
+                        favoriteWeatherEntity.latitude=lat
+                        favoriteWeatherEntity.longitude=lon
+                        favoriteWeatherEntity.displayName=updatedCityName
+
+                    }
+
+                }
+            } catch (e: Exception) {
+                _weatherForecastHourlyData.value = ApiResponse.Error(e.message ?: "Unknown error")
+            }
+        }
+    }
+    fun fetchCurrentWeatherDataUbdate(apiKey: String) {
+        viewModelScope.launch {
+            try {
+                var lat = 0.0
+                var lon = 0.0
+                var data: CurrentWeather? = null
+                for(location in _updateFavoriteWeather.value){
+                    lat=location.latitude
+                    lon=location.longitude
+                }
+
+                _currentWeatherData.value = ApiResponse.Loading
+                if (lat != 0.0&&lon != 0.0) {
+                    repository.getCurrenWeatherByLatLon(lat, lon, apiKey, null, null)
+                    data = lat?.let { latitude ->
+                        lon?.let { longitude ->
+                            repository.getCurrenWeatherByLatLon(lat, lon, apiKey, null, null)
+                        }
+                    }
+                }
+                if (data != null) {
+                    _currentWeatherData.value = ApiResponse.Success(data)
+                    repository.setOldTemperatureUnit(TemperatureUnits.metric.toString())
+                    repository.setOldWindSpeedUnit(WindSpeedUnits.metric.toString())
+                    favoriteWeatherEntity.currentWeatherList= listOf(data)
+
+                }
+
+            } catch (e: Exception) {
+                _currentWeatherData.value = ApiResponse.Error(e.message ?: "Unknown error")
+            }
+        }
+    }
+
+
+    fun featch16DailyWeatherDataUbdate(apiKey: String) {
+        viewModelScope.launch {
+            try {
+                var lat = 0.0
+                var lon = 0.0
+                for(location in _updateFavoriteWeather.value){
+                    lat=location.latitude
+                    lon=location.longitude
+                }
+
+                _weatherForecast16DailyData.value = ApiResponse.Loading
+
+
+                if (lat != 0.0 && lon != 0.0) {
+                    repository.getForecastDailyByLatLon(lat, lon, apiKey, null, null).collect{ data->
+                        favoriteWeatherEntity.dailyForecastList= listOf(data)
+                        _weatherForecast16DailyData.value = ApiResponse.Success(data)
+                    }
+                }
+            } catch (e: Exception) {
+                _weatherForecast16DailyData.value = ApiResponse.Error(e.message ?: "Unknown error")
+            }
+        }
+    }
+    fun insertWeatherResponseEntityUbdate() {
+        if (favoriteWeatherEntity.currentWeatherList.isNotEmpty() &&
+            favoriteWeatherEntity.dailyForecastList.isNotEmpty() &&
+            favoriteWeatherEntity.hourlyForecastList.isNotEmpty()) {
+            viewModelScope.launch {
+                // Log the entity before insertion for debugging
+                Log.d(TAG, "Inserting FavoriteWeatherEntity: $favoriteWeatherEntity")
+
+                repository.insertFavoriteWeather(favoriteWeatherEntity)
+            }
+        } else {
+            Log.d(TAG, "FavoriteWeatherEntity lists are not fully populated")
+        }
     }
 
 }

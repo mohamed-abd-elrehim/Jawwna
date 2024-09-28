@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
@@ -23,6 +24,8 @@ import com.example.jawwna.databinding.FragmentHomeBinding
 import com.example.jawwna.databinding.FragmentMapBinding
 import com.example.jawwna.datasource.model.FavoriteLocationModel
 import com.example.jawwna.datasource.repository.Repository
+import com.example.jawwna.helper.PreferencesLocationEum
+import com.example.jawwna.helper.broadcastreceiver.SharedConnctionStateViewModel
 import com.example.jawwna.homescreen.adapter.DailyWeatherForecastAdapter
 import com.example.jawwna.homescreen.adapter.FavoriteLocationAdapter
 import com.example.jawwna.homescreen.adapter.HourlyWeatherForecastAdapter
@@ -42,10 +45,12 @@ class AddFavoriteLocationFragment : Fragment() {
     private lateinit var favoriteLocationRecyclerView: RecyclerView
     private var isDarkMode=false
 
+    private val sharedConnctionStateViewModel: SharedConnctionStateViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
     }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -65,6 +70,12 @@ class AddFavoriteLocationFragment : Fragment() {
                 AddFavoriteLocationViewModelFactory(Repository.getRepository(requireActivity().application))
             )[AddFavoriteLocationViewModel::class.java]
 
+
+        lifecycleScope.launch {
+            sharedConnctionStateViewModel.sharedConnctionState.collect { isConnected ->
+              viewModel.setIsConnectionAvailable(isConnected)
+            }
+        }
 
         // Initialize the DailyWeatherForecastAdapter and RecyclerView
         favoriteLocationRecyclerView = binding.recyclerViewFavorites
@@ -161,7 +172,7 @@ class AddFavoriteLocationFragment : Fragment() {
             binding.fabAddLocation.setOnClickListener {
                 Log.d(TAG, "onViewCreated: fabAddLocation")
                 val action =
-                    AddFavoriteLocationFragmentDirections.actionAddFavoriteLocationFragmentToMapFragment()
+                    AddFavoriteLocationFragmentDirections.actionAddFavoriteLocationFragmentToMapFragment(PreferencesLocationEum.FAVOURITE)
                 view.findNavController().navigate(action)
             }
 

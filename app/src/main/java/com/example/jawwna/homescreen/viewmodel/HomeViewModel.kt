@@ -77,6 +77,14 @@ class HomeViewModel( private val repository: IRepository) :ViewModel() {
 
     private var weatherResponseEntity: WeatherResponseEntity = WeatherResponseEntity("",emptyList(),emptyList(),emptyList(),0.0,0.0)
 
+    private  var modeData =PreferencesLocationEum.CURRENT
+
+    fun setMode(preferencesLocationEum: PreferencesLocationEum)
+    {
+        modeData=preferencesLocationEum
+
+    }
+
 
     fun fetchWeatherForecastHourlyData(apiKey: String) {
         viewModelScope.launch {

@@ -20,7 +20,9 @@ data class WeatherResponseEntity(
     @TypeConverters(ForcastHourlyDataConverter::class)
     var hourlyForecastList: List<ForecastResponse>, // List of hourly weather forecasts
     var latitude:Double,
-    var longitude: Double
+    var longitude: Double,
+    var displayName: String? = null
+
 )
 
 @Entity(tableName = "FavoriteWeatherEntity")
@@ -33,7 +35,8 @@ data class FavoriteWeatherEntity(
     @TypeConverters(ForcastHourlyDataConverter::class)
     var hourlyForecastList: List<ForecastResponse>, // List of hourly weather forecasts
     var latitude:Double,
-    var longitude: Double
+    var longitude: Double,
+    var displayName: String? = null
 
 )
 

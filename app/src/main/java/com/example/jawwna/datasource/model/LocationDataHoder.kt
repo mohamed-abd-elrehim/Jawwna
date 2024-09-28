@@ -5,5 +5,7 @@ import java.io.Serializable
 data class LocationDataHolder(
     val latitude: Double,
     val longitude: Double,
-    val locationName: String? = null
+    val locationName: String? = null,
+    val updatedLocationName: String? = null
+
 ): Serializable

@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.jawwna.BuildConfig
@@ -28,6 +29,7 @@ import com.example.jawwna.homescreen.adapter.DailyWeatherForecastAdapter
 import com.example.jawwna.homescreen.adapter.HourlyWeatherForecastAdapter
 import com.example.jawwna.homescreen.viewmodel.HomeViewModelFactory
 import com.example.jawwna.homescreen.viewmodel.HomeViewModel
+import com.example.jawwna.mapscreen.MapFragmentArgs
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onCompletion
@@ -51,6 +53,7 @@ class HomeFragment : Fragment() {
     private lateinit var customPopup: CustomPopup
     private var isDarkMode = false
 
+    private val args: HomeFragmentArgs by navArgs() //  Safe Args
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -65,6 +68,17 @@ class HomeFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        if (args != null){
+            if (args.isFavorite == false) {
+
+
+            } else {
+
+            }
+
+    }
+
         customPopup = CustomPopup(requireContext())
 
         viewModel =

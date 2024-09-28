@@ -1,7 +1,5 @@
 package com.example.jawwna.mainactivity
 
-import NetworkChangeReceiver
-import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.res.Configuration
@@ -13,36 +11,26 @@ import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.view.View
-import android.view.animation.LinearInterpolator
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.core.content.ContextCompat
-
-import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
+import androidx.navigation.Navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.example.jawwna.R
 import com.example.jawwna.customui.CustomAlertDialog
 import com.example.jawwna.customui.CustomSnackbar
 import com.example.jawwna.databinding.ActivityMainBinding
 import com.example.jawwna.datasource.repository.Repository
-import com.example.jawwna.helper.UpdateLocale
+import com.example.jawwna.helper.PreferencesLocationEum
+import com.example.jawwna.helper.broadcastreceiver.NetworkChangeReceiver
 import com.example.jawwna.helper.broadcastreceiver.NetworkStateChangeListener
 import com.example.jawwna.helper.broadcastreceiver.SharedConnctionStateViewModel
 import com.example.jawwna.mainactivity.viewmodel.MainActivityViewModel
 import com.example.jawwna.mainactivity.viewmodel.MainActivityViewModelFactory
-import com.example.jawwna.settingsfragment.viewmodel.SettingsViewModel
-import com.example.jawwna.settingsfragment.viewmodel.SettingsViewModelFactory
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.util.Locale
 
@@ -56,8 +44,6 @@ class MainActivity : AppCompatActivity() , NetworkStateChangeListener {
     private lateinit var bottomNavigationView: BottomNavigationView
     private val scaleDuration: Long = 250
     private val TAG = "MainActivity"
-
-
     private lateinit var rootLayout: View
     private var isNetworkAvailable: Boolean = true
     private lateinit var networkChangeReceiver: NetworkChangeReceiver
@@ -65,9 +51,35 @@ class MainActivity : AppCompatActivity() , NetworkStateChangeListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Initialize the binding
+        mBinding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(mBinding.root)
+        rootLayout = mBinding.root
+        // Get the NavController from the NavHostFragment
+        val navHostFragment = supportFragmentManager
+            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        navController = navHostFragment.navController
 
         networkChangeReceiver = NetworkChangeReceiver(this)
         val customAlert = CustomAlertDialog(this)
+
+
+        // Access the VideoView using View Binding
+        val videoView = mBinding.backgroundVideo
+        // Initialize bottomNavigationView
+        bottomNavigationView = mBinding.bottomNavigationView
+
+        if (intent != null) {
+        intent.getStringExtra("MapFragment")?.let {
+            if (it == "mapFragment") {
+                val bundle = Bundle()
+                bundle.putString("actionCurrent", PreferencesLocationEum.CURRENT.toString());
+                navController.navigate(R.id.mapFragment, bundle)
+
+            }
+        }
+            }
+
 
 
         viewModel =
@@ -89,6 +101,7 @@ class MainActivity : AppCompatActivity() , NetworkStateChangeListener {
                 }
             }
         }
+
         viewModel.setUpdateLocale(Locale.getDefault().language)
         lifecycleScope.launch {
             viewModel.updateLocale.collect { language ->
@@ -101,21 +114,8 @@ class MainActivity : AppCompatActivity() , NetworkStateChangeListener {
         // Log to check the current default language
         Log.i(TAG, "Current Locale: ${Locale.getDefault().language}")
 
-        // Initialize the binding
-        mBinding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(mBinding.root)
-        rootLayout = mBinding.root
 
-        // Access the VideoView using View Binding
-        val videoView = mBinding.backgroundVideo
 
-        // Initialize bottomNavigationView
-        bottomNavigationView = mBinding.bottomNavigationView
-
-        // Get the NavController from the NavHostFragment
-        val navHostFragment = supportFragmentManager
-            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        navController = navHostFragment.navController
 
         // Set up a listener for the global layout to detect if the keyboard is open
         bottomNavigationView.viewTreeObserver.addOnGlobalLayoutListener {
