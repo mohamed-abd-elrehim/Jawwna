@@ -104,5 +104,9 @@
     <string name="item_clicked">Item clicked: %1$s</string>
     <string name="min_20_c_max_30_c">Min: 20°C, Max: 30°C</string>
     <string name="weather_icon">Weather Icon</string>
+    <string name="you_cannot_select_a_past_time">You cannot select a past time.</string>
+    <string name="alarm_cancelled">Alarm Cancelled</string>
+    <string name="alarm_reminder">Alarm Reminder</string>
+    <string name="reminder_for_at">Reminder for %1$s at %2$s %3$s</string>
 
 </resources>

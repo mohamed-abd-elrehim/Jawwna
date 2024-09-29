@@ -29,5 +29,7 @@ interface ILocalDataSource {
 
 
      suspend fun changeAlarmStatus(date: String, time: String, newStatus: Boolean)
+     suspend fun getAlarmByDateTimeAndType(alarmDate: String, alarmTime: String, type: String): AlarmEntity?
+
 
 }

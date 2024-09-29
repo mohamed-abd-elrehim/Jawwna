@@ -71,4 +71,10 @@ interface WeatherDAO {
 
     @Query("SELECT * FROM alarm WHERE date = :alarmDate AND time = :alarmTime") // Updated to use date and time
     suspend fun getAlarmByDateTime(alarmDate: String, alarmTime: String): AlarmEntity?
+
+    // Method to get an alarm by date, time, and type
+    @Query("SELECT * FROM alarm WHERE date = :alarmDate AND time = :alarmTime AND type = :type")
+    suspend fun getAlarmByDateTimeAndType(alarmDate: String, alarmTime: String, type: String): AlarmEntity?
+
+
 }

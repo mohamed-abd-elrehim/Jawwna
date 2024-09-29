@@ -81,6 +81,14 @@ object LocalDataSource : ILocalDataSource {
         weatherDAO.changeAlarmStatus(date, time, newStatus)
     }
 
+    override suspend fun getAlarmByDateTimeAndType(
+        alarmDate: String,
+        alarmTime: String,
+        type: String
+    ): AlarmEntity? {
+        return weatherDAO.getAlarmByDateTimeAndType(alarmDate, alarmTime, type)
+    }
+
 
 }
 

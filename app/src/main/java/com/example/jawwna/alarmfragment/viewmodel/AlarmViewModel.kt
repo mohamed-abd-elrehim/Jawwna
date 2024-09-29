@@ -33,7 +33,7 @@ class AlarmViewModel(private val repository: IRepository) : ViewModel() {
     val alarmsDetaHolder: StateFlow<AlarmDataHolder?> get() = _alarmsDetaHolder
 
     private val selectedDate = MutableStateFlow<String?>(null)
-
+    val _alarmType = MutableStateFlow<String?>(null)
 
     init {
         loadAlarms()
@@ -94,6 +94,11 @@ class AlarmViewModel(private val repository: IRepository) : ViewModel() {
         _dateStateFlow.value = formattedDates
     }
 
+    fun setAlarmType(type: String) {
+        // Update the StateFlow with the selected alarm type
+        _alarmType.value = type
+    }
+
 
     fun setSelectedDate(date: String) {
         // Update the StateFlow with the selected date
@@ -120,12 +125,15 @@ class AlarmViewModel(private val repository: IRepository) : ViewModel() {
                     // Check for an exact date match
                     if (date==dateFormat.format(dateDatabase)) {
                         // Create the AlarmDataHolder if a match is found
-                        alarmDataHolder = AlarmDataHolder(
-                            icon = dailyForecastData.weather[0].icon,
-                            description = dailyForecastData.weather[0].description,
-                            maxTemp = dailyForecastData.temp.max.toString(),
-                            minTemp = dailyForecastData.temp.min.toString()
-                        )
+                        alarmDataHolder = _alarmType.value?.let {
+                            AlarmDataHolder(
+                                icon = dailyForecastData.weather[0].icon,
+                                description = dailyForecastData.weather[0].description,
+                                maxTemp = dailyForecastData.temp.max.toString(),
+                                minTemp = dailyForecastData.temp.min.toString(),
+                                type = it
+                            )
+                        }
                     }
                 }
             }

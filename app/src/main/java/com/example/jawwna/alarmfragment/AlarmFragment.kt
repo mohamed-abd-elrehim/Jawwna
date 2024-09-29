@@ -30,11 +30,14 @@ import kotlinx.coroutines.launch
 import java.util.*
 import android.app.Activity
 import android.app.Application
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
 import android.view.WindowManager
+import android.widget.RadioGroup
 import androidx.lifecycle.lifecycleScope
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.Worker
@@ -51,6 +54,8 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import androidx.work.Configuration
 import androidx.work.ExistingWorkPolicy
+import com.example.jawwna.helper.AlarmType
+import com.example.jawwna.helper.NotificationWorker
 
 class AlarmFragment : Fragment() {
 
@@ -65,6 +70,7 @@ class AlarmFragment : Fragment() {
     private var selectedDay = 0
     private val REQUEST_CODE = 100
 
+    private lateinit var radioGroup: RadioGroup
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -78,6 +84,18 @@ class AlarmFragment : Fragment() {
 
         super.onViewCreated(view, savedInstanceState)
         binding.cardView.visibility = View.GONE
+        radioGroup= binding.radioGroup
+        radioGroup.setOnCheckedChangeListener { _, checkedId ->
+            when (checkedId) {
+                R.id.notification -> {
+                    alarmViewModel.setAlarmType(AlarmType.NOTIFICATION.toString())
+                }
+
+                R.id.alarm -> {
+                    alarmViewModel.setAlarmType( AlarmType.ALARM.toString())
+                }
+            }
+        }
 
         alarmViewModel = ViewModelProvider(
             this,
@@ -97,12 +115,14 @@ class AlarmFragment : Fragment() {
             object : AlarmAdapter.OnDeleteItemClickListener {
                 override fun onItemClick(alarm: com.example.jawwna.datasource.model.AlarmEntity) {
                     cancelAlarm(alarm.date, alarm.time)
+                    alarmViewModel.deleteAlarm( alarm)
                     // Handle the item click, show a Toast or navigate to another screen
+                    // Don't forget to call show() on the Toast
                     Toast.makeText(
                         requireContext(),
-                        getString(R.string.item_clicked, alarm.date),
+                        getString(R.string.alarm_cancelled),
                         Toast.LENGTH_SHORT
-                    ).show() // Don't forget to call show() on the Toast
+                    ).show()
                 }
             }
         )
@@ -212,7 +232,7 @@ class AlarmFragment : Fragment() {
                         // Show an error message if the selected time is in the past
                         Toast.makeText(
                             requireContext(),
-                            "You cannot select a past time.",
+                            getString(R.string.you_cannot_select_a_past_time),
                             Toast.LENGTH_SHORT
                         ).show()
                     } else {
@@ -267,7 +287,8 @@ class AlarmFragment : Fragment() {
                             icon = holder.icon,
                             description = holder.description,
                             maxTemp = holder.maxTemp,
-                            minTemp = holder.minTemp
+                            minTemp = holder.minTemp ,
+                            type = holder.type
                         )
 
                         // Save the alarm through ViewModel
@@ -278,22 +299,42 @@ class AlarmFragment : Fragment() {
                             Toast.LENGTH_SHORT
                         ).show()
 
-                        // Enqueue the worker
-                        val data = Data.Builder()
-                            .putString("date", selectedDate)
-                            .putString("time", selectedTime)
-                            .build()
+                        when (alarmEntity.type)
+                        {
+                            AlarmType.NOTIFICATION.toString() -> {
+                                // Enqueue the worker for notification
+                                val data = Data.Builder()
+                                    .putString("date", selectedDate)
+                                    .putString("time", selectedTime)
+                                    .build()
 
-                        val alarmWorkRequest = OneTimeWorkRequestBuilder<AlarmWorker>()
-                            .setInputData(data)
-                            .build()
+                                val notificationWorkRequest = OneTimeWorkRequestBuilder<NotificationWorker>()
+                                    .setInputData(data)
+                                    .build()
 
-                        val alarmId = generateAlarmId(selectedDate, selectedTime) // You can call the static method directly
-                        WorkManager.getInstance(requireContext()).enqueueUniqueWork(alarmId, ExistingWorkPolicy.REPLACE, alarmWorkRequest)
+                                val notificationId = generateAlarmId(selectedDate, selectedTime)
+                                WorkManager.getInstance(requireContext()).enqueueUniqueWork(
+                                    notificationId, ExistingWorkPolicy.REPLACE, notificationWorkRequest
+                                )
+                            }
+                            AlarmType.ALARM.toString() -> {
+                                // Enqueue the worker
+                                val data = Data.Builder()
+                                    .putString("date", selectedDate)
+                                    .putString("time", selectedTime)
+                                    .build()
 
+                                val alarmWorkRequest = OneTimeWorkRequestBuilder<AlarmWorker>()
+                                    .setInputData(data)
+                                    .build()
 
+                                val alarmId = generateAlarmId(selectedDate, selectedTime) // You can call the static method directly
+                                WorkManager.getInstance(requireContext()).enqueueUniqueWork(alarmId, ExistingWorkPolicy.REPLACE, alarmWorkRequest)
 
-                        // Reset the button texts
+                            }
+
+                        }
+                               // Reset the button texts
                         binding.buttonSelectDate.text = getString(R.string.select_date)
                         binding.buttonSelectTime.text = getString(R.string.select_time)
                     }
@@ -319,6 +360,20 @@ class AlarmFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
     }
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channelId = "ALARM_NOTIFICATION_CHANNEL"
+            val channelName = "Alarm Notifications"
+            val importance = NotificationManager.IMPORTANCE_HIGH
+            val channel = NotificationChannel(channelId, channelName, importance).apply {
+                description = "Channel for Alarm Notifications"
+            }
+            val notificationManager =
+                requireContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
 }
 
 /*

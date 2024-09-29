@@ -80,5 +80,28 @@
     <!-- New strings for location dialog in Arabic -->
     <string name="location_dialog_title">الموقع غير متاح</string>
     <string name="location_dialog_message">اختر موقعك من الخريطة أو GPS</string>
+    <string name="failed_to_retrieve_your_current_location_please_check_your_network_connection_or_select_a_location_from_the_map_manually">
+        فشل في استرداد موقعك الحالي. يرجى التحقق من اتصال الشبكة الخاص بك أو تحديد موقع من الخريطة يدويًا.
+    </string>
+    <string name="warning">تحذير</string>
+    <string name="check_network">تحقق من الشبكة</string>
+    <string name="current_weather">الطقس الحالي</string>
+    <string name="favorite_weather">الطقس المفضل</string>
+    <string name="notification">إشعار</string>
+    <string name="alarm">منبه</string>
+    <string name="select_date">حدد التاريخ</string>
+    <string name="select_time">حدد الوقت</string>
+    <string name="add_alarm">إضافة منبه</string>
+    <string name="delete_alarm">حذف المنبه</string>
+    <string name="please_select_both_date_and_time">يرجى تحديد كل من التاريخ والوقت</string>
+    <string name="alarm_saved">تم حفظ المنبه!</string>
+    <string name="invalid_date">تاريخ غير صالح</string>
+    <string name="item_clicked">تم النقر على العنصر: %1$s</string>
+    <string name="min_20_c_max_30_c">الحد الأدنى: 20°C، الحد الأقصى: 30°C</string>
+    <string name="weather_icon">أيقونة الطقس</string>
+    <string name="you_cannot_select_a_past_time">لا يمكنك اختيار وقت ماضٍ.</string>
+    <string name="alarm_cancelled">تم إلغاء المنبه</string>
+    <string name="alarm_reminder">تذكير المنبه</string>
+    <string name="reminder_for_at">تذكير لـ %1$s في %2$s %3$s</string>
 </resources>
 

@@ -16,6 +16,7 @@ data class AlarmEntity(
     val icon: String,
     val maxTemp: String,
     val minTemp: String,
-    val description: String
+    val description: String,
+    val type: String
 )
 

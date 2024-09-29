@@ -23,6 +23,7 @@ class AlarmAdapter(
         val textViewDate: TextView = itemView.findViewById(R.id.textViewDate)
         val textViewTime: TextView = itemView.findViewById(R.id.textViewTime)
         val iconDelete: ImageView = itemView.findViewById(R.id.iconDelete)
+        val textViewType: TextView = itemView.findViewById(R.id.textViewType)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AlarmViewHolder {
@@ -35,6 +36,7 @@ class AlarmAdapter(
         val alarm = alarms[position]
         holder.textViewDate.text = alarm.date
         holder.textViewTime.text = alarm.time
+        holder.textViewType.text = alarm.type
 
         // Correctly reference deleteItemClickListener
         holder.iconDelete.setOnClickListener {
