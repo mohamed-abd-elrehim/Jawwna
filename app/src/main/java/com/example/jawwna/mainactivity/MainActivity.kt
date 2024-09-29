@@ -19,7 +19,9 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation.findNavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.work.*
 import com.example.jawwna.R
+import com.example.jawwna.alarmfragment.helper.AlarmWorkerFactory
 import com.example.jawwna.customui.CustomAlertDialog
 import com.example.jawwna.customui.CustomSnackbar
 import com.example.jawwna.databinding.ActivityMainBinding
@@ -34,7 +36,9 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import java.util.Locale
-
+import androidx.work.*
+import androidx.work.WorkManager
+import androidx.work.WorkManagerInitializer
 
 class MainActivity : AppCompatActivity(), NetworkStateChangeListener {
 
@@ -52,6 +56,8 @@ class MainActivity : AppCompatActivity(), NetworkStateChangeListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
         // Initialize the binding
         mBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(mBinding.root)

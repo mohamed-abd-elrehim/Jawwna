@@ -56,6 +56,10 @@ object LocalDataSource : ILocalDataSource {
         weatherDAO.deleteFavoriteWeatherByCityName(cityName)
     }
 
+    override suspend fun getAlarmByDateTime(alarmDate: String, alarmTime: String): AlarmEntity? {
+        return weatherDAO.getAlarmByDateTime(alarmDate, alarmTime)
+    }
+
     override suspend fun deleteAlarmByDateTime(alarmDate: String, alarmTime: String) {
         weatherDAO.deleteAlarmByDateTime(alarmDate, alarmTime)
     }
@@ -71,6 +75,10 @@ object LocalDataSource : ILocalDataSource {
 
     override suspend fun deleteAlarm(alarm: AlarmEntity) {
         weatherDAO.deleteAlarm(alarm)
+    }
+
+    override suspend fun changeAlarmStatus(date: String, time: String, newStatus: Boolean) {
+        weatherDAO.changeAlarmStatus(date, time, newStatus)
     }
 
 

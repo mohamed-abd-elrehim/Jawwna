@@ -20,11 +20,14 @@ interface ILocalDataSource {
      suspend fun deleteFavoriteWeatherByCityName(cityName: String)
 
 
+     suspend fun getAlarmByDateTime(alarmDate: String, alarmTime: String): AlarmEntity?
      suspend fun deleteAlarmByDateTime(alarmDate: String, alarmTime: String)
+
      suspend fun insertAlarm(alarm: AlarmEntity)
      fun getAllAlarms(): Flow<List<AlarmEntity>>
      suspend fun deleteAlarm(alarm: AlarmEntity)
 
 
+     suspend fun changeAlarmStatus(date: String, time: String, newStatus: Boolean)
 
 }

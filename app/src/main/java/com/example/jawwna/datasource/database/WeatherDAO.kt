@@ -65,4 +65,10 @@ interface WeatherDAO {
     @Query("DELETE FROM alarm WHERE date = :alarmDate AND time = :alarmTime") // Updated to use date and time
     suspend fun deleteAlarmByDateTime(alarmDate: String, alarmTime: String)
 
+    // New function to change alarm status
+    @Query("UPDATE alarm SET isActive = :newStatus WHERE date = :date AND time = :time")
+    suspend fun changeAlarmStatus(date: String, time: String, newStatus: Boolean)
+
+    @Query("SELECT * FROM alarm WHERE date = :alarmDate AND time = :alarmTime") // Updated to use date and time
+    suspend fun getAlarmByDateTime(alarmDate: String, alarmTime: String): AlarmEntity?
 }

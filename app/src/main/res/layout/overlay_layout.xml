@@ -1,0 +1,47 @@
+<!-- res/layout/overlay_layout.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/alarmOverlay"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/card_settings_field_background_light_mode"
+    android:padding="16dp">
+
+    <!-- Weather Icon (Downloaded from the Internet) -->
+    <ImageView
+        android:id="@+id/weatherIcon"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_gravity="center"
+        android:contentDescription="@string/weather_icon" />
+
+    <!-- Min and Max Temperature -->
+    <TextView
+        android:id="@+id/temperatureText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/min_20_c_max_30_c"
+        android:textSize="18sp"
+        android:layout_gravity="center"
+        android:paddingTop="8dp" />
+
+    <!-- Weather Description -->
+    <TextView
+        android:id="@+id/weatherDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/clouds"
+        android:textSize="16sp"
+        android:layout_gravity="center"
+        android:paddingTop="8dp" />
+
+    <!-- Dismiss Button -->
+    <Button
+        android:id="@+id/dismissButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/dismiss"
+        android:textSize="16sp"
+        android:layout_gravity="center"
+        android:paddingTop="16dp" />
+</LinearLayout>

@@ -205,6 +205,10 @@ class Repository private constructor(val application: Application) : IRepository
         LocalDataSource.deleteFavoriteWeatherByCityName(cityName)
     }
 
+    override suspend fun getAlarmByDateTime(alarmDate: String, alarmTime: String): AlarmEntity? {
+        return LocalDataSource.getAlarmByDateTime(alarmDate, alarmTime)
+    }
+
     override  suspend fun deleteAlarmByDateTime(alarmDate: String, alarmTime: String) {
         LocalDataSource.deleteAlarmByDateTime(alarmDate, alarmTime)
     }
@@ -219,6 +223,10 @@ class Repository private constructor(val application: Application) : IRepository
 
     override suspend fun deleteAlarm(alarm: AlarmEntity) {
         LocalDataSource.deleteAlarm(alarm)
+    }
+
+    override suspend fun changeAlarmStatus(date: String, time: String, newStatus: Boolean) {
+        LocalDataSource.changeAlarmStatus(date, time, newStatus)
     }
 
     // save settings

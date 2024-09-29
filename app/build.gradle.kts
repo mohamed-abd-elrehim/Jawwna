@@ -137,6 +137,10 @@ dependencies {
     // mapbox
     //implementation("com.mapbox.maps:android:11.6.1")
 
+    //workManager
+    implementation ("androidx.work:work-runtime-ktx:2.7.1")
+//workManager
+    implementation( "androidx.window:window:1.0.0")
 
 }
 

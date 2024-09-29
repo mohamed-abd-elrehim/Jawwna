@@ -102,5 +102,7 @@
     <string name="alarm_saved">Alarm saved!</string>
     <string name="invalid_date">Invalid date</string>
     <string name="item_clicked">Item clicked: %1$s</string>
+    <string name="min_20_c_max_30_c">Min: 20°C, Max: 30°C</string>
+    <string name="weather_icon">Weather Icon</string>
 
 </resources>
