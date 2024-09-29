@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_nav_host"
-    app:startDestination="@id/homeFragment">
+    app:startDestination="@id/alarmFragment">
 
     <fragment
         android:id="@+id/homeFragment"
@@ -61,9 +61,26 @@
             android:id="@+id/action_addFavoriteLocationFragment_to_mapFragment"
             app:destination="@id/mapFragment" />
         <argument
-            android:name="Latitude"
-            app:argType="float" />
-        <argument android:name="Longitud"
-            app:argType="float" />
+            android:name="LatitudeFav"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <argument android:name="LongitudFav"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <action
+            android:id="@+id/action_addFavoriteLocationFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+        <argument
+            android:name="locationName"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </fragment>
+    <fragment
+        android:id="@+id/alarmFragment"
+        android:name="com.example.jawwna.alarmfragment.AlarmFragment"
+        android:label="fragment_alarm"
+        tools:layout="@layout/fragment_alarm" />
 </navigation>

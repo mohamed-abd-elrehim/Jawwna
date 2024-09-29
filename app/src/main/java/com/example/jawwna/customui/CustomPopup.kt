@@ -76,6 +76,7 @@ import com.example.jawwna.R
                 popupView.startAnimation(fadeOut)
             }
         }
+
     }
 
 

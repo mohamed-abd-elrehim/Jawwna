@@ -5,5 +5,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface IGeocodingService {
     fun searchPlace(query: String): Flow<LatLng?>
-    suspend fun getCountryNameFromLatLong(latitude: Double, longitude: Double): String?
+    fun getCountryNameFromLatLong(latitude: Double, longitude: Double): String?
 }

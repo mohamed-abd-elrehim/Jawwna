@@ -36,6 +36,8 @@ class DailyWeatherForecastAdapter(
     }
 
     override fun onBindViewHolder(holder: ForecastViewHolder, position: Int) {
+        Log.d("DailyWeatherForecastAdapter", "Binding position: $position, forecast: ${forecastList.size}")
+
         val forecast = forecastList[position]
         holder.bind(forecast)
         holder.itemView.setOnClickListener {
@@ -93,6 +95,7 @@ class DailyWeatherForecastAdapter(
 
     // Method to update data
     fun updateData(newForecastList: List<DailyForecastData>) {
+        Log.d("DailyWeatherForecastAdapter", "updateData: ${newForecastList.size}")
         forecastList = newForecastList
         notifyDataSetChanged()
     }

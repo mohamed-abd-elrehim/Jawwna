@@ -11,6 +11,7 @@ import com.example.jawwna.datasource.localdatasoource.shared_preferences_helper.
 import com.example.jawwna.datasource.localdatasoource.shared_preferences_helper.location.PreferencesLocationHelper
 import com.example.jawwna.datasource.localdatasoource.shared_preferences_helper.settings.IPreferencesSettingsHelper
 import com.example.jawwna.datasource.localdatasoource.shared_preferences_helper.settings.PreferencesSettingsHelper
+import com.example.jawwna.datasource.model.AlarmEntity
 import com.example.jawwna.datasource.model.CurrentWeather
 import com.example.jawwna.datasource.model.ForecastResponse
 import com.example.jawwna.datasource.model.WeatherResponse
@@ -150,6 +151,16 @@ class Repository private constructor(val application: Application) : IRepository
 
     }
 
+    override suspend fun getForecastDailyByCityName(
+        cityName: String,
+        apiKey: String,
+        lang: String?,
+        units: String?
+    ): Flow<WeatherResponse> {
+        return RemoteDataSource.getForecastDailyByCityName(cityName, apiKey,  getLanguageCode(), units)
+
+    }
+
     override suspend fun insertWeatherLocalData(currentWeather: WeatherResponseEntity) {
         LocalDataSource.insertWeatherLocalData(currentWeather)
     }
@@ -192,6 +203,22 @@ class Repository private constructor(val application: Application) : IRepository
 
     override suspend fun deleteFavoriteWeatherByCityName(cityName: String) {
         LocalDataSource.deleteFavoriteWeatherByCityName(cityName)
+    }
+
+    override  suspend fun deleteAlarmByDateTime(alarmDate: String, alarmTime: String) {
+        LocalDataSource.deleteAlarmByDateTime(alarmDate, alarmTime)
+    }
+
+    override suspend fun insertAlarm(alarm: AlarmEntity) {
+        LocalDataSource.insertAlarm(alarm)
+    }
+
+    override  fun getAllAlarms(): Flow<List<AlarmEntity>> {
+        return LocalDataSource.getAllAlarms()
+    }
+
+    override suspend fun deleteAlarm(alarm: AlarmEntity) {
+        LocalDataSource.deleteAlarm(alarm)
     }
 
     // save settings
@@ -363,7 +390,7 @@ class Repository private constructor(val application: Application) : IRepository
         return geocodingService.searchPlace(query)
     }
 
-    override suspend fun getCountryNameFromLatLong(latitude: Double, longitude: Double): String? {
+    override  fun getCountryNameFromLatLong(latitude: Double, longitude: Double): String? {
         return geocodingService.getCountryNameFromLatLong(latitude, longitude)
 
     }
@@ -380,6 +407,7 @@ class Repository private constructor(val application: Application) : IRepository
             else -> "en"
         }
     }
+
 
 
 

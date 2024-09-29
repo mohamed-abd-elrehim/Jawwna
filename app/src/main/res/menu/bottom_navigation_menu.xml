@@ -15,6 +15,10 @@
 
     <!-- Settings Menu Item -->
     <item
+        android:id="@+id/menualarm"
+        android:icon="@drawable/add_alarm_nav_light_mode"
+        android:title="Alarm" />
+    <item
         android:id="@+id/menuSetting"
         android:icon="@drawable/round_settings_24_light_mode"
         android:title="@string/setting" />

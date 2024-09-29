@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.jawwna.R
+import com.example.jawwna.add_favorite_location_screen.AddFavoriteLocationFragmentDirections
 import com.example.jawwna.customui.CustomAlertDialog
 import com.example.jawwna.databinding.FragmentMapBinding
 import com.example.jawwna.datasource.repository.Repository
@@ -31,7 +32,7 @@ import kotlinx.coroutines.launch
 
 class MapFragment : Fragment() {
     private val TAG = "MapFragment"
-    private val DEFAULT_ZOOM = 15f
+    private val DEFAULT_ZOOM = 5f
 
     private var currentPlaceName: String? = null
     lateinit var search_for_place: SearchView
@@ -58,26 +59,30 @@ class MapFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (arguments != null) {
-            if (arguments!!.containsKey("actionCurrent"))
-            {
-                locationActionMode =
-                arguments!!.getString("actionCurrent")?.let { PreferencesLocationEum.valueOf(it) }!! // Retrieve String from Bundle
-            }else if (arguments!!.containsKey("actionFav")) {
-                    locationActionMode = PreferencesLocationEum.FAVOURITE
-            }else  {
-                locationActionMode = PreferencesLocationEum.MAP
-            }
-
-        }
-        Log.i("locationActionMode", "onViewCreated: " + locationActionMode)
-
         // Initialize mapViewModel using ViewModelProvider
         mapViewModel = ViewModelProvider(
             this, MapViewModelFactory(
                 Repository.getRepository(requireActivity().application)
             )
         )[MapViewModel::class.java]
+
+        if (arguments != null) {
+            if (arguments!!.containsKey("actionCurrent"))
+            {
+                locationActionMode =
+                    arguments!!.getString("actionCurrent")?.let { PreferencesLocationEum.valueOf(it) }!! // Retrieve String from Bundle
+            }else if (arguments!!.containsKey("actionFav")) {
+                locationActionMode = PreferencesLocationEum.FAVOURITE
+            }else  {
+                locationActionMode = PreferencesLocationEum.MAP
+            }
+
+        }
+
+
+
+        Log.i("locationActionMode", "onViewCreated: $locationActionMode")
+
 
         // Initialize the MapFragment and bind it with the OnMapReadyCallback
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
@@ -248,18 +253,21 @@ class MapFragment : Fragment() {
 
                         when (locationActionMode) {
                             PreferencesLocationEum.FAVOURITE -> {
-                                val action =
-                                    MapFragmentDirections.actionMapFragmentToAddFavoriteLocationFragment(
-                                        latitude.toFloat(),
-                                        longitude.toFloat()
-                                    )
-                                view?.findNavController()?.navigate(action)
+                                val action = MapFragmentDirections.actionMapFragmentToAddFavoriteLocationFragment()
+                                action.latitudeFav= latitude.toString()
+                                action.longitudFav= longitude.toString()
+
+                                requireView().findNavController().navigate(action)
+
+                                Log.i("action Map", "onViewCreated: " + action.latitudeFav + " " + action.longitudFav)
                             }
                             PreferencesLocationEum.CURRENT -> {
                                 val action =
-                                    MapFragmentDirections.actionMapFragmentToHomeFragment(
-                                        latitude.toFloat(),
-                                        longitude.toFloat())
+                                    MapFragmentDirections.actionMapFragmentToHomeFragment()
+
+                                action.latitude = latitude.toString()
+                                action.longitud = longitude.toString()
+
                                 view?.findNavController()?.navigate(action)
                             }else -> {
 

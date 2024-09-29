@@ -25,6 +25,10 @@ interface IRemoteDataSource {
 
 //16-day forecast data
     suspend fun getForecastDailyByLatLon(lat: Double, lon: Double, apiKey: String, lang: String? = null, units: String? = null): Flow<WeatherResponse>
+    suspend fun getForecastDailyByCityName(cityName: String, apiKey: String, lang: String? = null, units: String? = null): Flow<WeatherResponse>
+
+    //Alerts data
+
 
 
 

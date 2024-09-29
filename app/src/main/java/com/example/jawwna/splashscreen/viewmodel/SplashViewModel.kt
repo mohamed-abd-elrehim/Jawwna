@@ -43,6 +43,7 @@ class SplashViewModel(private val repository: IRepository) : ViewModel() {
         _updateLocale.value = repository.getLanguage()!!
     }
 
+
     fun setAnimationResource(nightModeFlags: Int) {
         val resource = when (nightModeFlags) {
             Configuration.UI_MODE_NIGHT_YES -> R.raw.nightmodesplashanim // Dark mode animation

@@ -38,6 +38,8 @@ import com.google.android.gms.location.LocationServices
 import android.Manifest
 import android.content.IntentFilter
 import android.net.ConnectivityManager
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import com.example.jawwna.customui.CustomPopup
@@ -45,10 +47,11 @@ import com.example.jawwna.helper.broadcastreceiver.NetworkChangeReceiver
 import com.example.jawwna.helper.broadcastreceiver.NetworkStateChangeListener
 import com.example.jawwna.helper.broadcastreceiver.SharedConnctionStateViewModel
 import com.google.android.gms.maps.model.LatLng
+import kotlinx.coroutines.delay
 
 class SplashActivity : AppCompatActivity() , NetworkStateChangeListener {
     private lateinit var networkChangeReceiver: NetworkChangeReceiver
-    private val sharedConnctionStateViewModel: SharedConnctionStateViewModel by viewModels()
+    private lateinit var sharedConnctionStateViewModel: SharedConnctionStateViewModel
     private var isNetworkAvailable: Boolean = true
     private lateinit var rootLayout: View
 
@@ -70,6 +73,8 @@ class SplashActivity : AppCompatActivity() , NetworkStateChangeListener {
         binding = ActivitySplashScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
         rootLayout = binding.root
+        sharedConnctionStateViewModel = ViewModelProvider(this)[SharedConnctionStateViewModel::class.java]
+
         customPopup = CustomPopup(this)
         viewModel =
             ViewModelProvider(
@@ -78,6 +83,7 @@ class SplashActivity : AppCompatActivity() , NetworkStateChangeListener {
             ).get(
                 SplashViewModel::class.java
             )
+
         viewModel.setUpdateLocale(Locale.getDefault().language)
 
         // Collect the updated locale
@@ -87,9 +93,11 @@ class SplashActivity : AppCompatActivity() , NetworkStateChangeListener {
                 applyThemeBasedOnLocaleAndMode()
             }
         }
+        Log.i("Current Locale", "Current Locale: ${Locale.getDefault().language}")
+
         // Collect the current location
         lifecycleScope.launch {
-            sharedConnctionStateViewModel.sharedConnctionState.collect { isConnected ->
+            SharedConnctionStateViewModel.sharedConnctionState.collect { isConnected ->
                 if (!isConnected) {
                     isNetworkAvailable=false
                 } else {
@@ -147,24 +155,35 @@ class SplashActivity : AppCompatActivity() , NetworkStateChangeListener {
                 if (!isCurrenLocationAvailable) {
                     if (!isNetworkAvailable) {
                         customPopup.showPopup(rootLayout,getString(R.string.no_internet_connection),"please check your internet connection and try again", isNightMode)
-                        finish()
-                    }
-                    customAlert.showDialog(
-                        message = getString(R.string.location_dialog_message),
-                        title = getString(R.string.location_dialog_title),
-                        isDarkTheme = isNightMode,
-                        positiveText = getString(R.string.map),
-                        negativeText = getString(R.string.gps),
-                        positiveAction = {
-                            // Navigate to MainActivity
-                            startActivity(Intent(this@SplashActivity, MainActivity::class.java).apply {
-                                putExtra("MapFragment", "mapFragment") // Pass any data if necessary
-                            })
-                        },
-                        negativeAction = {
-                            checkGpsEnabled()
+                        lifecycleScope.launch {
+                            delay(5000)
+                            finish()
                         }
-                    )
+                    }else {
+                        customAlert.showDialog(
+                            message = getString(R.string.location_dialog_message),
+                            title = getString(R.string.location_dialog_title),
+                            isDarkTheme = isNightMode,
+                            positiveText = getString(R.string.map),
+                            negativeText = getString(R.string.gps),
+                            positiveAction = {
+                                // Navigate to MainActivity
+                                // Simulate some loading or delay before starting MainActivity
+                                Handler(Looper.getMainLooper()).postDelayed({
+                                    startActivity(
+                                        Intent(this@SplashActivity, MainActivity::class.java).apply {
+                                            putExtra("MapFragment", "mapFragment") // Pass any data if necessary
+                                        }
+                                    )
+                                    finish() // Optional: call finish() to remove the splash activity from the back stack
+                                }, 2000) // Delay of 2000 milliseconds (2 seconds)
+
+                            },
+                            negativeAction = {
+                                checkGpsEnabled()
+                            }
+                        )
+                    }
                 } else {
                     // Start MainActivity when animation ends
                     startActivity(Intent(this@SplashActivity, MainActivity::class.java))
@@ -204,6 +223,14 @@ class SplashActivity : AppCompatActivity() , NetworkStateChangeListener {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             this.createConfigurationContext(config)
         }
+
+        updateUIText()
+    }
+
+    // Function to update UI components dynamically after locale change
+    private fun updateUIText() {
+        binding.welcomeText.text = getString(R.string.welcome_text)
+        // Update other UI components if needed, like menus, toolbar, etc.
     }
 
     private fun applyThemeBasedOnLocaleAndMode() {
@@ -225,6 +252,7 @@ class SplashActivity : AppCompatActivity() , NetworkStateChangeListener {
                 setTheme(R.style.Theme_Jawwna)  // Default locale Light mode theme
             }
         }
+        updateUIText()
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -344,12 +372,14 @@ class SplashActivity : AppCompatActivity() , NetworkStateChangeListener {
         super.onStop()
         unregisterReceiver(networkChangeReceiver)
 
+
     }
 
     override fun onDestroy() {
         super.onDestroy()
         // Cancel the animation when the activity is destroyed
         lottieAnimationView.cancelAnimation()
+
 
     }
 }

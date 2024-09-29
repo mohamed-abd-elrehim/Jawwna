@@ -176,5 +176,17 @@ object  RemoteDataSource: IRemoteDataSource {
 
     }
 
+    override suspend fun getForecastDailyByCityName(
+        cityName: String,
+        apiKey: String,
+        lang: String?,
+        units: String?
+    ): Flow<WeatherResponse> {
+        return flow {
+            val response =weatherApiService.getForecastDailyByCityName(cityName, apiKey, lang, units)
+            emit(response)
+        }
+    }
+
 
 }

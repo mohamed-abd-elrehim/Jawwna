@@ -31,7 +31,7 @@ class GeocodingService(private val context: Context) : IGeocodingService {
         }
     }
 
-    override suspend fun getCountryNameFromLatLong(latitude: Double, longitude: Double): String? {
+    override  fun getCountryNameFromLatLong(latitude: Double, longitude: Double): String? {
         val geocoder = Geocoder(context, Locale.getDefault())
         return try {
             // Fetch the address list using the geocoder

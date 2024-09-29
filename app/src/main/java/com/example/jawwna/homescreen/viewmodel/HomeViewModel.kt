@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.jawwna.BuildConfig
 import com.example.jawwna.R
 import com.example.jawwna.datasource.localdatasoource.shared_preferences_helper.location.PreferencesCurrentLocationHelper
 import com.example.jawwna.datasource.model.CurrentWeather
@@ -47,6 +48,7 @@ class HomeViewModel( private val repository: IRepository) :ViewModel() {
     val isDarkMode: StateFlow<Boolean> get() = _isDarkMode
 
 
+
     //LiveDataGetWhterData
 
     private val _currentWeatherData = MutableStateFlow<ApiResponse<CurrentWeather>>(ApiResponse.Loading)
@@ -68,6 +70,8 @@ class HomeViewModel( private val repository: IRepository) :ViewModel() {
     )
     val weatherForecast16DailyRow: StateFlow<List<DailyForecastData>> = _weatherForecast16DailyRow
 
+
+
     //_weatherForecastHourlyRow
     private val _weatherForecastHourlyRow = MutableStateFlow<List<HourlyForecastData>>(
         emptyList()
@@ -77,19 +81,28 @@ class HomeViewModel( private val repository: IRepository) :ViewModel() {
 
     private var weatherResponseEntity: WeatherResponseEntity = WeatherResponseEntity("",emptyList(),emptyList(),emptyList(),0.0,0.0)
 
-    private  var modeData =PreferencesLocationEum.CURRENT
+
+    private val _preferencesLocationEum = MutableStateFlow<PreferencesLocationEum>(PreferencesLocationEum.CURRENT)
+    private val _isConnctionAvailable = MutableStateFlow<Boolean>(true)
+
+
 
     fun setMode(preferencesLocationEum: PreferencesLocationEum)
     {
-        modeData=preferencesLocationEum
-
+        _preferencesLocationEum.value=preferencesLocationEum
+        Log.d(TAG, "setMode: $preferencesLocationEum")
+    }
+    fun setConnection(isConnctionAvailable: Boolean)
+    {
+        _isConnctionAvailable.value=isConnctionAvailable
+        Log.d(TAG, "setConnection: $isConnctionAvailable")
     }
 
 
     fun fetchWeatherForecastHourlyData(apiKey: String) {
         viewModelScope.launch {
             try {
-                repository.execute(PreferencesLocationEum.CURRENT)
+                repository.execute(_preferencesLocationEum.value)
                 val lat = repository.getLocationLatitude()
                 
                 val lon = repository.getLocationLongitude()
@@ -114,7 +127,7 @@ class HomeViewModel( private val repository: IRepository) :ViewModel() {
     fun fetchCurrentWeatherData(apiKey: String) {
         viewModelScope.launch {
             try {
-                repository.execute(PreferencesLocationEum.CURRENT)
+                repository.execute(_preferencesLocationEum.value)
                 val lat = repository.getLocationLatitude()
                 val lon = repository.getLocationLongitude()
 
@@ -130,6 +143,7 @@ class HomeViewModel( private val repository: IRepository) :ViewModel() {
                 repository.setOldWindSpeedUnit(WindSpeedUnits.metric.toString())
 
                 weatherResponseEntity.currentWeatherList= listOf(data)
+                weatherResponseEntity.cityName=data.name
 
             } catch (e: Exception) {
                 _currentWeatherData.value = ApiResponse.Error(e.message ?: "Unknown error")
@@ -141,7 +155,7 @@ class HomeViewModel( private val repository: IRepository) :ViewModel() {
         viewModelScope.launch {
             try {
                 _weatherForecast16DailyData.value = ApiResponse.Loading
-                repository.execute(PreferencesLocationEum.CURRENT)
+                repository.execute(_preferencesLocationEum.value)
 
                 val lat = repository.getLocationLatitude()
                 val lon = repository.getLocationLongitude()
@@ -163,13 +177,29 @@ class HomeViewModel( private val repository: IRepository) :ViewModel() {
             }
         }
     }
+
+//    fun getAllCurrentWeather() {
+//        viewModelScope.launch {
+//            repository.getAllWeatherLocalData().collect { favoriteWeatherList ->
+//                if (_isConnctionAvailable.value) {
+////                    _updateFavoriteWeather.value= mapToFavoriteDataLatLong(favoriteWeatherList)
+////                    Log.d(TAG, "_updateFavoriteWeather: ${_updateFavoriteWeather.value}")
+////                    fetchCurrentWeatherDataUbdate(BuildConfig.OPEN_WEATHER_API_KEY_PRO)
+////                    fetchWeatherForecastHourlyDataUbdate(BuildConfig.OPEN_WEATHER_API_KEY_PRO)
+////                    featch16DailyWeatherDataUbdate(BuildConfig.OPEN_WEATHER_API_KEY_PRO)
+////                    insertWeatherResponseEntityUbdate()
+//                }
+//                _weatherFavoriteRow.value = mapToFavoriteDatav2(favoriteWeatherList)
+//            }
+//        }
+//    }
+
     fun insertWeatherResponseEntity()
     {
         if (!weatherResponseEntity.currentWeatherList.isEmpty()&&!weatherResponseEntity.dailyForecastList.isEmpty()&&!weatherResponseEntity.hourlyForecastList.isEmpty()) {
             viewModelScope.launch {
-                repository.execute(PreferencesLocationEum.CURRENT)
+                repository.execute(_preferencesLocationEum.value)
                 repository.deleteAllWeatherLocalData()
-                weatherResponseEntity.cityName=repository.getLocationName().toString()
                 weatherResponseEntity.latitude= repository.getLocationLatitude()!!
                 weatherResponseEntity.longitude= repository.getLocationLongitude()!!
                 Log.d(TAG, "insertWeatherResponseEntity: $weatherResponseEntity")
@@ -333,6 +363,8 @@ class HomeViewModel( private val repository: IRepository) :ViewModel() {
         // Return the formatted time
         return timeFormat.format(currentTime)
     }
+
+
 
 
 

@@ -134,7 +134,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/daliy_recyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="1600dp"
                 android:nestedScrollingEnabled="false"
                 android:layout_marginTop="1dp"
                 app:layout_constraintEnd_toEndOf="@+id/hourly_recyclerView"

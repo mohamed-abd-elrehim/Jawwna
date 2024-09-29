@@ -45,7 +45,6 @@ class AddFavoriteLocationFragment : Fragment() {
     private lateinit var favoriteLocationRecyclerView: RecyclerView
     private var isDarkMode=false
 
-    private val sharedConnctionStateViewModel: SharedConnctionStateViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -64,6 +63,7 @@ class AddFavoriteLocationFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val customAlert = CustomAlertDialog(requireContext())
 
+
         viewModel =
             ViewModelProvider(
                 this,
@@ -71,9 +71,20 @@ class AddFavoriteLocationFragment : Fragment() {
             )[AddFavoriteLocationViewModel::class.java]
 
 
+        viewModel.insertHelperData()
         lifecycleScope.launch {
-            sharedConnctionStateViewModel.sharedConnctionState.collect { isConnected ->
-              viewModel.setIsConnectionAvailable(isConnected)
+            delay(2000)
+            viewModel.insertWeatherResponseEntity()
+        }
+
+        lifecycleScope.launch {
+            SharedConnctionStateViewModel.sharedConnctionState.collect { isConnected ->
+                if (isConnected) {
+                    Log.d("isConnected", "onViewCreated: isConnected")
+                    viewModel.getAllFavoriteWeather()
+                    viewModel.setIsConnectionAvailable(isConnected)
+                    viewModel.updateHelperData()
+                }
             }
         }
 
@@ -89,7 +100,11 @@ class AddFavoriteLocationFragment : Fragment() {
             requireContext(),
             object : FavoriteLocationAdapter.OnItemClickListener {
                 override fun onItemClick(favorites: FavoriteLocationModel) {
-
+                    val action = AddFavoriteLocationFragmentDirections.actionAddFavoriteLocationFragmentToHomeFragment()
+                    action.latitude = favorites.lat
+                    action.longitud = favorites.lon
+                    action.isFavorite=true
+                    view.findNavController().navigate(action)
 
                     // Handle the item click, show a Toast or navigate to another screen
                     Toast.makeText(
@@ -155,10 +170,10 @@ class AddFavoriteLocationFragment : Fragment() {
             }
         }
 
-        viewModel.featch16DailyWeatherData(BuildConfig.OPEN_WEATHER_API_KEY_PRO)
-        viewModel.fetchWeatherForecastHourlyData(BuildConfig.OPEN_WEATHER_API_KEY_PRO)
-        viewModel.fetchCurrentWeatherData(BuildConfig.OPEN_WEATHER_API_KEY_PRO)
-        viewModel.getAllFavoriteWeather()
+//        viewModel.featch16DailyWeatherData(BuildConfig.OPEN_WEATHER_API_KEY_PRO)
+//        viewModel.fetchWeatherForecastHourlyData(BuildConfig.OPEN_WEATHER_API_KEY_PRO)
+//        viewModel.fetchCurrentWeatherData(BuildConfig.OPEN_WEATHER_API_KEY_PRO)
+//        viewModel.getAllFavoriteWeather()
 
         lifecycleScope.launch {
             viewModel.weatherFavoriteRow.collect { data ->
@@ -169,30 +184,16 @@ class AddFavoriteLocationFragment : Fragment() {
 
 
 
-            binding.fabAddLocation.setOnClickListener {
-                Log.d(TAG, "onViewCreated: fabAddLocation")
-                val action =
-                    AddFavoriteLocationFragmentDirections.actionAddFavoriteLocationFragmentToMapFragment(PreferencesLocationEum.FAVOURITE)
-                view.findNavController().navigate(action)
-            }
-
-
-        lifecycleScope.launch {
-
-            delay(2000) // Delay for 2000 milliseconds (2 seconds)
-            viewModel.insertWeatherResponseEntity() // Call the insert method
+        binding.fabAddLocation.setOnClickListener {
+            Log.d(TAG, "onViewCreated: fabAddLocation")
+            val action =
+                AddFavoriteLocationFragmentDirections.actionAddFavoriteLocationFragmentToMapFragment(PreferencesLocationEum.FAVOURITE)
+            view.findNavController().navigate(action)
         }
 
-        }
+
+
 
     }
 
-
-
-
-
-
-
-
-
-
+}

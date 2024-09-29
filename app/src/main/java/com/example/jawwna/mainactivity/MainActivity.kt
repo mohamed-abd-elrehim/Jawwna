@@ -17,6 +17,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation.findNavController
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.example.jawwna.R
 import com.example.jawwna.customui.CustomAlertDialog
@@ -35,19 +36,19 @@ import kotlinx.coroutines.launch
 import java.util.Locale
 
 
-class MainActivity : AppCompatActivity() , NetworkStateChangeListener {
+class MainActivity : AppCompatActivity(), NetworkStateChangeListener {
 
     private lateinit var mBinding: ActivityMainBinding
     private lateinit var viewModel: MainActivityViewModel
     private lateinit var navController: NavController
-    private  var isNightMode= false
+    private var isNightMode = false
     private lateinit var bottomNavigationView: BottomNavigationView
     private val scaleDuration: Long = 250
     private val TAG = "MainActivity"
     private lateinit var rootLayout: View
     private var isNetworkAvailable: Boolean = true
     private lateinit var networkChangeReceiver: NetworkChangeReceiver
-    private val sharedConnctionStateViewModel: SharedConnctionStateViewModel by viewModels()
+    private lateinit var sharedConnctionStateViewModel: SharedConnctionStateViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,10 +56,28 @@ class MainActivity : AppCompatActivity() , NetworkStateChangeListener {
         mBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(mBinding.root)
         rootLayout = mBinding.root
-        // Get the NavController from the NavHostFragment
+
+        // Setup NavController with NavHostFragment
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+
         navController = navHostFragment.navController
+        Log.i(TAG, "onCreate: $intent")
+        // Handle intent extras
+        if (intent != null) {
+            intent.getStringExtra("MapFragment")?.let {
+                if (it == "mapFragment") {
+                    val bundle = Bundle()
+                    bundle.putString("actionCurrent", PreferencesLocationEum.CURRENT.toString())
+                    navController.navigate(R.id.mapFragment, bundle)
+                }
+            }
+        }
+
+        sharedConnctionStateViewModel =
+            ViewModelProvider(this)[SharedConnctionStateViewModel::class.java]
+
+
 
         networkChangeReceiver = NetworkChangeReceiver(this)
         val customAlert = CustomAlertDialog(this)
@@ -69,16 +88,7 @@ class MainActivity : AppCompatActivity() , NetworkStateChangeListener {
         // Initialize bottomNavigationView
         bottomNavigationView = mBinding.bottomNavigationView
 
-        if (intent != null) {
-        intent.getStringExtra("MapFragment")?.let {
-            if (it == "mapFragment") {
-                val bundle = Bundle()
-                bundle.putString("actionCurrent", PreferencesLocationEum.CURRENT.toString());
-                navController.navigate(R.id.mapFragment, bundle)
 
-            }
-        }
-            }
 
 
 
@@ -106,15 +116,13 @@ class MainActivity : AppCompatActivity() , NetworkStateChangeListener {
         lifecycleScope.launch {
             viewModel.updateLocale.collect { language ->
                 setLocale(language)
-              //  setFount()
+                //  setFount()
                 applyThemeBasedOnLocaleAndMode()
 
             }
         }
         // Log to check the current default language
         Log.i(TAG, "Current Locale: ${Locale.getDefault().language}")
-
-
 
 
         // Set up a listener for the global layout to detect if the keyboard is open
@@ -155,6 +163,12 @@ class MainActivity : AppCompatActivity() , NetworkStateChangeListener {
                     true
                 }
 
+                R.id.menualarm -> {
+                    videoView.start()
+                    navController.navigate(R.id.alarmFragment)
+                    true
+                }
+
                 else -> false
             }
         }
@@ -174,7 +188,7 @@ class MainActivity : AppCompatActivity() , NetworkStateChangeListener {
         }
 
         lifecycleScope.launch {
-            sharedConnctionStateViewModel.sharedConnctionState.collect {isConnected ->
+            SharedConnctionStateViewModel.sharedConnctionState.collect { isConnected ->
                 if (isConnected) {
                     CustomSnackbar.show(
                         view = rootLayout, // Pass the root view of the activity
@@ -196,18 +210,19 @@ class MainActivity : AppCompatActivity() , NetworkStateChangeListener {
                                 message = getString(R.string.do_you_want_to_open_network_settings),
                                 title = getString(R.string.alert_message),
                                 isDarkTheme = isNightMode,
-                                positiveText= getString(R.string.open_wifi),
+                                positiveText = getString(R.string.open_wifi),
                                 negativeText = getString(R.string.open_data),
                                 positiveAction = {
                                     val intent = Intent(Settings.ACTION_WIFI_SETTINGS)
                                     startActivity(intent)
 
-                                },negativeAction = {
+                                }, negativeAction = {
                                     val intent = Intent(Settings.ACTION_DATA_ROAMING_SETTINGS)
                                     startActivity(intent)
                                 })
                         },
-                        showButton = true)
+                        showButton = true
+                    )
                 }
             }
 
@@ -247,6 +262,13 @@ class MainActivity : AppCompatActivity() , NetworkStateChangeListener {
                         mBinding.bottomNavigationView.menu.findItem(R.id.menuHome).setIcon(uri)
                     }
                 }
+                launch {
+                    viewModel.iconAlarm.collect { uri ->
+                        mBinding.bottomNavigationView.menu.findItem(R.id.menualarm).setIcon(uri)
+                    }
+
+                }
+
             }
         }
 
@@ -294,18 +316,20 @@ class MainActivity : AppCompatActivity() , NetworkStateChangeListener {
         }
 
     }
+
     override fun onStart() {
         super.onStart()
         val filter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
         registerReceiver(networkChangeReceiver, filter)
     }
+
     override fun onStop() {
         super.onStop()
         unregisterReceiver(networkChangeReceiver)
     }
 
     // Function to set the application's locale
-     fun setLocale(language:String) {
+    fun setLocale(language: String) {
         // Create a Locale object for the specified language code
         val locale = Locale(language)
         Locale.setDefault(locale) // Set the default locale for the application
@@ -325,13 +349,14 @@ class MainActivity : AppCompatActivity() , NetworkStateChangeListener {
 
 
     }
+
     private fun applyThemeBasedOnLocaleAndMode() {
         // Detect current locale
         val currentLocale = resources.configuration.locales[0]
 
         // Detect if the UI is in night mode
         val nightModeFlags = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-        val isNightMode = nightModeFlags == Configuration.UI_MODE_NIGHT_YES
+        val isNightMode: Boolean = nightModeFlags == Configuration.UI_MODE_NIGHT_YES
 
         // Apply the correct theme
         if (currentLocale.language == "ar") {
@@ -349,7 +374,7 @@ class MainActivity : AppCompatActivity() , NetworkStateChangeListener {
         }
 
         lifecycleScope.launch {
-            sharedConnctionStateViewModel.sharedConnctionState.collect { isConnected ->
+            SharedConnctionStateViewModel.sharedConnctionState.collect { isConnected ->
                 Log.i(TAG, "applyThemeBasedOnLocaleAndMode: $isConnected")
                 isNetworkAvailable = isConnected
             }
@@ -368,9 +393,6 @@ class MainActivity : AppCompatActivity() , NetworkStateChangeListener {
             sharedConnctionStateViewModel.updateSharedData(isConnected)
         }
     }
-
-
-
 
 
 }

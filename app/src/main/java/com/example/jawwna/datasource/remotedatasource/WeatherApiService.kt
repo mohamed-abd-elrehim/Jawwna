@@ -135,4 +135,13 @@ interface WeatherApiService {
         @Query("cnt") cnt: Int = 16
     ):WeatherResponse
 
+    @GET("data/2.5/forecast/daily")
+    suspend fun getForecastDailyByCityName(
+        @Query("q") cityName: String,
+        @Query("appid") apiKey: String,
+        @Query("lang") lang: String? = null, // Optional language
+        @Query("units") units: String? = null ,// Optional units
+        @Query("cnt") cnt: Int = 16
+        ):WeatherResponse
+
 }

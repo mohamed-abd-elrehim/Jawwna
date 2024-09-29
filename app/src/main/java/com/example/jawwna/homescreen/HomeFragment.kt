@@ -25,6 +25,7 @@ import com.example.jawwna.customui.CustomPopup
 import com.example.jawwna.databinding.FragmentHomeBinding
 import com.example.jawwna.datasource.remotedatasource.ApiResponse
 import com.example.jawwna.datasource.repository.Repository
+import com.example.jawwna.helper.PreferencesLocationEum
 import com.example.jawwna.homescreen.adapter.DailyWeatherForecastAdapter
 import com.example.jawwna.homescreen.adapter.HourlyWeatherForecastAdapter
 import com.example.jawwna.homescreen.viewmodel.HomeViewModelFactory
@@ -69,11 +70,21 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewModel =
+            ViewModelProvider(
+                this,
+                HomeViewModelFactory(Repository.getRepository(requireActivity().application))
+            )[HomeViewModel::class.java]
+
         if (args != null){
             if (args.isFavorite == false) {
-
-
+                viewModel.setMode(PreferencesLocationEum.CURRENT)
+                Toast.makeText(requireContext(),
+                    getString(R.string.current_weather), Toast.LENGTH_SHORT).show()
             } else {
+                viewModel.setMode(PreferencesLocationEum.FAVOURITE)
+                Toast.makeText(requireContext(),
+                    getString(R.string.favorite_weather), Toast.LENGTH_SHORT).show()
 
             }
 
@@ -81,11 +92,6 @@ class HomeFragment : Fragment() {
 
         customPopup = CustomPopup(requireContext())
 
-        viewModel =
-            ViewModelProvider(
-                this,
-                HomeViewModelFactory(Repository.getRepository(requireActivity().application))
-            )[HomeViewModel::class.java]
         // Initialize the DailyWeatherForecastAdapter and RecyclerView
         daliyRecyclerView = binding.daliyRecyclerView
         // Set the LayoutManager for the RecyclerView
@@ -258,12 +264,12 @@ class HomeFragment : Fragment() {
                             Toast.LENGTH_SHORT
                         ).show()
                         // Show error message
-                        customPopup.showPopup(
-                            view,
-                            getString(R.string.error),
-                            response.message,
-                            isDarkMode
-                        ) // Change isDarkTheme as needed
+//                        customPopup.showPopup(
+//                            view,
+//                            getString(R.string.error),
+//                            response.message,
+//                            isDarkMode
+//                        ) // Change isDarkTheme as needed
 
 
 

@@ -3,6 +3,7 @@ package com.example.jawwna.datasource.localdatasoource
 import android.content.Context
 import com.example.jawwna.datasource.database.WeatherDAO
 import com.example.jawwna.datasource.database.WeatherDatabase
+import com.example.jawwna.datasource.model.AlarmEntity
 import com.example.jawwna.datasource.model.FavoriteWeatherEntity
 import com.example.jawwna.datasource.model.WeatherResponseEntity
 import kotlinx.coroutines.flow.Flow
@@ -53,6 +54,23 @@ object LocalDataSource : ILocalDataSource {
 
     override suspend fun deleteFavoriteWeatherByCityName(cityName: String) {
         weatherDAO.deleteFavoriteWeatherByCityName(cityName)
+    }
+
+    override suspend fun deleteAlarmByDateTime(alarmDate: String, alarmTime: String) {
+        weatherDAO.deleteAlarmByDateTime(alarmDate, alarmTime)
+    }
+
+
+    override suspend fun insertAlarm(alarm: AlarmEntity) {
+        weatherDAO.insertAlarm(alarm)
+    }
+
+    override  fun getAllAlarms(): Flow<List<AlarmEntity>> {
+        return weatherDAO.getAllAlarms()
+    }
+
+    override suspend fun deleteAlarm(alarm: AlarmEntity) {
+        weatherDAO.deleteAlarm(alarm)
     }
 
 

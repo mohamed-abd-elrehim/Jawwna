@@ -1,5 +1,6 @@
 package com.example.jawwna.datasource.localdatasoource
 
+import com.example.jawwna.datasource.model.AlarmEntity
 import com.example.jawwna.datasource.model.FavoriteWeatherEntity
 import com.example.jawwna.datasource.model.WeatherResponseEntity
 import kotlinx.coroutines.flow.Flow
@@ -17,6 +18,13 @@ interface ILocalDataSource {
      suspend fun deleteFavoriteWeather(favoriteWeather: FavoriteWeatherEntity)
      suspend fun deleteAllFavoriteWeather()
      suspend fun deleteFavoriteWeatherByCityName(cityName: String)
+
+
+     suspend fun deleteAlarmByDateTime(alarmDate: String, alarmTime: String)
+     suspend fun insertAlarm(alarm: AlarmEntity)
+     fun getAllAlarms(): Flow<List<AlarmEntity>>
+     suspend fun deleteAlarm(alarm: AlarmEntity)
+
 
 
 }

@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.example.jawwna.datasource.model.AlarmEntity
 import com.example.jawwna.datasource.model.FavoriteWeatherEntity
 //import com.example.jawwna.datasource.model.CurrentWeather
 //import com.example.jawwna.datasource.model.FavoriteLocation
@@ -51,5 +52,17 @@ interface WeatherDAO {
     suspend fun deleteFavoriteWeatherByCityName(cityName: String)
 
 
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAlarm(alarm: AlarmEntity)
+
+    @Query("SELECT * FROM alarm ORDER BY date DESC, time DESC") // Updated to match table name and composite keys
+    fun getAllAlarms(): Flow<List<AlarmEntity>>
+
+    @Delete
+    suspend fun deleteAlarm(alarm: AlarmEntity)
+
+    @Query("DELETE FROM alarm WHERE date = :alarmDate AND time = :alarmTime") // Updated to use date and time
+    suspend fun deleteAlarmByDateTime(alarmDate: String, alarmTime: String)
 
 }

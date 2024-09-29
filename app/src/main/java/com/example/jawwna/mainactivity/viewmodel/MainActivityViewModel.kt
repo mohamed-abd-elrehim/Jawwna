@@ -26,6 +26,9 @@ class MainActivityViewModel(private val repository: IRepository) : ViewModel() {
     private val _iconHome = MutableStateFlow<Int>(0)
     val iconHome: StateFlow<Int> get() = _iconHome
 
+    private val _iconAlarm = MutableStateFlow<Int>(0)
+    val iconAlarm: StateFlow<Int> get() = _iconAlarm
+
     private val _updateLocale = MutableStateFlow<String>("")
     val updateLocale: StateFlow<String> get() = _updateLocale
 
@@ -48,22 +51,27 @@ class MainActivityViewModel(private val repository: IRepository) : ViewModel() {
         val favoriteUri: Int
         val settingsUri: Int
         val homeUri: Int
+        val alarmUri: Int
 
         when (nightModeFlags) {
             Configuration.UI_MODE_NIGHT_YES -> {
                 favoriteUri =R.drawable.ic_favorite_night_mode
                 settingsUri = R.drawable.round_settings_24_night_mode
                 homeUri = R.drawable.round_home_24_night_mode
+                alarmUri = R.drawable.add_alarm_nav_night_mode
+
             }
             Configuration.UI_MODE_NIGHT_NO -> {
                 favoriteUri = R.drawable.ic_favorite_light_mode
                 settingsUri = R.drawable.round_settings_24_light_mode
                 homeUri = R.drawable.round_home_24_light_mode
+                alarmUri = R.drawable.add_alarm_nav_light_mode
                 }
             else -> {
                 favoriteUri = R.drawable.ic_favorite_light_mode
                 settingsUri = R.drawable.round_settings_24_light_mode
                 homeUri = R.drawable.round_home_24_light_mode
+                alarmUri = R.drawable.add_alarm_nav_light_mode
             }
         }
 
@@ -71,6 +79,7 @@ class MainActivityViewModel(private val repository: IRepository) : ViewModel() {
         _iconFavorite.value = favoriteUri
         _iconSetting.value = settingsUri
         _iconHome.value = homeUri
+        _iconAlarm.value = alarmUri
     }
 
 

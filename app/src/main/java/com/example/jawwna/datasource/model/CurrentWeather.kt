@@ -97,7 +97,8 @@ data class WeatherList(
     @TypeConverters(WeatherConditionConverter::class) val weather: List<WeatherCondition>,
     val speed: Double,
     val clouds: Int,
-    val rain: Double?
+    val rain: Double?,
+    val dt: Long
 )
 
 /**
