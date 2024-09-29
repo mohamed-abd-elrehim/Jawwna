@@ -162,6 +162,7 @@ class AlarmViewModel(private val repository: IRepository) : ViewModel() {
     }
 
 
+
     fun getCurrentWeatherData() {
         viewModelScope.launch {
             repository.getAllWeatherLocalData().collect { weatherData ->
@@ -172,3 +173,4 @@ class AlarmViewModel(private val repository: IRepository) : ViewModel() {
 
     }
 }
+

@@ -18,6 +18,8 @@ import com.example.jawwna.datasource.model.HourlyForecastData
 import com.example.jawwna.datasource.model.WeatherResponse
 import com.example.jawwna.datasource.localdatasoource.shared_preferences_helper.location.PreferencesLocationHelper
 import com.example.jawwna.datasource.localdatasoource.shared_preferences_helper.settings.PreferencesSettingsHelper
+import com.example.jawwna.datasource.model.FavoriteWeatherEntity
+import com.example.jawwna.datasource.model.LocationDataHolder
 import com.example.jawwna.datasource.model.TemperatureResult
 import com.example.jawwna.datasource.model.WeatherResponseEntity
 import com.example.jawwna.datasource.model.WindResult
@@ -27,6 +29,7 @@ import com.example.jawwna.helper.PreferencesLocationEum
 import com.example.jawwna.helper.TemperatureUnits
 import com.example.jawwna.helper.UnitConvertHelper
 import com.example.jawwna.helper.WindSpeedUnits
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -77,14 +80,18 @@ class HomeViewModel( private val repository: IRepository) :ViewModel() {
         emptyList()
     )
     val weatherForecastHourlyRow: StateFlow<List<HourlyForecastData>> = _weatherForecastHourlyRow
-
-
     private var weatherResponseEntity: WeatherResponseEntity = WeatherResponseEntity("",emptyList(),emptyList(),emptyList(),0.0,0.0)
-
-
     private val _preferencesLocationEum = MutableStateFlow<PreferencesLocationEum>(PreferencesLocationEum.CURRENT)
     private val _isConnctionAvailable = MutableStateFlow<Boolean>(true)
+    private val _updateFavoriteWeather = MutableStateFlow<List<LocationDataHolder>>(emptyList())
 
+
+    private val _current = MutableStateFlow<List<CurrentWeather>>(emptyList())
+    val current: StateFlow<List<CurrentWeather>> = _current
+    private val _daily = MutableStateFlow<List<WeatherResponse>>(emptyList())
+    val daily: StateFlow<List<WeatherResponse>> = _daily
+    private val _hourly = MutableStateFlow<List<ForecastResponse>>(emptyList())
+    val hourly: StateFlow<List<ForecastResponse>> = _hourly
 
 
     fun setMode(preferencesLocationEum: PreferencesLocationEum)
@@ -92,11 +99,56 @@ class HomeViewModel( private val repository: IRepository) :ViewModel() {
         _preferencesLocationEum.value=preferencesLocationEum
         Log.d(TAG, "setMode: $preferencesLocationEum")
     }
-    fun setConnection(isConnctionAvailable: Boolean)
-    {
-        _isConnctionAvailable.value=isConnctionAvailable
-        Log.d(TAG, "setConnection: $isConnctionAvailable")
+    private fun mapToFavoriteDataLatLong(response: List<WeatherResponseEntity>): MutableList<LocationDataHolder> {
+        return response.flatMap { weatherEntity -> // Flatten the list of lists
+            weatherEntity.currentWeatherList.map { weatherList -> // Map each weatherList entry
+                LocationDataHolder(
+                    locationName = weatherEntity.cityName, // Get city name for each entity
+                    latitude = weatherList.coord.lat, // Safely retrieves the latitude
+                    longitude = weatherList.coord.lon // Safely retrieves the longitude
+                )
+            }
+        }.toMutableList() // Convert to MutableList
     }
+    fun getAllWeather() {
+        viewModelScope.launch {
+
+            repository.getAllWeatherLocalData().collect { weatherResponseEntity ->
+                if (_isConnctionAvailable.value) {
+                    Log.d("isConnected2", "onViewCreated: isConnected")
+                    updateHelperData()
+                }
+                _current.value = weatherResponseEntity[0].currentWeatherList
+                _daily.value = weatherResponseEntity[0].dailyForecastList
+                _hourly.value = weatherResponseEntity[0].hourlyForecastList
+                val hourlyForecastDataList = mapToHourlyForecastData(_hourly.value.first())
+                _weatherForecastHourlyRow.value = hourlyForecastDataList
+                val dailyForecastDataList = mapToDailyForecastData(_daily.value.first())
+                _weatherForecast16DailyRow.value = dailyForecastDataList
+
+
+                Log.d(TAG, "getAllWeather: ${weatherResponseEntity}")
+            }
+        }
+    }
+
+
+
+
+
+    fun setIsConnectionAvailable(isConnected: Boolean) {
+        _isConnctionAvailable.value = isConnected
+    }
+    fun updateHelperData(){
+        featch16DailyWeatherData(BuildConfig.OPEN_WEATHER_API_KEY_PRO)
+        fetchCurrentWeatherData(BuildConfig.OPEN_WEATHER_API_KEY_PRO)
+        fetchWeatherForecastHourlyData(BuildConfig.OPEN_WEATHER_API_KEY_PRO)
+       viewModelScope.launch {
+           delay(2000)
+           insertWeatherResponseEntity()
+       }
+    }
+
 
 
     fun fetchWeatherForecastHourlyData(apiKey: String) {
@@ -150,7 +202,6 @@ class HomeViewModel( private val repository: IRepository) :ViewModel() {
             }
         }
     }
-
     fun featch16DailyWeatherData(apiKey: String) {
         viewModelScope.launch {
             try {

@@ -7,7 +7,7 @@ import androidx.room.Index
 
 @Entity(
     tableName = "alarm",
-    primaryKeys = ["date", "time"] // Ensure unique combination of date and time
+    primaryKeys = ["date", "time", "type"] // Ensure unique combination of date and time
 )
 data class AlarmEntity(
     val date: String, // Date as part of the composite key

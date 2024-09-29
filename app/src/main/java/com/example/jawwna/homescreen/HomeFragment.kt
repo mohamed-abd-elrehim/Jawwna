@@ -26,6 +26,7 @@ import com.example.jawwna.databinding.FragmentHomeBinding
 import com.example.jawwna.datasource.remotedatasource.ApiResponse
 import com.example.jawwna.datasource.repository.Repository
 import com.example.jawwna.helper.PreferencesLocationEum
+import com.example.jawwna.helper.broadcastreceiver.SharedConnctionStateViewModel
 import com.example.jawwna.homescreen.adapter.DailyWeatherForecastAdapter
 import com.example.jawwna.homescreen.adapter.HourlyWeatherForecastAdapter
 import com.example.jawwna.homescreen.viewmodel.HomeViewModelFactory
@@ -44,11 +45,8 @@ class HomeFragment : Fragment() {
 
     private lateinit var viewModel: HomeViewModel
     private lateinit var binding: FragmentHomeBinding
-
     private lateinit var hourlyRecyclerViewAdapter: HourlyWeatherForecastAdapter
     private lateinit var hourlyRecyclerView: RecyclerView
-
-
     private lateinit var daliyRecyclerViewAdapter: DailyWeatherForecastAdapter
     private lateinit var daliyRecyclerView: RecyclerView
     private lateinit var customPopup: CustomPopup
@@ -75,6 +73,20 @@ class HomeFragment : Fragment() {
                 this,
                 HomeViewModelFactory(Repository.getRepository(requireActivity().application))
             )[HomeViewModel::class.java]
+
+
+        lifecycleScope.launch {
+            SharedConnctionStateViewModel.sharedConnctionState.collect { isConnected ->
+                if (isConnected) {
+                    Log.d("isConnected", "onViewCreated: isConnected")
+                    viewModel.setIsConnectionAvailable(isConnected)
+                    viewModel.updateHelperData()
+                }else{
+                    viewModel.getAllWeather()
+                }
+
+            }
+        }
 
         if (args != null){
             if (args.isFavorite == false) {
@@ -182,7 +194,7 @@ class HomeFragment : Fragment() {
         }
         // Check the current theme mode when view is created
         viewModel.checkThemeMode(resources)
-        viewModel.featch16DailyWeatherData(BuildConfig.OPEN_WEATHER_API_KEY_PRO)
+        //viewModel.featch16DailyWeatherData(BuildConfig.OPEN_WEATHER_API_KEY_PRO)
 
         lifecycleScope.launch {
             viewModel.weatherForecast16DailyRow.collect { data ->
@@ -197,7 +209,7 @@ class HomeFragment : Fragment() {
 
 
         }
-        viewModel.fetchWeatherForecastHourlyData(BuildConfig.OPEN_WEATHER_API_KEY_PRO)
+        //viewModel.fetchWeatherForecastHourlyData(BuildConfig.OPEN_WEATHER_API_KEY_PRO)
         lifecycleScope.launch {
             viewModel.weatherForecastHourlyRow.collect { data ->
                 if (!data.isEmpty()) {
@@ -212,7 +224,7 @@ class HomeFragment : Fragment() {
 
         }
 
-        viewModel.fetchCurrentWeatherData(BuildConfig.OPEN_WEATHER_API_KEY_PRO)
+       // viewModel.fetchCurrentWeatherData(BuildConfig.OPEN_WEATHER_API_KEY_PRO)
 
         lifecycleScope.launch {
             viewModel.currentWeatherData.collect { response ->
@@ -278,11 +290,11 @@ class HomeFragment : Fragment() {
                 }
             }
         }
-        lifecycleScope.launch {
-
-            delay(2000) // Delay for 2000 milliseconds (2 seconds)
-            viewModel.insertWeatherResponseEntity() // Call the insert method
-        }
+//        lifecycleScope.launch {
+//
+//            delay(2000) // Delay for 2000 milliseconds (2 seconds)
+//            viewModel.insertWeatherResponseEntity() // Call the insert method
+//        }
     }
 
     private fun updateIcons(isDarkMode: Boolean) {
