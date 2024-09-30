@@ -51,7 +51,7 @@ class HomeFragment : Fragment() {
     private lateinit var daliyRecyclerView: RecyclerView
     private lateinit var customPopup: CustomPopup
     private var isDarkMode = false
-
+var isFav=false
     private val args: HomeFragmentArgs by navArgs() //  Safe Args
 
     override fun onCreateView(
@@ -74,6 +74,22 @@ class HomeFragment : Fragment() {
                 HomeViewModelFactory(Repository.getRepository(requireActivity().application))
             )[HomeViewModel::class.java]
 
+        if (args != null){
+            if (args.isFavorite == false) {
+                viewModel.setMode(PreferencesLocationEum.CURRENT)
+                Toast.makeText(requireContext(),
+                    getString(R.string.current_weather), Toast.LENGTH_SHORT).show()
+                isFav=false
+            } else {
+                viewModel.setMode(PreferencesLocationEum.FAVOURITE)
+                Toast.makeText(requireContext(),
+                    getString(R.string.favorite_weather), Toast.LENGTH_SHORT).show()
+                isFav=true
+
+            }
+
+        }
+
 
         lifecycleScope.launch {
             SharedConnctionStateViewModel.sharedConnctionState.collect { isConnected ->
@@ -88,19 +104,6 @@ class HomeFragment : Fragment() {
             }
         }
 
-        if (args != null){
-            if (args.isFavorite == false) {
-                viewModel.setMode(PreferencesLocationEum.CURRENT)
-                Toast.makeText(requireContext(),
-                    getString(R.string.current_weather), Toast.LENGTH_SHORT).show()
-            } else {
-                viewModel.setMode(PreferencesLocationEum.FAVOURITE)
-                Toast.makeText(requireContext(),
-                    getString(R.string.favorite_weather), Toast.LENGTH_SHORT).show()
-
-            }
-
-    }
 
         customPopup = CustomPopup(requireContext())
 
@@ -235,11 +238,7 @@ class HomeFragment : Fragment() {
 
                     is ApiResponse.Success -> {
                         // Update UI with the weather data
-                        Toast.makeText(
-                            requireContext(),
-                            "Weather: ${response.data}",
-                            Toast.LENGTH_SHORT
-                        ).show()
+
                         Log.i(TAG, ": Sccesss Current" + response.data)
                         val result = viewModel.checkTemperatureUnit(response.data.main.temp)
                         binding.mainTextTemperature.text =
@@ -270,11 +269,7 @@ class HomeFragment : Fragment() {
                     }
 
                     is ApiResponse.Error -> {
-                        Toast.makeText(
-                            requireContext(),
-                            "Error: ${response.message}",
-                            Toast.LENGTH_SHORT
-                        ).show()
+
                         // Show error message
 //                        customPopup.showPopup(
 //                            view,
