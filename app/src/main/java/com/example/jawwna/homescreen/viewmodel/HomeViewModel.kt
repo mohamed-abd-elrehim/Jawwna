@@ -99,7 +99,7 @@ class HomeViewModel( private val repository: IRepository) :ViewModel() {
         _preferencesLocationEum.value=preferencesLocationEum
         Log.d(TAG, "setMode: $preferencesLocationEum")
     }
-    private fun mapToFavoriteDataLatLong(response: List<WeatherResponseEntity>): MutableList<LocationDataHolder> {
+     fun mapToFavoriteDataLatLong(response: List<WeatherResponseEntity>): MutableList<LocationDataHolder> {
         return response.flatMap { weatherEntity -> // Flatten the list of lists
             weatherEntity.currentWeatherList.map { weatherList -> // Map each weatherList entry
                 LocationDataHolder(
@@ -288,7 +288,7 @@ class HomeViewModel( private val repository: IRepository) :ViewModel() {
 
 
     //GetFuture17DayNames
-    private fun mapToDailyForecastData(response: WeatherResponse): List<DailyForecastData> {
+     fun mapToDailyForecastData(response: WeatherResponse): List<DailyForecastData> {
         val dayNames = getFutureDayNames() // Get the future day names
 
         return response.list

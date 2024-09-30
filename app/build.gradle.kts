@@ -10,6 +10,7 @@ plugins {
 }
 
 android {
+
     namespace = "com.example.jawwna"
     compileSdk = 34
     ndkVersion ="23.0.7599858"
@@ -39,6 +40,7 @@ android {
         manifestPlaceholders["open_weather_map_api_key_pro"] = project.properties["OPEN_WEATHER_API_KEY_PRO"]as Any
 
     }
+
 
     buildTypes {
         release {
@@ -75,6 +77,14 @@ android {
 
 }
 
+val junitVersion = "4.13.2"
+val hamcrestVersion = "2.2"
+val archTestingVersion = "2.1.0"
+val robolectricVersion = "4.8"
+val androidXTestCoreVersion = "1.4.0"
+val androidXTestExtKotlinRunnerVersion = "1.1.5"
+val espressoVersion = "3.4.0"
+val coroutinesVersion = "1.6.4"
 
 dependencies {
 
@@ -93,6 +103,7 @@ dependencies {
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.play.services.maps)
+    implementation(libs.androidx.junit.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -141,6 +152,28 @@ dependencies {
     implementation ("androidx.work:work-runtime-ktx:2.7.1")
 //workManager
     implementation( "androidx.window:window:1.0.0")
+
+// Unit testing
+    testImplementation("junit:junit:$junitVersion")
+    testImplementation("org.hamcrest:hamcrest:2.2")
+    testImplementation("org.hamcrest:hamcrest-library:2.2")
+    testImplementation("androidx.arch.core:core-testing:$archTestingVersion")
+    testImplementation("org.robolectric:robolectric:$robolectricVersion")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion")
+    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+
+    // AndroidX Test - JVM testing
+    testImplementation("androidx.test:core-ktx:$androidXTestCoreVersion")
+
+    // AndroidX Test - Instrumented testing
+    androidTestImplementation("androidx.test.ext:junit-ktx:$androidXTestExtKotlinRunnerVersion")
+    androidTestImplementation("androidx.test.espresso:espresso-core:$espressoVersion")
+    androidTestImplementation("androidx.arch.core:core-testing:$archTestingVersion")
+
+    // Timber for logging
+    implementation("com.jakewharton.timber:timber:5.0.1")
+
+
 
 }
 

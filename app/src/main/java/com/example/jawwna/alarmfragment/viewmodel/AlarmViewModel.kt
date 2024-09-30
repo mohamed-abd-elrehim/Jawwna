@@ -23,6 +23,7 @@ import java.util.*
 class AlarmViewModel(private val repository: IRepository) : ViewModel() {
 
     private val _alarms = MutableStateFlow<List<AlarmEntity>>(emptyList())
+
     val alarms: StateFlow<List<AlarmEntity>> get() = _alarms
     private val _currentWeather = MutableStateFlow<List<WeatherResponseEntity>>(emptyList())
     // StateFlow to hold the formatted date list

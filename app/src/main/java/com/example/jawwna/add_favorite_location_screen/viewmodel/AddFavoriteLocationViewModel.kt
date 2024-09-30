@@ -73,6 +73,7 @@ class AddFavoriteLocationViewModel(private val repository: IRepository) : ViewMo
 
     private val _isConnectionAvailable = MutableStateFlow<Boolean>(true)
     private val _updateFavoriteWeather = MutableStateFlow<List<LocationDataHolder>>(emptyList())
+    val updateFavoriteWeather: StateFlow<List<LocationDataHolder>> = _updateFavoriteWeather
 
 
     fun setIsConnectionAvailable(isConnected: Boolean) {

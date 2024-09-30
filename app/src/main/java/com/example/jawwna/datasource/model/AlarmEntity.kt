@@ -12,7 +12,7 @@ import androidx.room.Index
 data class AlarmEntity(
     val date: String, // Date as part of the composite key
     val time: String,   // Time as part of the composite ke
-    val isActive: Boolean = true,
+    var isActive: Boolean = true,
     val icon: String,
     val maxTemp: String,
     val minTemp: String,
