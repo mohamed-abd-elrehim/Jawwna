@@ -16,7 +16,7 @@ class SettingsViewModel(private val iRepository: IRepository) : ViewModel() {
     // LiveData to hold the card settings field background color
     private val _cardSettingsFieldBackgroundLightMode = MutableStateFlow<Int>(0)
     val cardSettingsFieldBackgroundLightModeLiveData: StateFlow<Int> get() = _cardSettingsFieldBackgroundLightMode
-    var currentLanguage:String? =""
+    var currentLanguage:String? ="en"
 
     // LiveData properties to observe settings
     private val _temperatureUnit = MutableStateFlow<String?>("")
@@ -86,7 +86,7 @@ class SettingsViewModel(private val iRepository: IRepository) : ViewModel() {
     fun isCurrentLanguage( language: String):Boolean {
         if(currentLanguage ==language ) {
             return true
-        }else {
+        }else  {
             return false
         }
 

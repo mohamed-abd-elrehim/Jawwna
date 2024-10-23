@@ -16,56 +16,65 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
+        android:layout_margin="8dp"
         android:clickable="true"
         android:focusable="true"
         android:onClick="@{() -> itemClickListener.onItemClick(dailyForecastData)}"
-        app:cardCornerRadius="20dp"
-        app:cardElevation="6dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="4dp"
         app:cardBackgroundColor="@android:color/transparent">
 
-        <LinearLayout
-            android:id="@+id/dayForecastLayout"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/dayForecastLayout1"
+
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="180.dp"
             android:background="@drawable/card_settings_field_background_light_mode"
-            android:padding="16dp"
-            android:orientation="vertical">
+            android:padding="12dp">
 
             <TextView
                 android:id="@+id/day_forecast_text_day"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@{dailyForecastData.dayName}"
-                android:textSize="20sp"
-                android:layout_marginStart="10dp"
-                android:layout_marginBottom="20dp"
-                android:layout_gravity="center|start" />
+                android:textSize="18sp"
+                android:textColor="@android:color/black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Monday" />
 
             <TextView
                 android:id="@+id/day_forecast_text_des"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
                 android:text="@{dailyForecastData.description}"
-                android:textSize="16sp"
-                android:layout_gravity="top|start"
-                android:layout_marginTop="10dp" />
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="@id/day_forecast_text_day"
+                app:layout_constraintTop_toBottomOf="@id/day_forecast_text_day"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:text="Sunny" />
 
             <ImageView
                 android:id="@+id/day_forecast_image_weather"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:src="@{dailyForecastData.icon}"
-                android:layout_gravity="center" />
+                app:layout_constraintTop_toBottomOf="@id/day_forecast_text_des"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:src="@drawable/sample_weather_icon" />
 
             <TextView
                 android:id="@+id/day_forecast_text_temperature"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:layout_gravity="center"
-                android:text="@{String.format(@string/temperature_format_daily_forecast, dailyForecastData.tempMax.value, dailyForecastData.tempMax.unit, dailyForecastData.tempMin.value, dailyForecastData.tempMin.unit)}" />
-        </LinearLayout>
+                android:textSize="14sp"
+                android:text="@{String.format(@string/temperature_format_daily_forecast, dailyForecastData.tempMax.value, dailyForecastData.tempMax.unit, dailyForecastData.tempMin.value, dailyForecastData.tempMin.unit)}"
+                app:layout_constraintTop_toBottomOf="@id/day_forecast_image_weather"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:text="25°C / 15°C" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 </layout>

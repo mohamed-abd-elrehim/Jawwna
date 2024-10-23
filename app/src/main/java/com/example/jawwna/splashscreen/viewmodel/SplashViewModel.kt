@@ -32,7 +32,13 @@ class SplashViewModel(private val repository: IRepository) : ViewModel() {
     val isCurrenLocationAvailable: StateFlow<Boolean> get() = _isCurrenLocationAvailable
     private val currenLocationName = MutableStateFlow<String?>("")
 
-    
+    private val _theme = MutableStateFlow<String?>("")
+    val theme: StateFlow<String?> get() = _theme
+
+    fun getTheme() {
+        _theme.value =repository.getTheme()
+    }
+
 
     fun IsCurrenLocationAvailable() {
         repository.execute(PreferencesLocationEum.CURRENT)

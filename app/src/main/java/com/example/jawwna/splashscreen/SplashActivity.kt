@@ -42,6 +42,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.View
+import androidx.appcompat.app.AppCompatDelegate
 import com.example.jawwna.customui.CustomPopup
 import com.example.jawwna.helper.broadcastreceiver.NetworkChangeReceiver
 import com.example.jawwna.helper.broadcastreceiver.NetworkStateChangeListener
@@ -84,6 +85,22 @@ class SplashActivity : AppCompatActivity() , NetworkStateChangeListener {
                 SplashViewModel::class.java
             )
 
+        viewModel.getTheme()
+        lifecycleScope.launch {
+            // Observe theme changes
+            viewModel.theme.collect { theme ->
+                when (theme) {
+                    "light" -> {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                    }
+                    "dark" -> {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                    }
+                    else -> {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                    }
+                }
+            }}
         viewModel.setUpdateLocale(Locale.getDefault().language)
 
         // Collect the updated locale

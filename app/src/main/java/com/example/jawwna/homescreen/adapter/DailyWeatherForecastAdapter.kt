@@ -75,11 +75,13 @@ class DailyWeatherForecastAdapter(
 
             // Apply dark/light mode backgrounds
             if (isDarkModeEnabled(context)) {
-                binding.dayForecastLayout.setBackgroundResource(R.drawable.card_settings_field_background_night_mode)
+                binding.dayForecastLayout1.setBackgroundResource(R.drawable.card_settings_field_background_night_mode)
+                binding.dayForecastTextDay.setTextColor(ContextCompat.getColor(context, android.R.color.white))
                 binding.dayForecastTextDes.setTextColor(ContextCompat.getColor(context, android.R.color.holo_blue_bright))
                 binding.dayForecastTextTemperature.setTextColor(ContextCompat.getColor(context, android.R.color.holo_blue_bright))
             } else {
-                binding.dayForecastLayout.setBackgroundResource(R.drawable.card_settings_field_background_light_mode)
+                binding.dayForecastLayout1.setBackgroundResource(R.drawable.card_settings_field_background_light_mode)
+                binding.dayForecastTextDay.setTextColor(ContextCompat.getColor(context, android.R.color.black))
                 binding.dayForecastTextDes.setTextColor(ContextCompat.getColor(context, android.R.color.holo_blue_dark))
                 binding.dayForecastTextTemperature.setTextColor(ContextCompat.getColor(context, android.R.color.holo_blue_dark))
             }
