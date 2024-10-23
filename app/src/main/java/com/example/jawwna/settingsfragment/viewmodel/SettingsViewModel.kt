@@ -27,8 +27,7 @@ class SettingsViewModel(private val iRepository: IRepository) : ViewModel() {
     val language: StateFlow<String?> get() = _language
     private val _theme = MutableStateFlow<String?>("")
     val theme: StateFlow<String?> get() = _theme
-    private val _notificationsStatus = MutableStateFlow<String?>("")
-    val notificationsStatus: StateFlow<String?> get() = _notificationsStatus
+
     private val _getLocationMode = MutableStateFlow<String?>("")
     val getLocationMode: StateFlow<String?> get() = _getLocationMode
 
@@ -42,8 +41,8 @@ class SettingsViewModel(private val iRepository: IRepository) : ViewModel() {
         _windSpeedUnit.value = iRepository.getWindSpeedUnit()
         _language.value = iRepository.getLanguage()
         _theme.value = iRepository.getTheme()
-        _notificationsStatus.value = iRepository.getNotifications()
         _getLocationMode.value = iRepository.getGetLocationMode()
+
     }
 
 
@@ -82,11 +81,8 @@ class SettingsViewModel(private val iRepository: IRepository) : ViewModel() {
             iRepository.saveTheme(theme)
             _theme.value = theme
         }
-        if(notificationsStatus != null) {
-            iRepository.saveNotifications(notificationsStatus)
-            _notificationsStatus.value = notificationsStatus
-        }
     }
+
     fun resetSettings():Boolean {
         iRepository.resetSettings()
         loadSettings()

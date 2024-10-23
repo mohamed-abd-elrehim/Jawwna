@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
     tools:context=".splashscreen.SplashActivity">
 
     <!--dp (Density-independent Pixels): وحدة قياس الأكثر استخدامًا، وتستند إلى كثافة الشاشة. يُفضل استخدام dp لعرض وارتفاع العناصر لأن هذه الوحدة تضمن مظهرًا متناسقًا عبر الأجهزة ذات الشاشات المختلفة. 1dp يعادل 1 بكسل على شاشة بمعدل كثافة 160dpi (القياسية).
@@ -27,8 +28,8 @@ match_parent: يجعل العرض أو الارتفاع يملأ كامل الم
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
-        app:lottie_loop="true"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:lottie_loop="true" />
 
     <TextView
         android:id="@+id/welcomeText"

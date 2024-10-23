@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -35,6 +36,8 @@ class SettingsFragment : Fragment() {
     private var isDarkMode = false
     private var isArabic = false
     private var isEnglish = false
+    private var previousIsArabic = isArabic
+    private var previousIsEnglish = isEnglish
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -100,20 +103,22 @@ lifecycleScope.launch {
         // Observe theme changes
         viewModel.theme.collect { theme ->
             when (theme) {
-                "light" -> binding.radioLight.isChecked = true
-                "dark" -> binding.radioDark.isChecked = true
-                else -> binding.radioLight.isChecked = true
+                "light" -> {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+
+                    binding.radioLight.isChecked = true
+                }
+                "dark" -> {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                    binding.radioDark.isChecked = true
+                }
+                else -> {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                    binding.radioLight.isChecked = true
+                }
             }
         }}
-        lifecycleScope.launch {
-        // Observe notification changes
-        viewModel.notificationsStatus.collect { status ->
-            when (status) {
-                "enabled" -> binding.radioEnable.isChecked = true
-                "disabled" -> binding.radioDisable.isChecked = true
-                else -> binding.radioDisable.isChecked = true
-            }
-        }}
+
         lifecycleScope.launch {
         // Observe wind speed unit changes
         viewModel.windSpeedUnit.collect { unit ->
@@ -122,6 +127,7 @@ lifecycleScope.launch {
                 WindSpeedUnits.imperial.toString() -> binding.radioMilesPerHour.isChecked = true
             }
         }}
+
 
 
         // Get current night mode
@@ -134,6 +140,8 @@ lifecycleScope.launch {
             isDarkMode = false
 
         }
+
+
         // Set the video URI in the ViewModel based on the night mode
 
 
@@ -152,8 +160,6 @@ lifecycleScope.launch {
                 binding.languageBackground.background =
                     ContextCompat.getDrawable(requireContext(), colorResId)
                 binding.themeBackground.background =
-                    ContextCompat.getDrawable(requireContext(), colorResId)
-                binding.notificationsBackground.background =
                     ContextCompat.getDrawable(requireContext(), colorResId)
                 binding.resettingbut.background =
                     ContextCompat.getDrawable(requireContext(), colorResId)
@@ -250,11 +256,6 @@ lifecycleScope.launch {
                 else -> null
             }
 
-            val notificationsStatus = when (binding.notificationGroupTheme.checkedRadioButtonId) {
-                R.id.radio_enable -> "enabled"
-                R.id.radio_disable -> "disabled"
-                else -> null
-            }
 
             customAlert.showDialog(
                 message = getString(R.string.are_you_sure),
@@ -268,10 +269,9 @@ lifecycleScope.launch {
                         windSpeedUnit,
                         language,
                         theme,
-                        notificationsStatus
                     )
-                    if (isArabic || isEnglish) {
-                        showRestartDialog(isDarkMode)
+                    if ((previousIsArabic != isArabic) || (previousIsEnglish != isEnglish)) {
+                        showRestartDialog(isDarkMode) // Show restart dialog only if language changed
                     }
                     Toast.makeText(
                         requireContext(),

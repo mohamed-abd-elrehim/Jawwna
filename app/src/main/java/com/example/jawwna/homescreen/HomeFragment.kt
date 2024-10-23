@@ -19,6 +19,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.jawwna.BuildConfig
 import com.example.jawwna.R
 import com.example.jawwna.customui.CustomPopup
@@ -74,6 +76,7 @@ var isFav=false
                 HomeViewModelFactory(Repository.getRepository(requireActivity().application))
             )[HomeViewModel::class.java]
 
+
         if (args != null){
             if (args.isFavorite == false) {
                 viewModel.setMode(PreferencesLocationEum.CURRENT)
@@ -89,7 +92,6 @@ var isFav=false
             }
 
         }
-
 
         lifecycleScope.launch {
             SharedConnctionStateViewModel.sharedConnctionState.collect { isConnected ->
@@ -239,12 +241,29 @@ var isFav=false
                     is ApiResponse.Success -> {
                         // Update UI with the weather data
 
+
                         Log.i(TAG, ": Sccesss Current" + response.data)
                         val result = viewModel.checkTemperatureUnit(response.data.main.temp)
                         binding.mainTextTemperature.text =
                             getString(R.string.temperature_format, result.value, result.unit)
 
                         val resultWind = viewModel.checkWindSpeedUnit(response.data.wind.speed)
+
+                        // Check if dark mode is enabled
+                        val modeSuffix = if (isDarkMode) "n" else "d"
+
+                        // Split the icon name and construct the URL
+                        val iconName = response.data.weather.get(0).icon // Example: "10d" or "01n"
+                        val baseUrl = "https://openweathermap.org/img/wn/"
+                        val fullIconUrl = "$baseUrl${iconName?.dropLast(1)}$modeSuffix@2x.png"
+
+                        // Load icon using Glide, applying cache strategy
+                        context?.let {
+                            Glide.with(it)
+                                .load(fullIconUrl)
+                                .diskCacheStrategy(DiskCacheStrategy.ALL) // Cache all versions of the image
+                                .into(binding.mainAnimation)
+                        }
                         binding.textWindSpeed.text = getString(
                             R.string.wind_speed_format,
                             resultWind.value,
@@ -299,14 +318,12 @@ var isFav=false
             binding.iconWindSpeed.setImageResource(R.drawable.ic_windy_night_mode)
             binding.iconPressure.setImageResource(R.drawable.ic_barometer_night_mode)
             binding.iconClouds.setImageResource(R.drawable.ic_cloud_night_mode)
-            binding.mainAnimation.setAnimation(R.raw.animationgg)
         } else {
             // Set light mode icons
             binding.iconHumidity.setImageResource(R.drawable.ic_humidity_light_mode)
             binding.iconWindSpeed.setImageResource(R.drawable.ic_windy_light_mode)
             binding.iconPressure.setImageResource(R.drawable.ic_barometer_light_mode)
             binding.iconClouds.setImageResource(R.drawable.ic_cloud_lgiht_mode)
-            binding.mainAnimation.setAnimation(R.raw.animationgg)
         }
     }
 

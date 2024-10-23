@@ -90,15 +90,12 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <com.airbnb.lottie.LottieAnimationView
+            <ImageView
                 android:id="@+id/main_animation"
                 android:layout_width="151dp"
                 android:layout_height="100dp"
                 android:layout_gravity="center"
-                app:lottie_autoPlay="true"
-                app:lottie_rawRes="@raw/animationgg"
-                app:lottie_loop="true"/>
-
+                android:src="@drawable/ic_cloudy" />
 
             <TextView
                 android:id="@+id/main_text_temperature"

@@ -302,7 +302,7 @@ class AddFavoriteLocationViewModel(private val repository: IRepository) : ViewMo
         return response.flatMap { weatherEntity -> // Iterate through each FavoriteWeatherEntity
             weatherEntity.currentWeatherList.map { weatherList -> // Map each weatherList entry
                 FavoriteLocationModel(
-                    placeName = weatherList.name, // Get city name for each entity
+                    placeName = weatherEntity.cityName, // Get city name for each entity
                     icon = weatherList.weather.firstOrNull()?.icon, // Safely retrieves the first weather icon
                     description = weatherList.weather.firstOrNull()?.description, // Safely retrieves the description
                     temp = checkTemperatureUnit(weatherList.main.temp), // Applies unit conversion/check to temperature
@@ -375,19 +375,19 @@ class AddFavoriteLocationViewModel(private val repository: IRepository) : ViewMo
         val convertedTemperature = when (temperatureUnit) {
             TemperatureUnits.metric.toString() -> UnitConvertHelper.convertTemperature(
                 temp,
-                repository.getOldTemperatureUnit(),
+                TemperatureUnits.standard.toString(),
                 TemperatureUnits.metric
             )
 
             TemperatureUnits.imperial.toString() -> UnitConvertHelper.convertTemperature(
                 temp,
-                repository.getOldTemperatureUnit(),
+                TemperatureUnits.standard.toString(),
                 TemperatureUnits.imperial
             )
 
             else -> UnitConvertHelper.convertTemperature(
                 temp,
-                repository.getOldTemperatureUnit(),
+                TemperatureUnits.standard.toString(),
                 TemperatureUnits.standard
             )
         }

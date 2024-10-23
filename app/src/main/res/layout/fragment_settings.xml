@@ -244,49 +244,6 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- Notifications Card -->
-            <androidx.cardview.widget.CardView
-                app:cardCornerRadius="25dp"
-                android:elevation="100dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@android:color/transparent"
-                android:layout_marginBottom="16dp">
-
-                <LinearLayout
-                    android:id="@+id/notificationsBackground"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:background="@drawable/card_settings_field_background_light_mode"
-                    android:padding="16dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/notifications"
-                        android:textStyle="bold"
-                        android:textSize="18sp"/>
-
-                    <RadioGroup
-                        android:id="@+id/notification_group_theme"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-
-                        <RadioButton
-                            android:id="@+id/radio_enable"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/enable"/>
-
-                        <RadioButton
-                            android:id="@+id/radio_disable"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/disable"/>
-                    </RadioGroup>
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
 
             <Button
                 android:id="@+id/savebut"

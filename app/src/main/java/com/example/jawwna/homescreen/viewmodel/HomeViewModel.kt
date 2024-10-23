@@ -332,9 +332,9 @@ class HomeViewModel( private val repository: IRepository) :ViewModel() {
     fun checkTemperatureUnit(temp: Double): TemperatureResult {
         val temperatureUnit = repository.getTemperatureUnit()
         val convertedTemperature = when (temperatureUnit) {
-            TemperatureUnits.metric.toString() -> UnitConvertHelper.convertTemperature(temp, repository.getOldTemperatureUnit(), TemperatureUnits.metric)
-            TemperatureUnits.imperial.toString() -> UnitConvertHelper.convertTemperature(temp, repository.getOldTemperatureUnit(), TemperatureUnits.imperial)
-            else -> UnitConvertHelper.convertTemperature(temp, repository.getOldTemperatureUnit(), TemperatureUnits.standard)
+            TemperatureUnits.metric.toString() -> UnitConvertHelper.convertTemperature(temp, TemperatureUnits.standard.toString(), TemperatureUnits.metric)
+            TemperatureUnits.imperial.toString() -> UnitConvertHelper.convertTemperature(temp, TemperatureUnits.standard.toString(), TemperatureUnits.imperial)
+            else -> UnitConvertHelper.convertTemperature(temp, TemperatureUnits.standard.toString(), TemperatureUnits.standard)
         }
 
         val unit = when (temperatureUnit) {
@@ -351,11 +351,11 @@ class HomeViewModel( private val repository: IRepository) :ViewModel() {
         val windUnit = repository.getWindSpeedUnit()
 
         val convertedWindSpeed = when (windUnit) {
-            WindSpeedUnits.imperial.toString() ->  UnitConvertHelper.convertWindSpeed(windSpeed,repository.getOldWindSpeedUnit(),
+            WindSpeedUnits.imperial.toString() ->  UnitConvertHelper.convertWindSpeed(windSpeed,WindSpeedUnits.metric.toString(),
                 WindSpeedUnits.imperial)
-            WindSpeedUnits.metric.toString() -> UnitConvertHelper.convertWindSpeed(windSpeed,repository.getOldWindSpeedUnit(),
+            WindSpeedUnits.metric.toString() -> UnitConvertHelper.convertWindSpeed(windSpeed,WindSpeedUnits.metric.toString(),
                 WindSpeedUnits.metric)
-            else -> UnitConvertHelper.convertWindSpeed(windSpeed,repository.getOldWindSpeedUnit(),WindSpeedUnits.imperial)
+            else -> UnitConvertHelper.convertWindSpeed(windSpeed,WindSpeedUnits.metric.toString(),WindSpeedUnits.imperial)
         }
         val unit = when (windUnit) {
             WindSpeedUnits.metric.toString() -> "m/s"

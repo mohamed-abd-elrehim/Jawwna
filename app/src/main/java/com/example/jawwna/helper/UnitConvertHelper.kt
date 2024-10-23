@@ -7,36 +7,19 @@ object UnitConvertHelper {
 
     // Temperature conversion based on the TemperatureUnits enum
     fun convertTemperature(value: Double, fromUnit: String?, toUnit: TemperatureUnits): Double {
-        return when (fromUnit) {
-            TemperatureUnits.metric.toString() -> when (toUnit) {
-                TemperatureUnits.metric -> roundToOneDecimal(value)
-                TemperatureUnits.imperial -> roundToOneDecimal((value * 9 / 5) + 32)
-                TemperatureUnits.standard -> roundToOneDecimal(value + 273.15)
-            }
-            TemperatureUnits.imperial.toString() -> when (toUnit) {
-                TemperatureUnits.metric -> roundToOneDecimal((value - 32) * 5 / 9)
-                TemperatureUnits.imperial -> roundToOneDecimal(value)
-                TemperatureUnits.standard -> roundToOneDecimal((value - 32) * 5 / 9 + 273.15)
-            }
-            else -> when (toUnit) {
-                TemperatureUnits.metric -> roundToOneDecimal(value - 273.15)
-                TemperatureUnits.imperial -> roundToOneDecimal((value - 273.15) * 9 / 5 + 32)
-                TemperatureUnits.standard -> roundToOneDecimal(value)
-            }
+        return when (toUnit) {
+            TemperatureUnits.metric -> roundToOneDecimal(value - 273.15) // Kelvin to Celsius
+            TemperatureUnits.imperial -> roundToOneDecimal((value - 273.15) * 9 / 5 + 32) // Kelvin to Fahrenheit
+            TemperatureUnits.standard -> roundToOneDecimal(value) // Already in Kelvin
+
         }
     }
 
     // Wind speed conversion based on the WindSpeedUnits enum
     fun convertWindSpeed(value: Double, fromUnit: String?, toUnit: WindSpeedUnits): Double {
-        return when (fromUnit) {
-            WindSpeedUnits.metric.toString() -> when (toUnit) {
-                WindSpeedUnits.metric -> roundToOneDecimal(value)
-                WindSpeedUnits.imperial -> roundToOneDecimal(value * 2.23694)
-            }
-            else -> when (toUnit) {
-                WindSpeedUnits.metric -> roundToOneDecimal(value / 2.23694)
-                WindSpeedUnits.imperial -> roundToOneDecimal(value)
-            }
+        return when (toUnit) {
+            WindSpeedUnits.metric -> roundToOneDecimal(value) // m/s to km/h
+            WindSpeedUnits.imperial -> roundToOneDecimal(value * 2.23694) // m/s to mph
         }
     }
 

@@ -241,14 +241,23 @@ class SplashActivity : AppCompatActivity() , NetworkStateChangeListener {
         // Apply the correct theme based on locale and night mode
         if (currentLocale.language == "ar") {
             if (isNightMode) {
+                binding.welcomeText.setTextColor(ContextCompat.getColor(this, R.color.white))
+                binding.main.setBackgroundColor(ContextCompat.getColor(this, R.color.colorOnBackground))
                 setTheme(R.style.Theme_Jawwna_Arabic_Night)  // Arabic Night mode theme
             } else {
+                binding.welcomeText.setTextColor(ContextCompat.getColor(this, R.color.colorPrimaryNightMode))
+                binding.main.setBackgroundColor(ContextCompat.getColor(this, R.color.colorBackground))
                 setTheme(R.style.Theme_Jawwna_Arabic)  // Arabic Light mode theme
             }
         } else {
+
             if (isNightMode) {
+                binding.welcomeText.setTextColor(ContextCompat.getColor(this, R.color.white))
+                binding.main.setBackgroundColor(ContextCompat.getColor(this, R.color.colorOnBackground))
                 setTheme(R.style.Theme_Jawwna_Night)  // Default locale Night mode theme
             } else {
+                binding.welcomeText.setTextColor(ContextCompat.getColor(this, R.color.colorPrimaryNightMode))
+                binding.main.setBackgroundColor(ContextCompat.getColor(this, R.color.colorBackground))
                 setTheme(R.style.Theme_Jawwna)  // Default locale Light mode theme
             }
         }
