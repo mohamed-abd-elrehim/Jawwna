@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.media.MediaPlayer
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -36,9 +37,6 @@ class SettingsFragment : Fragment() {
     private var isDarkMode = false
     private var isArabic = false
     private var isEnglish = false
-    private var previousIsArabic = isArabic
-    private var previousIsEnglish = isEnglish
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,7 +72,9 @@ lifecycleScope.launch {
             when (mode) {
                 "MAP" -> binding.radioMap.isChecked = true
                 "GPS" -> binding.radioGps.isChecked = true
-                else -> binding.radioMap.isChecked = true
+                else -> {
+                    binding.radioMap.isChecked = true
+                }
             }
         }
 }
@@ -239,16 +239,20 @@ lifecycleScope.launch {
 
             when (binding.radioGroupLanguage.checkedRadioButtonId) {
                 R.id.radio_arabic -> {
-                    isArabic = true
+
+                    isArabic = !viewModel.isCurrentLanguage("ar")
                     isEnglish = false
                 }
 
                 R.id.radio_english -> {
                     isArabic = false
-                    isEnglish = true
+                    isEnglish = !viewModel.isCurrentLanguage("en")
+
                 }
 
-                else -> null
+                else -> {
+                  null
+                }
             }
             val theme = when (binding.radioGroupTheme.checkedRadioButtonId) {
                 R.id.radio_light -> "light"
@@ -261,6 +265,10 @@ lifecycleScope.launch {
                 message = getString(R.string.are_you_sure),
                 isDarkTheme = isDarkMode,
                 positiveAction = {
+                    Log.d("SettingsFragment", "${isArabic} ${isEnglish} ")
+                    if (isArabic ||  isEnglish) {
+                        showRestartDialog(isDarkMode) // Show restart dialog only if language changed
+                    }
 
                     // Call updateSettings with the selected values
                     updateSettings(
@@ -270,9 +278,7 @@ lifecycleScope.launch {
                         language,
                         theme,
                     )
-                    if ((previousIsArabic != isArabic) || (previousIsEnglish != isEnglish)) {
-                        showRestartDialog(isDarkMode) // Show restart dialog only if language changed
-                    }
+
                     Toast.makeText(
                         requireContext(),
                         getString(R.string.settings_saved), Toast.LENGTH_SHORT

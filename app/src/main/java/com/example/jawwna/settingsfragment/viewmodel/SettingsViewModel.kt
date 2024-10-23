@@ -83,6 +83,15 @@ class SettingsViewModel(private val iRepository: IRepository) : ViewModel() {
         }
     }
 
+    fun isCurrentLanguage( language: String):Boolean {
+        if(currentLanguage ==language ) {
+            return true
+        }else {
+            return false
+        }
+
+    }
+
     fun resetSettings():Boolean {
         iRepository.resetSettings()
         loadSettings()
